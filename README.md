@@ -11,6 +11,8 @@ exportação de Excel compatível com o Streamlit HMB.
 | [`contagem_fisica/`](./contagem_fisica/) | Projeto Flutter (MVP Fase 1) |
 | [`contagem_fisica/README.md`](./contagem_fisica/README.md) | Documentação do app Flutter (stack, fluxo, build) |
 | [`contagem_fisica/AGENTS.md`](./contagem_fisica/AGENTS.md) | Comandos padrão para desenvolver no projeto |
+| [`downloads/index.html`](./downloads/index.html) | Página pública com QR code para instalar o APK |
+| [`.github/workflows/pages.yml`](./.github/workflows/pages.yml) | Publica a página `downloads/` no GitHub Pages |
 
 ## MVP (Fase 1) — status
 
@@ -46,3 +48,51 @@ flutter test                # regras anti-erro
 ```
 
 Mais detalhes em [`contagem_fisica/README.md`](./contagem_fisica/README.md).
+
+## Distribuir APK via QR code
+
+Há uma página pública em `downloads/index.html` (publicada no GitHub Pages)
+com um QR code que aponta sempre para a **versão mais recente** do APK
+hospedada em **GitHub Releases**. O operador escaneia com o celular e baixa
+o app — funciona offline depois de baixado.
+
+### 1) Habilitar GitHub Pages (uma única vez)
+
+- Repo no GitHub: **Settings → Pages**
+- Em **Build and deployment → Source**: escolha **GitHub Actions**
+  (o workflow `.github/workflows/pages.yml` cuida do resto).
+- A URL final será algo como
+  `https://hendelsantos.github.io/app_contagem_fisica_submaterial/`.
+
+### 2) Gerar e publicar o APK
+
+```bash
+cd contagem_fisica
+flutter build apk --release                       # gera build/app/outputs/flutter-apk/app-release.apk
+# renomeie para o nome esperado pela página:
+cp build/app/outputs/flutter-apk/app-release.apk ../app-release.apk
+```
+
+### 3) Criar a Release no GitHub
+
+- Repo: **Releases → Draft a new release**
+- **Choose a tag**: `v0.1.0` (ou a versão que quiser)
+- **Attach binaries**: arraste o arquivo `app-release.apk`
+- **Publish release**
+
+Pronto — ao publicar, o QR code da página automaticamente aponta para a nova
+versão (URL `.../releases/latest/download/app-release.apk`).
+
+### 4) Atualizar no futuro
+
+- Suba código novo com `git push`
+- Rode `flutter build apk --release` para gerar nova versão
+- Crie nova Release (`v0.2.0`, etc.) e anexe o APK
+- A página e o QR code **continuam os mesmos** — sempre apontam para "latest".
+
+### Console / alternative API
+
+A página usa `api.qrserver.com` para gerar o QR code e `api.github.com`
+para mostrar a tag da versão atual. Ambos são serviços públicos gratuitos.
+Se a rede da fábrica bloquear `api.qrserver.com`, dá pra trocar por uma
+lib JS embutida ou outro serviço de QR (ver comentário no `index.html`).
