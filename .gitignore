@@ -1,0 +1,17 @@
+# OS / editor cruft
+.DS_Store
+*.log
+*.swp
+.idea/
+.vscode/
+.atom/
+.history/
+.buildlog/
+
+# Flutter (também coberto por contagem_fisica/.gitignore)
+**/build/
+**/.dart_tool/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/.metadata
