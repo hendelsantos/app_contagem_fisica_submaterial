@@ -50,3 +50,17 @@ class ItemContagem(models.Model):
 
     def __str__(self):
         return f"{self.material_codigo} - {self.status}"
+
+
+class NotaRecebimento(models.Model):
+    item = models.ForeignKey(ItemContagem, related_name="notas", on_delete=models.CASCADE)
+    numero = models.CharField(max_length=120)
+    quantidade = models.DecimalField(max_digits=14, decimal_places=3, default=0)
+    data_recebimento = models.DateTimeField(null=True, blank=True)
+    foto_path = models.CharField(max_length=500, blank=True)
+
+    class Meta:
+        ordering = ["numero"]
+
+    def __str__(self):
+        return f"{self.numero} - {self.quantidade}"

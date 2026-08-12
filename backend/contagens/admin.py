@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Contagem, ItemContagem
+from .models import Contagem, ItemContagem, NotaRecebimento
 
 
 class ItemContagemInline(admin.TabularInline):
@@ -15,6 +15,12 @@ class ItemContagemInline(admin.TabularInline):
         "estoque_contado",
         "status",
     )
+
+
+class NotaRecebimentoInline(admin.TabularInline):
+    model = NotaRecebimento
+    extra = 0
+    fields = ("numero", "quantidade", "data_recebimento", "foto_path")
 
 
 @admin.register(Contagem)
@@ -45,3 +51,10 @@ class ItemContagemAdmin(admin.ModelAdmin):
     )
     search_fields = ("material_codigo", "material_descricao", "fornecedor")
     list_filter = ("fornecedor", "status")
+    inlines = [NotaRecebimentoInline]
+
+
+@admin.register(NotaRecebimento)
+class NotaRecebimentoAdmin(admin.ModelAdmin):
+    list_display = ("numero", "quantidade", "item")
+    search_fields = ("numero", "item__material_codigo", "item__material_descricao")

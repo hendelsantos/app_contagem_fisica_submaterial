@@ -11,7 +11,7 @@ from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from .models import Contagem, ItemContagem
+from .models import Contagem, ItemContagem, NotaRecebimento
 
 
 def health(_request):
@@ -49,7 +49,7 @@ def dashboard(request):
 
 @login_required
 def detalhe_contagem(request, pk):
-    contagem = get_object_or_404(Contagem.objects.prefetch_related("itens"), pk=pk)
+    contagem = get_object_or_404(Contagem.objects.prefetch_related("itens__notas"), pk=pk)
     return render(request, "contagens/detalhe.html", {"contagem": contagem})
 
 
@@ -76,7 +76,7 @@ def api_contagens(request):
 def api_contagem_detalhe(request, pk):
     if not request.user.is_authenticated and not _token_valido(request):
         return _unauthorized()
-    contagem = get_object_or_404(Contagem.objects.prefetch_related("itens"), pk=pk)
+    contagem = get_object_or_404(Contagem.objects.prefetch_related("itens__notas"), pk=pk)
     data = _contagem_json(contagem)
     data["itens"] = [_item_json(item) for item in contagem.itens.all()]
     return JsonResponse(data)
@@ -108,7 +108,7 @@ def _salvar_payload(payload):
     ItemContagem.objects.filter(contagem=contagem).delete()
     for item in itens:
         material = item.get("material", {})
-        ItemContagem.objects.create(
+        item_obj = ItemContagem.objects.create(
             contagem=contagem,
             material_codigo=item.get("materialCodigo", ""),
             fornecedor=material.get("fornecedor", ""),
@@ -124,6 +124,14 @@ def _salvar_payload(payload):
             timestamp_item=_parse_dt(item.get("timestamp")),
             payload_original=item,
         )
+        for nota in item.get("notas", []):
+            NotaRecebimento.objects.create(
+                item=item_obj,
+                numero=str(nota.get("numero") or ""),
+                quantidade=_decimal(nota.get("quantidade")),
+                data_recebimento=_parse_dt(nota.get("dataRecebimento")),
+                foto_path=nota.get("fotoPath") or "",
+            )
     return contagem
 
 
@@ -181,7 +189,17 @@ def _item_json(item):
         "estoqueAnterior": float(item.estoque_anterior),
         "estoqueContado": float(item.estoque_contado),
         "recebimentoTotal": float(item.recebimento_total),
+        "notas": [_nota_json(nota) for nota in item.notas.all()],
         "consumoEstimado": float(item.consumo_estimado),
         "status": item.status,
         "justificativa": item.justificativa,
+    }
+
+
+def _nota_json(nota):
+    return {
+        "numero": nota.numero,
+        "quantidade": float(nota.quantidade),
+        "dataRecebimento": nota.data_recebimento.isoformat() if nota.data_recebimento else None,
+        "fotoPath": nota.foto_path,
     }

@@ -16,6 +16,7 @@
         <th>Material</th>
         <th>Anterior</th>
         <th>Receb.</th>
+        <th>NFs</th>
         <th>Contado</th>
         <th>Consumo</th>
         <th>Status</th>
@@ -28,6 +29,13 @@
           <td><strong>{{ item.material_codigo }}</strong><br><span>{{ item.material_descricao }}</span></td>
           <td>{{ item.estoque_anterior }}</td>
           <td>{{ item.recebimento_total }}</td>
+          <td>
+            {% for nota in item.notas.all %}
+              <strong>{{ nota.numero }}</strong><br><span>{{ nota.quantidade }}</span>{% if not forloop.last %}<br>{% endif %}
+            {% empty %}
+              <span>-</span>
+            {% endfor %}
+          </td>
           <td>{{ item.estoque_contado }}</td>
           <td>{{ item.consumo_estimado }}</td>
           <td><span class="pill">{{ item.status }}</span></td>
