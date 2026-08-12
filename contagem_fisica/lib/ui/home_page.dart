@@ -20,9 +20,30 @@ class HomePage extends ConsumerWidget {
         title: const Text('Contagem Física'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.info_outline),
+            tooltip: 'Sobre o app',
+            onPressed: () => context.push('/sobre'),
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Encerrar sessão',
             onPressed: () async {
+              final confirmar = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text('Encerrar sessão'),
+                  content: const Text(
+                    'Os dados da sessão atual permanecem salvos no aparelho,\n'
+                    'mas você voltará para a tela de setup.\n\n'
+                    'Continuar?',
+                  ),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
+                    FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Sair')),
+                  ],
+                ),
+              );
+              if (confirmar != true) return;
               await ref.read(sessaoAtualProvider.notifier).limpar();
               if (context.mounted) context.go('/');
             },

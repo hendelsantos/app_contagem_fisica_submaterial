@@ -5,6 +5,7 @@ import 'package:contagem_fisica/ui/home_page.dart';
 import 'package:contagem_fisica/ui/material_page.dart';
 import 'package:contagem_fisica/ui/resumo_page.dart';
 import 'package:contagem_fisica/ui/setup_operador_page.dart';
+import 'package:contagem_fisica/ui/sobre_page.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,7 +18,8 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final emSetup = state.matchedLocation == '/';
       final emHome = state.matchedLocation == '/home';
-      if (!temSessao && (emHome || state.matchedLocation.startsWith('/fornecedor') ||
+      final emSobre = state.matchedLocation == '/sobre';
+      if (!temSessao && !emSobre && (emHome || state.matchedLocation.startsWith('/fornecedor') ||
           state.matchedLocation.startsWith('/material') ||
           state.matchedLocation == '/resumo' || state.matchedLocation == '/export')) {
         return '/';
@@ -40,6 +42,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/resumo', builder: (c, s) => const ResumoPage()),
       GoRoute(path: '/export', builder: (c, s) => const ExportPage()),
+      GoRoute(path: '/sobre', builder: (c, s) => const SobrePage()),
     ],
   );
 });

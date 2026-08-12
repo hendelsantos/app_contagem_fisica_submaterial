@@ -51,6 +51,12 @@ class _SetupOperadorPageState extends ConsumerState<SetupOperadorPage> {
 
   Future<void> _iniciar() async {
     if (!_formKey.currentState!.validate()) return;
+    if (!_fimPrevisto.isAfter(_inicio)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('A data/hora final precisa ser depois do início.')),
+      );
+      return;
+    }
     await ref.read(sessaoAtualProvider.notifier).iniciar(
           operadorNome: _nomeCtrl.text.trim(),
           operadorMatricula: _matriculaCtrl.text.trim(),
@@ -64,7 +70,16 @@ class _SetupOperadorPageState extends ConsumerState<SetupOperadorPage> {
   Widget build(BuildContext context) {
     final fmt = DateFormat('dd/MM/yyyy HH:mm');
     return Scaffold(
-      appBar: AppBar(title: const Text('Início da contagem')),
+      appBar: AppBar(
+        title: const Text('Início da contagem'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            tooltip: 'Sobre o app',
+            onPressed: () => context.push('/sobre'),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(

@@ -6,7 +6,7 @@
         android:maxSdkVersion="29"/>
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <application
-        android:label="contagem_fisica"
+        android:label="Contagem Física HMB"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

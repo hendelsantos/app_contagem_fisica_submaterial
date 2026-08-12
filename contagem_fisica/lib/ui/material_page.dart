@@ -39,6 +39,8 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
   StatusItem _status = StatusItem.pendente;
   ItemContagemDTO? _item;
   MaterialDTO? _material;
+  ReferenciaMaterialDTO? _ref;
+  bool _estoqueAntEditavel = false;
 
   @override
   void dispose() {
@@ -52,11 +54,23 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     super.dispose();
   }
 
-  void _carregar(ItemContagemDTO? it, double? ref, MaterialDTO mat) {
+  void _carregar(ItemContagemDTO? it, ReferenciaMaterialDTO? ref, MaterialDTO mat) {
     _item = it;
     _material = mat;
-    _estoqueAntCtrl.text =
-        (it?.estoqueAnterior ?? ref ?? 0).toStringAsFixed(2);
+    _ref = ref;
+    final valorRef = ref?.estoqueFinalKg;
+    final temItem = it != null;
+    final temRef = ref != null;
+    if (temItem && it.estoqueAnterior > 0) {
+      _estoqueAntCtrl.text = it.estoqueAnterior.toStringAsFixed(2);
+      _estoqueAntEditavel = false;
+    } else if (temRef) {
+      _estoqueAntCtrl.text = valorRef!.toStringAsFixed(2);
+      _estoqueAntEditavel = false;
+    } else {
+      _estoqueAntCtrl.text = '0.00';
+      _estoqueAntEditavel = true;
+    }
     _contadoCtrl.text = it?.estoqueContado?.toStringAsFixed(2) ?? '';
     _recebCtrl.text = it?.recebimentoTotal?.toStringAsFixed(2) ?? '0';
     _obsCtrl.text = it?.observacao ?? '';
@@ -203,10 +217,14 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     );
     final fotoObrigatoria = fotosObrigatoriaArquivo(item, r);
     if (fotoObrigatoria && _justFotoPath == null && _fotoPath == null) {
+      ref.invalidate(itensSessaoProvider(sessao.id));
+      ref.invalidate(resumosFornecedoresProvider(sessao.id));
       _snack('Foto é obrigatória para esta divergência.');
       return;
     }
     if (r.bloqueado) {
+      ref.invalidate(itensSessaoProvider(sessao.id));
+      ref.invalidate(resumosFornecedoresProvider(sessao.id));
       _snack(r.avisos.join('\n'));
       return;
     }
@@ -219,6 +237,10 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
         dataReferencia: DateTime.now(),
       );
     }
+    // invalida providers para contadores refletirem novo status
+    ref.invalidate(itensSessaoProvider(sessao.id));
+    ref.invalidate(resumosFornecedoresProvider(sessao.id));
+    ref.invalidate(referenciaMaterialCompletaProvider(widget.codigo));
     _snack('Material concluído: ${status.label}.');
     if (mounted) context.pop();
   }
@@ -227,6 +249,10 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     return fotoObrigatoria(item);
   }
 
+  String _fmtData(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/'
+      '${d.year} ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+
   @override
   Widget build(BuildContext context) {
     final matAsync = ref.watch(materialPorCodigoProvider(widget.codigo));
@@ -234,7 +260,7 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     final itensAsync = sessao == null
         ? const AsyncValue<List<ItemContagemDTO>>.loading()
         : ref.watch(itensSessaoProvider(sessao.id));
-    final refAsync = ref.watch(referenciaMaterialProvider(widget.codigo));
+    final refAsync = ref.watch(referenciaMaterialCompletaProvider(widget.codigo));
 
     return Scaffold(
       appBar: AppBar(title: const Text('Contagem do material')),
@@ -250,7 +276,7 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
                     id: '',
                     sessaoId: sessao?.id ?? '',
                     materialCodigo: widget.codigo,
-                    estoqueAnterior: refAsync.valueOrNull ?? 0,
+                    estoqueAnterior: refAsync.valueOrNull?.estoqueFinalKg ?? 0,
                     status: StatusItem.pendente,
                     timestamp: DateTime.now(),
                   ),
@@ -310,10 +336,21 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
             const SizedBox(height: 8),
             TextFormField(
               controller: _estoqueAntCtrl,
-              decoration: const InputDecoration(
+              readOnly: !_estoqueAntEditavel,
+              decoration: InputDecoration(
                 labelText: 'Estoque anterior (referência)',
-                border: OutlineInputBorder(),
-                helperText: 'Primeira contagem: digite o estoque de referência.',
+                border: const OutlineInputBorder(),
+                helperText: _ref != null
+                    ? 'Última contagem em ${_fmtData(_ref!.dataReferencia)}.\n'
+                      'Ponderado automaticamente pelo app.'
+                    : 'Primeira contagem: digite o estoque inicial '
+                      '(em ${mat.unidade}). Próximas contagens usarão '
+                      'o saldo automaticamente.',
+                suffixText: mat.unidade,
+                filled: !_estoqueAntEditavel,
+                fillColor: !_estoqueAntEditavel
+                    ? Colors.grey.shade100
+                    : null,
               ),
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
             ),

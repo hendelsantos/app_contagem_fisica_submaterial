@@ -132,3 +132,17 @@ class ResumoFornecedor {
 
   bool get concluido => pendentes == 0 && bloqueados == 0;
 }
+
+class ReferenciaMaterialDTO {
+  final String materialCodigo;
+  final double estoqueFinalKg;
+  final DateTime dataReferencia;
+  final String? sessaoOrigemId;
+
+  const ReferenciaMaterialDTO({
+    required this.materialCodigo,
+    required this.estoqueFinalKg,
+    required this.dataReferencia,
+    this.sessaoOrigemId,
+  });
+}

@@ -66,3 +66,16 @@ final referenciaMaterialProvider =
   final r = await db.referenciaDoMaterial(codigo);
   return r?.estoqueFinalKg;
 });
+
+final referenciaMaterialCompletaProvider =
+    FutureProvider.family<ReferenciaMaterialDTO?, String>((ref, codigo) async {
+  final db = ref.watch(databaseProvider);
+  final r = await db.referenciaDoMaterial(codigo);
+  if (r == null) return null;
+  return ReferenciaMaterialDTO(
+    materialCodigo: r.materialCodigo,
+    estoqueFinalKg: r.estoqueFinalKg,
+    dataReferencia: r.dataReferencia,
+    sessaoOrigemId: r.sessaoOrigemId,
+  );
+});
