@@ -184,12 +184,19 @@
     // URL estável: sempre a "latest" release. Ao publicar nova versão,
     // basta fazer upload do APK na nova Release que este QR code
     // automaticamente aponta para a versão mais recente.
-    const LATEST_URL = `https://github.com/${REPO}/releases/latest/download/${APK_FILE}`;
     const RELEASES_URL = `https://github.com/${REPO}/releases`;
 
-    // QR code (serviço público gratuito e estável; só需要 carregar a imagem).
+    // Página pública de download/instalação (GitHub Pages).
+    // O QR aponta para esta página; o usuário scans → abre → toca em "Baixar APK".
+    const PAGES_URL = `https://hendelsantos.github.io/app_contagem_fisica_submaterial/`;
+
+    // URL do APK na Release "latest" (preenchida quando houver Release publicada).
+    let LATEST_URL = `https://github.com/${REPO}/releases/latest/download/${APK_FILE}`;
+
+    // QR code aponta para a PÁGINA de download (não direto ao APK),
+    // evitando 404 quando ainda não há Release criada.
     const qrSrc =
-      `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&qzone=4&data=${encodeURIComponent(LATEST_URL)}`;
+      `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&qzone=4&data=${encodeURIComponent(PAGES_URL)}`;
 
     document.getElementById("qrcode").src = qrSrc;
     document.getElementById("downloadBtn").href = LATEST_URL;
@@ -197,10 +204,20 @@
 
     // Tenta mostrar a tag da versão atual (latest) via API do GitHub
     fetch(`https://api.github.com/repos/${REPO}/releases/latest`)
-      .then(r => r.ok ? r.json() : null)
+      .then(r => r.json())
       .then(j => {
         if (j && j.tag_name) {
           document.getElementById("versao").textContent = j.tag_name;
+        } else {
+          // Sem Release disponível ainda — avisa o usuário no botão.
+          const btn = document.getElementById("downloadBtn");
+          btn.textContent = "APK ainda não publicado (aguardando Release)";
+          btn.style.opacity = ".6";
+          btn.style.cursor = "not-allowed";
+          btn.addEventListener("click", e => {
+            e.preventDefault();
+            alert("Ainda não há uma Release publicada com o APK.\n\nVeja as versões em: " + RELEASES_URL);
+          });
         }
       })
       .catch(() => { /* offline: deixa o texto padrão */ });
