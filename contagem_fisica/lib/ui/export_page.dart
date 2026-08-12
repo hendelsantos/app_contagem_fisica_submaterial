@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../domain/backend_sync.dart';
 import '../domain/export_excel.dart';
 import '../domain/export_pdf.dart';
 import '../domain/export_zip.dart';
@@ -18,10 +19,12 @@ class ExportPage extends ConsumerStatefulWidget {
 
 class _ExportPageState extends ConsumerState<ExportPage> {
   bool _gerando = false;
+  bool _enviandoBackend = false;
   String? _excelPath;
   String? _pdfPath;
   String? _zipPath;
   String? _erro;
+  String? _backendOk;
 
   Future<void> _gerar() async {
     setState(() {
@@ -69,8 +72,33 @@ class _ExportPageState extends ConsumerState<ExportPage> {
     }
   }
 
+  Future<void> _enviarBackend() async {
+    setState(() {
+      _enviandoBackend = true;
+      _erro = null;
+      _backendOk = null;
+    });
+    try {
+      final sessao = ref.read(sessaoAtualProvider).valueOrNull;
+      if (sessao == null) throw StateError('Sem sessão ativa.');
+      final materiais = await ref.read(todosMateriaisProvider.future);
+      final itens = await ref.read(itensSessaoProvider(sessao.id).future);
+      await BackendSync().enviarContagem(
+        sessao: sessao,
+        itens: itens,
+        materiais: materiais,
+      );
+      setState(() => _backendOk = 'Dados enviados para o backend.');
+    } catch (e) {
+      setState(() => _erro = e.toString());
+    } finally {
+      if (mounted) setState(() => _enviandoBackend = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final backendConfigurado = BackendSync().configurado;
     return Scaffold(
       appBar: AppBar(title: const Text('Exportar contagem')),
       body: Padding(
@@ -88,10 +116,24 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                 child: Text('Erro: $_erro',
                     style: const TextStyle(color: Colors.red)),
               ),
+            if (_backendOk != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(_backendOk!,
+                    style: const TextStyle(color: Colors.green)),
+              ),
             FilledButton.icon(
               icon: const Icon(Icons.folder_zip),
               label: const Text('Gerar pacote de auditoria'),
               onPressed: _gerando ? null : _gerar,
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              icon: const Icon(Icons.cloud_upload),
+              label: const Text('Compartilhar dados no backend'),
+              onPressed: !backendConfigurado || _enviandoBackend
+                  ? null
+                  : _enviarBackend,
             ),
             const SizedBox(height: 16),
             if (_zipPath != null)

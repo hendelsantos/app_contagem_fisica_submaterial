@@ -1,0 +1,17 @@
+{% extends "contagens/base.html" %}
+{% block title %}Entrar | Contagem HMB{% endblock %}
+{% block content %}
+<section class="login-panel">
+  <h1>Entrar</h1>
+  <p>Acompanhe as contagens enviadas pelo app Android.</p>
+  {% if form.errors %}
+    <div class="alert">Usuario ou senha invalidos.</div>
+  {% endif %}
+  <form method="post" class="form">
+    {% csrf_token %}
+    <label>Usuario {{ form.username }}</label>
+    <label>Senha {{ form.password }}</label>
+    <button type="submit">Acessar dashboard</button>
+  </form>
+</section>
+{% endblock %}

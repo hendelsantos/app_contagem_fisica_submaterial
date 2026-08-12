@@ -1,5 +1,12 @@
 # Changelog — Contagem Física HMB
 
+## 0.6.0
+- Adicionado envio dos dados da contagem para o backend Django no Railway.
+- Tela Exportar ganha o botão **Compartilhar dados no backend**.
+- Payload enviado inclui sessão, itens, materiais, status, justificativas, fotos referenciadas e notas fiscais.
+- Backend configurado por `--dart-define=BACKEND_URL` e `--dart-define=APP_API_TOKEN`, evitando gravar token no repositório.
+- Nova dependência direta: `http`.
+
 ## 0.5.0
 - Exportacao gera um pacote ZIP de auditoria com Excel, PDF e pasta `fotos/`.
 - Fotos de contagem, justificativa e notas fiscais sao copiadas para dentro do ZIP quando os arquivos ainda existem no aparelho.

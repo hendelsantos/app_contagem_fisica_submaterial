@@ -1,0 +1,55 @@
+{% extends "contagens/base.html" %}
+{% block content %}
+<section class="hero">
+  <div>
+    <h1>Painel de contagens</h1>
+    <p>Base online para receber os valores do app, acompanhar divergencias e atualizar o estoque contado.</p>
+  </div>
+  <a class="button" href="/admin/">Admin</a>
+</section>
+
+<section class="metrics">
+  <article><span>Contagens</span><strong>{{ resumo.total|default:0 }}</strong></article>
+  <article><span>Itens</span><strong>{{ resumo.total_itens|default:0 }}</strong></article>
+  <article><span>Estoque contado</span><strong>{{ resumo.total_contado|default:0 }}</strong></article>
+  <article><span>Recebimentos</span><strong>{{ resumo.total_recebido|default:0 }}</strong></article>
+</section>
+
+<section class="grid">
+  <div>
+    <h2>Ultimas contagens</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Data</th><th>Operador</th><th>Itens</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for contagem in contagens %}
+            <tr>
+              <td>{{ contagem.data_inicio|date:"d/m/Y H:i" }}</td>
+              <td>{{ contagem.operador_nome }}</td>
+              <td>{{ contagem.total_itens }}</td>
+              <td><span class="pill">{{ contagem.status }}</span></td>
+              <td><a href="{% url 'detalhe_contagem' contagem.id %}">Abrir</a></td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5">Nenhuma contagem recebida ainda.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <aside>
+    <h2>Por fornecedor</h2>
+    {% for row in por_fornecedor %}
+      <div class="supplier">
+        <strong>{{ row.fornecedor|default:"Sem fornecedor" }}</strong>
+        <span>{{ row.itens }} itens · estoque {{ row.estoque|default:0 }}</span>
+      </div>
+    {% empty %}
+      <p class="muted">Os fornecedores aparecem aqui apos o primeiro envio.</p>
+    {% endfor %}
+  </aside>
+</section>
+{% endblock %}

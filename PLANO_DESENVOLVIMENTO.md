@@ -5,7 +5,7 @@ Status em 12/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 ## Versão atual
 
 - **Release latest:** v0.4.0 (https://github.com/hendelsantos/app_contagem_fisica_submaterial/releases/latest)
-- **pubspec.yaml:** `0.5.0+9` local, APK release gerado. Ainda falta publicar tag/release v0.5.0 no GitHub.
+- **pubspec.yaml:** `0.6.0+10` local em desenvolvimento. `v0.5.0` já teve commit/tag/push; falta criar GitHub Release se o `gh auth` não for concluído.
 - **Página de download:** https://hendelsantos.github.io/app_contagem_fisica_submaterial/  (automática via `releases/latest`)
 - **QR code aponta para:** a página acima (fixo).
 
@@ -22,26 +22,23 @@ Status em 12/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 | v0.3.3 | Histórico/auditoria por item — tabela `itens_historico`, tela `/historico`, snapshot por edição. |
 | v0.4.0 | Admin de parâmetros — tela `/admin` com PIN (SHA-256), tolerâncias configuráveis, consumo diário esperado por material, painel de alertas. |
 | v0.5.0 | Pacote ZIP de auditoria — Excel + PDF + pasta `fotos/` e manifesto de fotos. |
+| v0.6.0 | Backend Django/MySQL no Railway + envio da contagem pelo app via API. |
 
 ## Próximos passos (fila)
 
-### 1. Publicar release v0.5.0
-- APK gerado em `contagem_fisica/build/app/outputs/flutter-apk/app-release.apk`.
-- Falta commit, tag `v0.5.0`, push e criar GitHub Release com o APK anexado.
+### 1. Fechar publicação GitHub
+- `v0.5.0`: commit/tag/push feitos. Falta GitHub Release se `gh auth` não for concluído.
+- `v0.6.0`: gerar APK com `--dart-define=BACKEND_URL=... --dart-define=APP_API_TOKEN=...`, commit, tag e release.
 
-### 2. Backend Railway + dashboard web (Fase 3/4 do plano)
-- Provisionar via MCP Railway (tenho ferramentas disponíveis nesta sessão):
-  - serviço FastAPI + Postgres no Railway (free trial) **e dashboard no mesmo serviço** (decidido: não usar Pages para o dashboard).
-  - Auth real: login `hendel` / senha `admin123` (hasheada com bcrypt, JWT no cookie). Decidido: usuário único por enquanto.
-- Endpoints sugeridos:
-  - `POST /contagem` (recebe JSON da sessão completa + itens + notas + fotos).
-  - `GET /contagens` (lista para dashboard).
-  - `GET /contagens/{id}` (detalhe).
-  - `POST /auth/login` + `POST /auth/logout`.
-- App ganha botão **"Compartilhar dados"** na tela Exportar → envia POST para API.
-- Dashboard (servido pelo próprio FastAPI ou estático embutido no serviço): gráficos Chart.js (consumo, divergências, painel por fornecedor).
-- **Token/PAT:** NÃO embutir PAT no APK. Usar login do app -> backend -> auth real.
-- Importante: HTTPS obrigatório, CORS liberado só para o domínio Pages (download page) e para o próprio serviço Railway.
+### 2. Próximo polimento backend/app
+- Dashboard Django no Railway publicado em `https://backend-production-3a35.up.railway.app`.
+- Banco MySQL no Railway.
+- Login dashboard: `hendel` / `admin123` (trocar depois).
+- Endpoints:
+  - `POST /api/contagens/` recebe JSON da sessão completa + itens + notas.
+  - `GET /api/contagens/` lista contagens para usuário logado.
+  - `GET /api/contagens/{id}/` detalhe.
+- Próximo passo técnico: transformar o botão do app em envio automático após gerar pacote, se o fluxo real pedir.
 
 ### 3. Itens menores (pode fazer antes do backend, se aparecer prioridade)
 - Importar cadastro mestre JSON do Streamlit (`materiais.json`) — tela `/importar_cadastro`. Substitui seed fixo. **Decidido: deixar pra depois, manter seed.dart por enquanto.**
