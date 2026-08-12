@@ -17,6 +17,7 @@ part 'database.g.dart';
   ItensContagem,
   NotasRecebimento,
   Exports,
+  ItensHistorico,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
@@ -24,7 +25,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -37,6 +38,9 @@ class AppDatabase extends _$AppDatabase {
             await customStatement(
               "UPDATE materiais SET unidade = 'L' WHERE fornecedor = 'Axalta'",
             );
+          }
+          if (from < 3) {
+            await m.createTable(itensHistorico);
           }
         },
         beforeOpen: (details) async {
@@ -174,6 +178,7 @@ class AppDatabase extends _$AppDatabase {
     String? fotoPath,
     required String status,
     DateTime? timestamp,
+    String? operadorNome,
   }) async {
     final existente = await itemDaSessaoPorMaterial(sessaoId, materialCodigo);
     final agora = timestamp ?? DateTime.now();
@@ -193,8 +198,28 @@ class AppDatabase extends _$AppDatabase {
         status: Value(status),
         timestamp: Value(agora),
       ));
+      await _registrarHistorico(
+        itemId: id,
+        sessaoId: sessaoId,
+        materialCodigo: materialCodigo,
+        acao: 'criado',
+        operadorNome: operadorNome,
+        estoqueAnterior: estoqueAnterior,
+        estoqueContado: estoqueContado,
+        recebimentoTotal: recebimentoTotal,
+        status: status,
+        observacao: observacao,
+        justificativa: justificativa,
+        timestamp: agora,
+      );
       return id;
     }
+    final houveMudanca = existente.estoqueContado != estoqueContado ||
+        existente.recebimentoTotal != recebimentoTotal ||
+        existente.estoqueAnterior != estoqueAnterior ||
+        existente.status != status ||
+        existente.observacao != observacao ||
+        existente.justificativa != justificativa;
     await (update(itensContagem)..where((t) => t.id.equals(existente.id))).write(
       ItensContagemCompanion(
         estoqueAnterior: Value(estoqueAnterior),
@@ -208,7 +233,69 @@ class AppDatabase extends _$AppDatabase {
         timestamp: Value(agora),
       ),
     );
+    if (houveMudanca) {
+      await _registrarHistorico(
+        itemId: existente.id,
+        sessaoId: sessaoId,
+        materialCodigo: materialCodigo,
+        acao: 'editado',
+        operadorNome: operadorNome,
+        estoqueAnterior: estoqueAnterior,
+        estoqueContado: estoqueContado,
+        recebimentoTotal: recebimentoTotal,
+        status: status,
+        observacao: observacao,
+        justificativa: justificativa,
+        timestamp: agora,
+      );
+    }
     return existente.id;
+  }
+
+  Future<void> _registrarHistorico({
+    required String itemId,
+    required String sessaoId,
+    required String materialCodigo,
+    required String acao,
+    String? operadorNome,
+    double? estoqueAnterior,
+    double? estoqueContado,
+    double? recebimentoTotal,
+    String? status,
+    String? observacao,
+    String? justificativa,
+    required DateTime timestamp,
+  }) async {
+    final id = '${itemId}_hist_${timestamp.microsecondsSinceEpoch}_${acao.hashCode.abs()}';
+    await into(itensHistorico).insert(ItensHistoricoCompanion(
+      id: Value(id),
+      itemId: Value(itemId),
+      sessaoId: Value(sessaoId),
+      materialCodigo: Value(materialCodigo),
+      acao: Value(acao),
+      operadorNome: Value(operadorNome ?? ''),
+      estoqueAnterior: Value(estoqueAnterior),
+      estoqueContado: Value(estoqueContado),
+      recebimentoTotal: Value(recebimentoTotal),
+      status: Value(status),
+      observacao: Value(observacao),
+      justificativa: Value(justificativa),
+      timestamp: Value(timestamp),
+    ));
+  }
+
+  Future<List<ItemHistoricoRow>> historicoDoItem(String itemId) {
+    return (select(itensHistorico)
+          ..where((t) => t.itemId.equals(itemId))
+          ..orderBy([(t) => OrderingTerm.desc(t.timestamp)]))
+        .get();
+  }
+
+  Future<List<ItemHistoricoRow>> historicoDoMaterialNaSessao(String sessaoId, String materialCodigo) {
+    return (select(itensHistorico)
+          ..where((t) => t.sessaoId.equals(sessaoId) & t.materialCodigo.equals(materialCodigo))
+          ..orderBy([(t) => OrderingTerm.desc(t.timestamp)]))
+        .get();
   }
 
   Future<List<NotaRecebimentoRow>> notasDoItem(String itemId) {

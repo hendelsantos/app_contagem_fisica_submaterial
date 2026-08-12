@@ -2733,6 +2733,673 @@ class ExportsCompanion extends UpdateCompanion<ExportRow> {
   }
 }
 
+class $ItensHistoricoTable extends ItensHistorico
+    with TableInfo<$ItensHistoricoTable, ItemHistoricoRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ItensHistoricoTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _itemIdMeta = const VerificationMeta('itemId');
+  @override
+  late final GeneratedColumn<String> itemId = GeneratedColumn<String>(
+      'item_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _sessaoIdMeta =
+      const VerificationMeta('sessaoId');
+  @override
+  late final GeneratedColumn<String> sessaoId = GeneratedColumn<String>(
+      'sessao_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _materialCodigoMeta =
+      const VerificationMeta('materialCodigo');
+  @override
+  late final GeneratedColumn<String> materialCodigo = GeneratedColumn<String>(
+      'material_codigo', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _acaoMeta = const VerificationMeta('acao');
+  @override
+  late final GeneratedColumn<String> acao = GeneratedColumn<String>(
+      'acao', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _operadorNomeMeta =
+      const VerificationMeta('operadorNome');
+  @override
+  late final GeneratedColumn<String> operadorNome = GeneratedColumn<String>(
+      'operador_nome', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _estoqueAnteriorMeta =
+      const VerificationMeta('estoqueAnterior');
+  @override
+  late final GeneratedColumn<double> estoqueAnterior = GeneratedColumn<double>(
+      'estoque_anterior', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _estoqueContadoMeta =
+      const VerificationMeta('estoqueContado');
+  @override
+  late final GeneratedColumn<double> estoqueContado = GeneratedColumn<double>(
+      'estoque_contado', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _recebimentoTotalMeta =
+      const VerificationMeta('recebimentoTotal');
+  @override
+  late final GeneratedColumn<double> recebimentoTotal = GeneratedColumn<double>(
+      'recebimento_total', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _observacaoMeta =
+      const VerificationMeta('observacao');
+  @override
+  late final GeneratedColumn<String> observacao = GeneratedColumn<String>(
+      'observacao', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _justificativaMeta =
+      const VerificationMeta('justificativa');
+  @override
+  late final GeneratedColumn<String> justificativa = GeneratedColumn<String>(
+      'justificativa', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _timestampMeta =
+      const VerificationMeta('timestamp');
+  @override
+  late final GeneratedColumn<DateTime> timestamp = GeneratedColumn<DateTime>(
+      'timestamp', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        itemId,
+        sessaoId,
+        materialCodigo,
+        acao,
+        operadorNome,
+        estoqueAnterior,
+        estoqueContado,
+        recebimentoTotal,
+        status,
+        observacao,
+        justificativa,
+        timestamp
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'itens_historico';
+  @override
+  VerificationContext validateIntegrity(Insertable<ItemHistoricoRow> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('item_id')) {
+      context.handle(_itemIdMeta,
+          itemId.isAcceptableOrUnknown(data['item_id']!, _itemIdMeta));
+    } else if (isInserting) {
+      context.missing(_itemIdMeta);
+    }
+    if (data.containsKey('sessao_id')) {
+      context.handle(_sessaoIdMeta,
+          sessaoId.isAcceptableOrUnknown(data['sessao_id']!, _sessaoIdMeta));
+    } else if (isInserting) {
+      context.missing(_sessaoIdMeta);
+    }
+    if (data.containsKey('material_codigo')) {
+      context.handle(
+          _materialCodigoMeta,
+          materialCodigo.isAcceptableOrUnknown(
+              data['material_codigo']!, _materialCodigoMeta));
+    } else if (isInserting) {
+      context.missing(_materialCodigoMeta);
+    }
+    if (data.containsKey('acao')) {
+      context.handle(
+          _acaoMeta, acao.isAcceptableOrUnknown(data['acao']!, _acaoMeta));
+    } else if (isInserting) {
+      context.missing(_acaoMeta);
+    }
+    if (data.containsKey('operador_nome')) {
+      context.handle(
+          _operadorNomeMeta,
+          operadorNome.isAcceptableOrUnknown(
+              data['operador_nome']!, _operadorNomeMeta));
+    } else if (isInserting) {
+      context.missing(_operadorNomeMeta);
+    }
+    if (data.containsKey('estoque_anterior')) {
+      context.handle(
+          _estoqueAnteriorMeta,
+          estoqueAnterior.isAcceptableOrUnknown(
+              data['estoque_anterior']!, _estoqueAnteriorMeta));
+    }
+    if (data.containsKey('estoque_contado')) {
+      context.handle(
+          _estoqueContadoMeta,
+          estoqueContado.isAcceptableOrUnknown(
+              data['estoque_contado']!, _estoqueContadoMeta));
+    }
+    if (data.containsKey('recebimento_total')) {
+      context.handle(
+          _recebimentoTotalMeta,
+          recebimentoTotal.isAcceptableOrUnknown(
+              data['recebimento_total']!, _recebimentoTotalMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    if (data.containsKey('observacao')) {
+      context.handle(
+          _observacaoMeta,
+          observacao.isAcceptableOrUnknown(
+              data['observacao']!, _observacaoMeta));
+    }
+    if (data.containsKey('justificativa')) {
+      context.handle(
+          _justificativaMeta,
+          justificativa.isAcceptableOrUnknown(
+              data['justificativa']!, _justificativaMeta));
+    }
+    if (data.containsKey('timestamp')) {
+      context.handle(_timestampMeta,
+          timestamp.isAcceptableOrUnknown(data['timestamp']!, _timestampMeta));
+    } else if (isInserting) {
+      context.missing(_timestampMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ItemHistoricoRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ItemHistoricoRow(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      itemId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}item_id'])!,
+      sessaoId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}sessao_id'])!,
+      materialCodigo: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}material_codigo'])!,
+      acao: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}acao'])!,
+      operadorNome: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}operador_nome'])!,
+      estoqueAnterior: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}estoque_anterior']),
+      estoqueContado: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}estoque_contado']),
+      recebimentoTotal: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}recebimento_total']),
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status']),
+      observacao: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}observacao']),
+      justificativa: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}justificativa']),
+      timestamp: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}timestamp'])!,
+    );
+  }
+
+  @override
+  $ItensHistoricoTable createAlias(String alias) {
+    return $ItensHistoricoTable(attachedDatabase, alias);
+  }
+}
+
+class ItemHistoricoRow extends DataClass
+    implements Insertable<ItemHistoricoRow> {
+  final String id;
+  final String itemId;
+  final String sessaoId;
+  final String materialCodigo;
+  final String acao;
+  final String operadorNome;
+  final double? estoqueAnterior;
+  final double? estoqueContado;
+  final double? recebimentoTotal;
+  final String? status;
+  final String? observacao;
+  final String? justificativa;
+  final DateTime timestamp;
+  const ItemHistoricoRow(
+      {required this.id,
+      required this.itemId,
+      required this.sessaoId,
+      required this.materialCodigo,
+      required this.acao,
+      required this.operadorNome,
+      this.estoqueAnterior,
+      this.estoqueContado,
+      this.recebimentoTotal,
+      this.status,
+      this.observacao,
+      this.justificativa,
+      required this.timestamp});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['item_id'] = Variable<String>(itemId);
+    map['sessao_id'] = Variable<String>(sessaoId);
+    map['material_codigo'] = Variable<String>(materialCodigo);
+    map['acao'] = Variable<String>(acao);
+    map['operador_nome'] = Variable<String>(operadorNome);
+    if (!nullToAbsent || estoqueAnterior != null) {
+      map['estoque_anterior'] = Variable<double>(estoqueAnterior);
+    }
+    if (!nullToAbsent || estoqueContado != null) {
+      map['estoque_contado'] = Variable<double>(estoqueContado);
+    }
+    if (!nullToAbsent || recebimentoTotal != null) {
+      map['recebimento_total'] = Variable<double>(recebimentoTotal);
+    }
+    if (!nullToAbsent || status != null) {
+      map['status'] = Variable<String>(status);
+    }
+    if (!nullToAbsent || observacao != null) {
+      map['observacao'] = Variable<String>(observacao);
+    }
+    if (!nullToAbsent || justificativa != null) {
+      map['justificativa'] = Variable<String>(justificativa);
+    }
+    map['timestamp'] = Variable<DateTime>(timestamp);
+    return map;
+  }
+
+  ItensHistoricoCompanion toCompanion(bool nullToAbsent) {
+    return ItensHistoricoCompanion(
+      id: Value(id),
+      itemId: Value(itemId),
+      sessaoId: Value(sessaoId),
+      materialCodigo: Value(materialCodigo),
+      acao: Value(acao),
+      operadorNome: Value(operadorNome),
+      estoqueAnterior: estoqueAnterior == null && nullToAbsent
+          ? const Value.absent()
+          : Value(estoqueAnterior),
+      estoqueContado: estoqueContado == null && nullToAbsent
+          ? const Value.absent()
+          : Value(estoqueContado),
+      recebimentoTotal: recebimentoTotal == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recebimentoTotal),
+      status:
+          status == null && nullToAbsent ? const Value.absent() : Value(status),
+      observacao: observacao == null && nullToAbsent
+          ? const Value.absent()
+          : Value(observacao),
+      justificativa: justificativa == null && nullToAbsent
+          ? const Value.absent()
+          : Value(justificativa),
+      timestamp: Value(timestamp),
+    );
+  }
+
+  factory ItemHistoricoRow.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ItemHistoricoRow(
+      id: serializer.fromJson<String>(json['id']),
+      itemId: serializer.fromJson<String>(json['itemId']),
+      sessaoId: serializer.fromJson<String>(json['sessaoId']),
+      materialCodigo: serializer.fromJson<String>(json['materialCodigo']),
+      acao: serializer.fromJson<String>(json['acao']),
+      operadorNome: serializer.fromJson<String>(json['operadorNome']),
+      estoqueAnterior: serializer.fromJson<double?>(json['estoqueAnterior']),
+      estoqueContado: serializer.fromJson<double?>(json['estoqueContado']),
+      recebimentoTotal: serializer.fromJson<double?>(json['recebimentoTotal']),
+      status: serializer.fromJson<String?>(json['status']),
+      observacao: serializer.fromJson<String?>(json['observacao']),
+      justificativa: serializer.fromJson<String?>(json['justificativa']),
+      timestamp: serializer.fromJson<DateTime>(json['timestamp']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'itemId': serializer.toJson<String>(itemId),
+      'sessaoId': serializer.toJson<String>(sessaoId),
+      'materialCodigo': serializer.toJson<String>(materialCodigo),
+      'acao': serializer.toJson<String>(acao),
+      'operadorNome': serializer.toJson<String>(operadorNome),
+      'estoqueAnterior': serializer.toJson<double?>(estoqueAnterior),
+      'estoqueContado': serializer.toJson<double?>(estoqueContado),
+      'recebimentoTotal': serializer.toJson<double?>(recebimentoTotal),
+      'status': serializer.toJson<String?>(status),
+      'observacao': serializer.toJson<String?>(observacao),
+      'justificativa': serializer.toJson<String?>(justificativa),
+      'timestamp': serializer.toJson<DateTime>(timestamp),
+    };
+  }
+
+  ItemHistoricoRow copyWith(
+          {String? id,
+          String? itemId,
+          String? sessaoId,
+          String? materialCodigo,
+          String? acao,
+          String? operadorNome,
+          Value<double?> estoqueAnterior = const Value.absent(),
+          Value<double?> estoqueContado = const Value.absent(),
+          Value<double?> recebimentoTotal = const Value.absent(),
+          Value<String?> status = const Value.absent(),
+          Value<String?> observacao = const Value.absent(),
+          Value<String?> justificativa = const Value.absent(),
+          DateTime? timestamp}) =>
+      ItemHistoricoRow(
+        id: id ?? this.id,
+        itemId: itemId ?? this.itemId,
+        sessaoId: sessaoId ?? this.sessaoId,
+        materialCodigo: materialCodigo ?? this.materialCodigo,
+        acao: acao ?? this.acao,
+        operadorNome: operadorNome ?? this.operadorNome,
+        estoqueAnterior: estoqueAnterior.present
+            ? estoqueAnterior.value
+            : this.estoqueAnterior,
+        estoqueContado:
+            estoqueContado.present ? estoqueContado.value : this.estoqueContado,
+        recebimentoTotal: recebimentoTotal.present
+            ? recebimentoTotal.value
+            : this.recebimentoTotal,
+        status: status.present ? status.value : this.status,
+        observacao: observacao.present ? observacao.value : this.observacao,
+        justificativa:
+            justificativa.present ? justificativa.value : this.justificativa,
+        timestamp: timestamp ?? this.timestamp,
+      );
+  ItemHistoricoRow copyWithCompanion(ItensHistoricoCompanion data) {
+    return ItemHistoricoRow(
+      id: data.id.present ? data.id.value : this.id,
+      itemId: data.itemId.present ? data.itemId.value : this.itemId,
+      sessaoId: data.sessaoId.present ? data.sessaoId.value : this.sessaoId,
+      materialCodigo: data.materialCodigo.present
+          ? data.materialCodigo.value
+          : this.materialCodigo,
+      acao: data.acao.present ? data.acao.value : this.acao,
+      operadorNome: data.operadorNome.present
+          ? data.operadorNome.value
+          : this.operadorNome,
+      estoqueAnterior: data.estoqueAnterior.present
+          ? data.estoqueAnterior.value
+          : this.estoqueAnterior,
+      estoqueContado: data.estoqueContado.present
+          ? data.estoqueContado.value
+          : this.estoqueContado,
+      recebimentoTotal: data.recebimentoTotal.present
+          ? data.recebimentoTotal.value
+          : this.recebimentoTotal,
+      status: data.status.present ? data.status.value : this.status,
+      observacao:
+          data.observacao.present ? data.observacao.value : this.observacao,
+      justificativa: data.justificativa.present
+          ? data.justificativa.value
+          : this.justificativa,
+      timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ItemHistoricoRow(')
+          ..write('id: $id, ')
+          ..write('itemId: $itemId, ')
+          ..write('sessaoId: $sessaoId, ')
+          ..write('materialCodigo: $materialCodigo, ')
+          ..write('acao: $acao, ')
+          ..write('operadorNome: $operadorNome, ')
+          ..write('estoqueAnterior: $estoqueAnterior, ')
+          ..write('estoqueContado: $estoqueContado, ')
+          ..write('recebimentoTotal: $recebimentoTotal, ')
+          ..write('status: $status, ')
+          ..write('observacao: $observacao, ')
+          ..write('justificativa: $justificativa, ')
+          ..write('timestamp: $timestamp')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      itemId,
+      sessaoId,
+      materialCodigo,
+      acao,
+      operadorNome,
+      estoqueAnterior,
+      estoqueContado,
+      recebimentoTotal,
+      status,
+      observacao,
+      justificativa,
+      timestamp);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ItemHistoricoRow &&
+          other.id == this.id &&
+          other.itemId == this.itemId &&
+          other.sessaoId == this.sessaoId &&
+          other.materialCodigo == this.materialCodigo &&
+          other.acao == this.acao &&
+          other.operadorNome == this.operadorNome &&
+          other.estoqueAnterior == this.estoqueAnterior &&
+          other.estoqueContado == this.estoqueContado &&
+          other.recebimentoTotal == this.recebimentoTotal &&
+          other.status == this.status &&
+          other.observacao == this.observacao &&
+          other.justificativa == this.justificativa &&
+          other.timestamp == this.timestamp);
+}
+
+class ItensHistoricoCompanion extends UpdateCompanion<ItemHistoricoRow> {
+  final Value<String> id;
+  final Value<String> itemId;
+  final Value<String> sessaoId;
+  final Value<String> materialCodigo;
+  final Value<String> acao;
+  final Value<String> operadorNome;
+  final Value<double?> estoqueAnterior;
+  final Value<double?> estoqueContado;
+  final Value<double?> recebimentoTotal;
+  final Value<String?> status;
+  final Value<String?> observacao;
+  final Value<String?> justificativa;
+  final Value<DateTime> timestamp;
+  final Value<int> rowid;
+  const ItensHistoricoCompanion({
+    this.id = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.sessaoId = const Value.absent(),
+    this.materialCodigo = const Value.absent(),
+    this.acao = const Value.absent(),
+    this.operadorNome = const Value.absent(),
+    this.estoqueAnterior = const Value.absent(),
+    this.estoqueContado = const Value.absent(),
+    this.recebimentoTotal = const Value.absent(),
+    this.status = const Value.absent(),
+    this.observacao = const Value.absent(),
+    this.justificativa = const Value.absent(),
+    this.timestamp = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ItensHistoricoCompanion.insert({
+    required String id,
+    required String itemId,
+    required String sessaoId,
+    required String materialCodigo,
+    required String acao,
+    required String operadorNome,
+    this.estoqueAnterior = const Value.absent(),
+    this.estoqueContado = const Value.absent(),
+    this.recebimentoTotal = const Value.absent(),
+    this.status = const Value.absent(),
+    this.observacao = const Value.absent(),
+    this.justificativa = const Value.absent(),
+    required DateTime timestamp,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        itemId = Value(itemId),
+        sessaoId = Value(sessaoId),
+        materialCodigo = Value(materialCodigo),
+        acao = Value(acao),
+        operadorNome = Value(operadorNome),
+        timestamp = Value(timestamp);
+  static Insertable<ItemHistoricoRow> custom({
+    Expression<String>? id,
+    Expression<String>? itemId,
+    Expression<String>? sessaoId,
+    Expression<String>? materialCodigo,
+    Expression<String>? acao,
+    Expression<String>? operadorNome,
+    Expression<double>? estoqueAnterior,
+    Expression<double>? estoqueContado,
+    Expression<double>? recebimentoTotal,
+    Expression<String>? status,
+    Expression<String>? observacao,
+    Expression<String>? justificativa,
+    Expression<DateTime>? timestamp,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (itemId != null) 'item_id': itemId,
+      if (sessaoId != null) 'sessao_id': sessaoId,
+      if (materialCodigo != null) 'material_codigo': materialCodigo,
+      if (acao != null) 'acao': acao,
+      if (operadorNome != null) 'operador_nome': operadorNome,
+      if (estoqueAnterior != null) 'estoque_anterior': estoqueAnterior,
+      if (estoqueContado != null) 'estoque_contado': estoqueContado,
+      if (recebimentoTotal != null) 'recebimento_total': recebimentoTotal,
+      if (status != null) 'status': status,
+      if (observacao != null) 'observacao': observacao,
+      if (justificativa != null) 'justificativa': justificativa,
+      if (timestamp != null) 'timestamp': timestamp,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ItensHistoricoCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? itemId,
+      Value<String>? sessaoId,
+      Value<String>? materialCodigo,
+      Value<String>? acao,
+      Value<String>? operadorNome,
+      Value<double?>? estoqueAnterior,
+      Value<double?>? estoqueContado,
+      Value<double?>? recebimentoTotal,
+      Value<String?>? status,
+      Value<String?>? observacao,
+      Value<String?>? justificativa,
+      Value<DateTime>? timestamp,
+      Value<int>? rowid}) {
+    return ItensHistoricoCompanion(
+      id: id ?? this.id,
+      itemId: itemId ?? this.itemId,
+      sessaoId: sessaoId ?? this.sessaoId,
+      materialCodigo: materialCodigo ?? this.materialCodigo,
+      acao: acao ?? this.acao,
+      operadorNome: operadorNome ?? this.operadorNome,
+      estoqueAnterior: estoqueAnterior ?? this.estoqueAnterior,
+      estoqueContado: estoqueContado ?? this.estoqueContado,
+      recebimentoTotal: recebimentoTotal ?? this.recebimentoTotal,
+      status: status ?? this.status,
+      observacao: observacao ?? this.observacao,
+      justificativa: justificativa ?? this.justificativa,
+      timestamp: timestamp ?? this.timestamp,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (itemId.present) {
+      map['item_id'] = Variable<String>(itemId.value);
+    }
+    if (sessaoId.present) {
+      map['sessao_id'] = Variable<String>(sessaoId.value);
+    }
+    if (materialCodigo.present) {
+      map['material_codigo'] = Variable<String>(materialCodigo.value);
+    }
+    if (acao.present) {
+      map['acao'] = Variable<String>(acao.value);
+    }
+    if (operadorNome.present) {
+      map['operador_nome'] = Variable<String>(operadorNome.value);
+    }
+    if (estoqueAnterior.present) {
+      map['estoque_anterior'] = Variable<double>(estoqueAnterior.value);
+    }
+    if (estoqueContado.present) {
+      map['estoque_contado'] = Variable<double>(estoqueContado.value);
+    }
+    if (recebimentoTotal.present) {
+      map['recebimento_total'] = Variable<double>(recebimentoTotal.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (observacao.present) {
+      map['observacao'] = Variable<String>(observacao.value);
+    }
+    if (justificativa.present) {
+      map['justificativa'] = Variable<String>(justificativa.value);
+    }
+    if (timestamp.present) {
+      map['timestamp'] = Variable<DateTime>(timestamp.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ItensHistoricoCompanion(')
+          ..write('id: $id, ')
+          ..write('itemId: $itemId, ')
+          ..write('sessaoId: $sessaoId, ')
+          ..write('materialCodigo: $materialCodigo, ')
+          ..write('acao: $acao, ')
+          ..write('operadorNome: $operadorNome, ')
+          ..write('estoqueAnterior: $estoqueAnterior, ')
+          ..write('estoqueContado: $estoqueContado, ')
+          ..write('recebimentoTotal: $recebimentoTotal, ')
+          ..write('status: $status, ')
+          ..write('observacao: $observacao, ')
+          ..write('justificativa: $justificativa, ')
+          ..write('timestamp: $timestamp, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2745,6 +3412,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $NotasRecebimentoTable notasRecebimento =
       $NotasRecebimentoTable(this);
   late final $ExportsTable exports = $ExportsTable(this);
+  late final $ItensHistoricoTable itensHistorico = $ItensHistoricoTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2756,7 +3424,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         sessoes,
         itensContagem,
         notasRecebimento,
-        exports
+        exports,
+        itensHistorico
       ];
 }
 
@@ -4152,6 +4821,310 @@ typedef $$ExportsTableProcessedTableManager = ProcessedTableManager<
     (ExportRow, BaseReferences<_$AppDatabase, $ExportsTable, ExportRow>),
     ExportRow,
     PrefetchHooks Function()>;
+typedef $$ItensHistoricoTableCreateCompanionBuilder = ItensHistoricoCompanion
+    Function({
+  required String id,
+  required String itemId,
+  required String sessaoId,
+  required String materialCodigo,
+  required String acao,
+  required String operadorNome,
+  Value<double?> estoqueAnterior,
+  Value<double?> estoqueContado,
+  Value<double?> recebimentoTotal,
+  Value<String?> status,
+  Value<String?> observacao,
+  Value<String?> justificativa,
+  required DateTime timestamp,
+  Value<int> rowid,
+});
+typedef $$ItensHistoricoTableUpdateCompanionBuilder = ItensHistoricoCompanion
+    Function({
+  Value<String> id,
+  Value<String> itemId,
+  Value<String> sessaoId,
+  Value<String> materialCodigo,
+  Value<String> acao,
+  Value<String> operadorNome,
+  Value<double?> estoqueAnterior,
+  Value<double?> estoqueContado,
+  Value<double?> recebimentoTotal,
+  Value<String?> status,
+  Value<String?> observacao,
+  Value<String?> justificativa,
+  Value<DateTime> timestamp,
+  Value<int> rowid,
+});
+
+class $$ItensHistoricoTableFilterComposer
+    extends Composer<_$AppDatabase, $ItensHistoricoTable> {
+  $$ItensHistoricoTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get itemId => $composableBuilder(
+      column: $table.itemId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get sessaoId => $composableBuilder(
+      column: $table.sessaoId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get materialCodigo => $composableBuilder(
+      column: $table.materialCodigo,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get acao => $composableBuilder(
+      column: $table.acao, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get operadorNome => $composableBuilder(
+      column: $table.operadorNome, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get estoqueAnterior => $composableBuilder(
+      column: $table.estoqueAnterior,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get estoqueContado => $composableBuilder(
+      column: $table.estoqueContado,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get recebimentoTotal => $composableBuilder(
+      column: $table.recebimentoTotal,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get observacao => $composableBuilder(
+      column: $table.observacao, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get justificativa => $composableBuilder(
+      column: $table.justificativa, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get timestamp => $composableBuilder(
+      column: $table.timestamp, builder: (column) => ColumnFilters(column));
+}
+
+class $$ItensHistoricoTableOrderingComposer
+    extends Composer<_$AppDatabase, $ItensHistoricoTable> {
+  $$ItensHistoricoTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get itemId => $composableBuilder(
+      column: $table.itemId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get sessaoId => $composableBuilder(
+      column: $table.sessaoId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get materialCodigo => $composableBuilder(
+      column: $table.materialCodigo,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get acao => $composableBuilder(
+      column: $table.acao, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get operadorNome => $composableBuilder(
+      column: $table.operadorNome,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get estoqueAnterior => $composableBuilder(
+      column: $table.estoqueAnterior,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get estoqueContado => $composableBuilder(
+      column: $table.estoqueContado,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get recebimentoTotal => $composableBuilder(
+      column: $table.recebimentoTotal,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get observacao => $composableBuilder(
+      column: $table.observacao, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get justificativa => $composableBuilder(
+      column: $table.justificativa,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get timestamp => $composableBuilder(
+      column: $table.timestamp, builder: (column) => ColumnOrderings(column));
+}
+
+class $$ItensHistoricoTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ItensHistoricoTable> {
+  $$ItensHistoricoTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get itemId =>
+      $composableBuilder(column: $table.itemId, builder: (column) => column);
+
+  GeneratedColumn<String> get sessaoId =>
+      $composableBuilder(column: $table.sessaoId, builder: (column) => column);
+
+  GeneratedColumn<String> get materialCodigo => $composableBuilder(
+      column: $table.materialCodigo, builder: (column) => column);
+
+  GeneratedColumn<String> get acao =>
+      $composableBuilder(column: $table.acao, builder: (column) => column);
+
+  GeneratedColumn<String> get operadorNome => $composableBuilder(
+      column: $table.operadorNome, builder: (column) => column);
+
+  GeneratedColumn<double> get estoqueAnterior => $composableBuilder(
+      column: $table.estoqueAnterior, builder: (column) => column);
+
+  GeneratedColumn<double> get estoqueContado => $composableBuilder(
+      column: $table.estoqueContado, builder: (column) => column);
+
+  GeneratedColumn<double> get recebimentoTotal => $composableBuilder(
+      column: $table.recebimentoTotal, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get observacao => $composableBuilder(
+      column: $table.observacao, builder: (column) => column);
+
+  GeneratedColumn<String> get justificativa => $composableBuilder(
+      column: $table.justificativa, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get timestamp =>
+      $composableBuilder(column: $table.timestamp, builder: (column) => column);
+}
+
+class $$ItensHistoricoTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ItensHistoricoTable,
+    ItemHistoricoRow,
+    $$ItensHistoricoTableFilterComposer,
+    $$ItensHistoricoTableOrderingComposer,
+    $$ItensHistoricoTableAnnotationComposer,
+    $$ItensHistoricoTableCreateCompanionBuilder,
+    $$ItensHistoricoTableUpdateCompanionBuilder,
+    (
+      ItemHistoricoRow,
+      BaseReferences<_$AppDatabase, $ItensHistoricoTable, ItemHistoricoRow>
+    ),
+    ItemHistoricoRow,
+    PrefetchHooks Function()> {
+  $$ItensHistoricoTableTableManager(
+      _$AppDatabase db, $ItensHistoricoTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ItensHistoricoTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ItensHistoricoTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ItensHistoricoTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> itemId = const Value.absent(),
+            Value<String> sessaoId = const Value.absent(),
+            Value<String> materialCodigo = const Value.absent(),
+            Value<String> acao = const Value.absent(),
+            Value<String> operadorNome = const Value.absent(),
+            Value<double?> estoqueAnterior = const Value.absent(),
+            Value<double?> estoqueContado = const Value.absent(),
+            Value<double?> recebimentoTotal = const Value.absent(),
+            Value<String?> status = const Value.absent(),
+            Value<String?> observacao = const Value.absent(),
+            Value<String?> justificativa = const Value.absent(),
+            Value<DateTime> timestamp = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ItensHistoricoCompanion(
+            id: id,
+            itemId: itemId,
+            sessaoId: sessaoId,
+            materialCodigo: materialCodigo,
+            acao: acao,
+            operadorNome: operadorNome,
+            estoqueAnterior: estoqueAnterior,
+            estoqueContado: estoqueContado,
+            recebimentoTotal: recebimentoTotal,
+            status: status,
+            observacao: observacao,
+            justificativa: justificativa,
+            timestamp: timestamp,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String itemId,
+            required String sessaoId,
+            required String materialCodigo,
+            required String acao,
+            required String operadorNome,
+            Value<double?> estoqueAnterior = const Value.absent(),
+            Value<double?> estoqueContado = const Value.absent(),
+            Value<double?> recebimentoTotal = const Value.absent(),
+            Value<String?> status = const Value.absent(),
+            Value<String?> observacao = const Value.absent(),
+            Value<String?> justificativa = const Value.absent(),
+            required DateTime timestamp,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ItensHistoricoCompanion.insert(
+            id: id,
+            itemId: itemId,
+            sessaoId: sessaoId,
+            materialCodigo: materialCodigo,
+            acao: acao,
+            operadorNome: operadorNome,
+            estoqueAnterior: estoqueAnterior,
+            estoqueContado: estoqueContado,
+            recebimentoTotal: recebimentoTotal,
+            status: status,
+            observacao: observacao,
+            justificativa: justificativa,
+            timestamp: timestamp,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$ItensHistoricoTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $ItensHistoricoTable,
+    ItemHistoricoRow,
+    $$ItensHistoricoTableFilterComposer,
+    $$ItensHistoricoTableOrderingComposer,
+    $$ItensHistoricoTableAnnotationComposer,
+    $$ItensHistoricoTableCreateCompanionBuilder,
+    $$ItensHistoricoTableUpdateCompanionBuilder,
+    (
+      ItemHistoricoRow,
+      BaseReferences<_$AppDatabase, $ItensHistoricoTable, ItemHistoricoRow>
+    ),
+    ItemHistoricoRow,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4170,4 +5143,6 @@ class $AppDatabaseManager {
       $$NotasRecebimentoTableTableManager(_db, _db.notasRecebimento);
   $$ExportsTableTableManager get exports =>
       $$ExportsTableTableManager(_db, _db.exports);
+  $$ItensHistoricoTableTableManager get itensHistorico =>
+      $$ItensHistoricoTableTableManager(_db, _db.itensHistorico);
 }

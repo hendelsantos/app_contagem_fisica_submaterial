@@ -35,7 +35,7 @@ class BackupData {
       );
 }
 
-const int kVersaoBackup = 1;
+const int kVersaoBackup = 2;
 
 Future<File> exportarBackup(AppDatabase db) async {
   final materiais = await db.select(db.materiais).get();
@@ -45,6 +45,7 @@ Future<File> exportarBackup(AppDatabase db) async {
   final itens = await db.select(db.itensContagem).get();
   final notas = await db.select(db.notasRecebimento).get();
   final exports = await db.select(db.exports).get();
+  final historico = await db.select(db.itensHistorico).get();
 
   final backup = BackupData(
     versao: kVersaoBackup,
@@ -57,6 +58,7 @@ Future<File> exportarBackup(AppDatabase db) async {
       'itens_contagem': itens.map((r) => r.toJson()).toList(),
       'notas_recebimento': notas.map((r) => r.toJson()).toList(),
       'exports': exports.map((r) => r.toJson()).toList(),
+      'itens_historico': historico.map((r) => r.toJson()).toList(),
     },
   );
 
@@ -77,6 +79,7 @@ Future<BackupResumoImport> importarBackup(AppDatabase db, File arquivo) async {
   final backup = BackupData.fromJson(json);
 
   await db.transaction(() async {
+    await db.customStatement('DELETE FROM itens_historico');
     await db.customStatement('DELETE FROM notas_recebimento');
     await db.customStatement('DELETE FROM itens_contagem');
     await db.customStatement('DELETE FROM exports');
@@ -113,6 +116,10 @@ Future<BackupResumoImport> importarBackup(AppDatabase db, File arquivo) async {
       final exs = backup.tabelas['exports'] ?? const [];
       for (final e in exs) {
         b.insert(db.exports, _exportsFromJson(e));
+      }
+      final hist = backup.tabelas['itens_historico'] ?? const [];
+      for (final h in hist) {
+        b.insert(db.itensHistorico, _historicoFromJson(h));
       }
     });
   });
@@ -189,6 +196,22 @@ ExportsCompanion _exportsFromJson(Map<String, dynamic> j) => ExportsCompanion(
       sessaoId: Value(j['sessaoId'] as String),
       caminhoExcel: Value(j['caminhoExcel'] as String?),
       caminhoPdf: Value(j['caminhoPdf'] as String?),
+      timestamp: Value(_parseDate(j['timestamp'])!),
+    );
+
+ItensHistoricoCompanion _historicoFromJson(Map<String, dynamic> j) => ItensHistoricoCompanion(
+      id: Value(j['id'] as String),
+      itemId: Value(j['itemId'] as String),
+      sessaoId: Value(j['sessaoId'] as String),
+      materialCodigo: Value(j['materialCodigo'] as String),
+      acao: Value(j['acao'] as String),
+      operadorNome: Value(j['operadorNome'] as String? ?? ''),
+      estoqueAnterior: Value((j['estoqueAnterior'] as num?)?.toDouble()),
+      estoqueContado: Value((j['estoqueContado'] as num?)?.toDouble()),
+      recebimentoTotal: Value((j['recebimentoTotal'] as num?)?.toDouble()),
+      status: Value(j['status'] as String?),
+      observacao: Value(j['observacao'] as String?),
+      justificativa: Value(j['justificativa'] as String?),
       timestamp: Value(_parseDate(j['timestamp'])!),
     );
 

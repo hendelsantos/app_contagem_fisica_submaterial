@@ -94,3 +94,23 @@ class Exports extends Table {
   @override
   Set<Column<Object>> get primaryKey => {id};
 }
+
+@DataClassName('ItemHistoricoRow')
+class ItensHistorico extends Table {
+  TextColumn get id => text()();
+  TextColumn get itemId => text()();
+  TextColumn get sessaoId => text()();
+  TextColumn get materialCodigo => text()();
+  TextColumn get acao => text()();
+  TextColumn get operadorNome => text()();
+  RealColumn get estoqueAnterior => real().nullable()();
+  RealColumn get estoqueContado => real().nullable()();
+  RealColumn get recebimentoTotal => real().nullable()();
+  TextColumn get status => text().nullable()();
+  TextColumn get observacao => text().nullable()();
+  TextColumn get justificativa => text().nullable()();
+  DateTimeColumn get timestamp => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}

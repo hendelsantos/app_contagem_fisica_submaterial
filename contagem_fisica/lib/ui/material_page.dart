@@ -171,6 +171,7 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       justificativaFotoPath: _justFotoPath,
       fotoPath: _fotoPath,
       status: concluir ? 'pendente' : 'pendente',
+      operadorNome: sessao.operadorNome,
     );
     await db.removerNotasDoItem(itemId);
     for (final n in _notas) {
@@ -214,6 +215,7 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       justificativaFotoPath: _justFotoPath,
       fotoPath: _fotoPath,
       status: statusParaDb(status),
+      operadorNome: sessao.operadorNome,
     );
     if (r.bloqueado) {
       ref.invalidate(itensSessaoProvider(sessao.id));
@@ -252,7 +254,16 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     final refAsync = ref.watch(referenciaMaterialCompletaProvider(widget.codigo));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Contagem do material')),
+      appBar: AppBar(
+          title: const Text('Contagem do material'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.history),
+              tooltip: 'Auditoria do item',
+              onPressed: () => context.push('/historico/${widget.codigo}'),
+            ),
+          ],
+        ),
       body: matAsync.when(
         data: (mat) {
           if (mat == null) return const Center(child: Text('Material não cadastrado.'));

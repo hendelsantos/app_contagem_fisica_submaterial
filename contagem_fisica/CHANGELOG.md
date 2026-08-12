@@ -1,5 +1,15 @@
 # Changelog — Contagem Física HMB
 
+## 0.3.3
+- Novo módulo **Auditoria do item** (tela /historico).
+- Cada adição/edição de item agora grava um registro de histórico com:
+  - operador que alterou, ação (`criado`/`editado`), timestamp,
+  - snapshot dos valores naquele momento (estoque anterior, contado, recebimento, status, justificativa).
+- Botão de auditoria na tela do material (ícone history na AppBar).
+- Tela de auditoria mostra timeline em ordem cronológica reversa, com chips coloridos por status.
+- Backup passa a incluir e restaurar o histórico (backup versão 2).
+- Nova tabela Drift `itens_historico` (schemaVersion 3).
+
 ## 0.3.2
 - Novo módulo **Backup e Restauração** (tela /backup).
 - Botão de backup na barra superior da Home.

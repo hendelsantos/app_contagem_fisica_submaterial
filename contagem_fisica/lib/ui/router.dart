@@ -2,6 +2,7 @@ import 'package:contagem_fisica/providers/sessao_provider.dart';
 import 'package:contagem_fisica/ui/backup_page.dart';
 import 'package:contagem_fisica/ui/export_page.dart';
 import 'package:contagem_fisica/ui/fornecedor_page.dart';
+import 'package:contagem_fisica/ui/historico_page.dart';
 import 'package:contagem_fisica/ui/home_page.dart';
 import 'package:contagem_fisica/ui/material_page.dart';
 import 'package:contagem_fisica/ui/resumo_page.dart';
@@ -41,6 +42,10 @@ final emSobre = state.matchedLocation == '/sobre';
       GoRoute(
         path: '/material/:codigo',
         builder: (c, s) => MaterialPage(s.pathParameters['codigo']!),
+      ),
+      GoRoute(
+        path: '/historico/:codigo',
+        builder: (c, s) => HistoricoPage(s.pathParameters['codigo']!),
       ),
       GoRoute(path: '/resumo', builder: (c, s) => const ResumoPage()),
       GoRoute(path: '/export', builder: (c, s) => const ExportPage()),
