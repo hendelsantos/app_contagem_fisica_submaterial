@@ -87,14 +87,13 @@ ResultadoValidacao validarItem(ItemContagemDTO item, {bool onComplete = true}) {
     final tol = toleranciaAumento(item.estoqueAnterior);
     if (aumento > tol) {
       aumentoSemRecebimento = aumento;
-      final justificado = (item.justificativa != null && item.justificativa!.trim().isNotEmpty) &&
-          (item.justificativaFotoPath != null && item.justificativaFotoPath!.isNotEmpty);
+      final justificado = (item.justificativa != null && item.justificativa!.trim().isNotEmpty);
       avisos.add(
           'Estoque aumentou ${aumento.toStringAsFixed(2)} sem recebimento registrado. Tolerância: ${tol.toStringAsFixed(2)}.');
       if (!justificado) {
         blocos.add(TipoBloqueio.aumentoSemRecebimento);
       } else {
-        avisos.add('Divergência justificada com foto e observação.');
+        avisos.add('Divergência justificada com observação (foto opcional).');
       }
     }
   }
@@ -107,11 +106,13 @@ ResultadoValidacao validarItem(ItemContagemDTO item, {bool onComplete = true}) {
   );
 }
 
-/// Foto é obrigatória quando (item 6.8):
+/// Indica quando a justificativa textual é recomendada/exigida (item 6.8):
 /// - há aumento sem recebimento;
-/// - há diferença grande contra estoque anterior;
-/// - ajuste manual/justificativa.
-bool fotoObrigatoria(ItemContagemDTO item) {
+/// - há consumo fisicamente impossível (negativo);
+/// - já existe justificativa preenchida.
+/// A foto torna-se opcional — apenas a observação escrita é exigida para
+/// considerar a divergência justificada.
+bool requerJustificativa(ItemContagemDTO item) {
   final contado = item.estoqueContado;
   final receb = item.recebimentoTotal;
   if (contado == null || receb == null) return false;

@@ -32,7 +32,7 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
   final _notaQtdCtrl = TextEditingController();
 
   bool _inicializado = false;
-  bool _fotoObrigatoria = false;
+  bool _requerJustificativa = false;
   String? _fotoPath;
   String? _justFotoPath;
   List<NotaRecebimentoDTO> _notas = [];
@@ -215,13 +215,6 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       fotoPath: _fotoPath,
       status: statusParaDb(status),
     );
-    final fotoObrigatoria = fotosObrigatoriaArquivo(item, r);
-    if (fotoObrigatoria && _justFotoPath == null && _fotoPath == null) {
-      ref.invalidate(itensSessaoProvider(sessao.id));
-      ref.invalidate(resumosFornecedoresProvider(sessao.id));
-      _snack('Foto é obrigatória para esta divergência.');
-      return;
-    }
     if (r.bloqueado) {
       ref.invalidate(itensSessaoProvider(sessao.id));
       ref.invalidate(resumosFornecedoresProvider(sessao.id));
@@ -243,10 +236,6 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     ref.invalidate(referenciaMaterialCompletaProvider(widget.codigo));
     _snack('Material concluído: ${status.label}.');
     if (mounted) context.pop();
-  }
-
-  bool fotosObrigatoriaArquivo(ItemContagemDTO item, ResultadoValidacao r) {
-    return fotoObrigatoria(item);
   }
 
   String _fmtData(DateTime d) =>
@@ -298,7 +287,7 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
   Widget _buildForm(MaterialDTO mat) {
     final item = _itemAtual();
     final r = validarItem(item, onComplete: true);
-    _fotoObrigatoria = fotoObrigatoria(item);
+    _requerJustificativa = requerJustificativa(item);
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Form(
@@ -442,34 +431,34 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
               maxLines: 2,
             ),
             const SizedBox(height: 8),
-            if (_fotoObrigatoria || r.avisos.any((a) => a.contains('justificada')))
+            if (_requerJustificativa || r.avisos.any((a) => a.contains('justificada')))
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('Justificativa de divergência *',
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
-                  TextFormField(
-                    controller: _justCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Explique a divergência',
-                      border: OutlineInputBorder(),
-                    ),
-                    maxLines: 3,
+const Text('Justificativa de divergência *',
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+                TextFormField(
+                  controller: _justCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Explique a divergência',
+                    border: OutlineInputBorder(),
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          icon: const Icon(Icons.photo_camera),
-                          label: Text(_justFotoPath == null
-                              ? 'Anexar foto justificativa'
-                              : 'Foto anexada'),
-                          onPressed: () => _tirarFoto(true),
-                        ),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        icon: const Icon(Icons.photo_camera),
+                        label: Text(_justFotoPath == null
+                            ? 'Anexar foto (opcional)'
+                            : 'Foto anexada'),
+                        onPressed: () => _tirarFoto(true),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
                 ],
               ),
             const SizedBox(height: 16),

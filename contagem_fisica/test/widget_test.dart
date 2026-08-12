@@ -87,7 +87,7 @@ void main() {
       expect(r.bloqueios, contains(TipoBloqueio.somaNotasDiferente));
     });
 
-    test('foto obrigatória quando aumento sem recebimento', () {
+    test('requer justificativa quando aumento sem recebimento', () {
       final item = ItemContagemDTO(
         id: '6',
         sessaoId: 's',
@@ -98,7 +98,7 @@ void main() {
         status: StatusItem.pendente,
         timestamp: DateTime(2026, 8, 11),
       );
-      expect(fotoObrigatoria(item), isTrue);
+      expect(requerJustificativa(item), isTrue);
     });
 
     test('tolerância: aumenta até 2% ou 1 Kg/L (mínimo 1) é permitido', () {

@@ -186,8 +186,8 @@ class SobrePage extends StatelessWidget {
           'Recebimento > 0 exige ao menos uma NF/GR cadastrada.',
           'Soma das NFs/GRs precisa bater com o recebimento total (tolerância 0,01).',
           'Aumento de estoque sem recebimento: tolera até 2% do estoque anterior '
-            'ou no mínimo 1 Kg/L. Acima disso, bloqueia e exige justificativa + foto.',
-          'Consumo fisicamente impossível (negativo) também exige foto.',
+            'ou no mínimo 1 Kg/L. Acima disso, bloqueia e exige justificativa por escrito (foto opcional).',
+          'Consumo fisicamente impossível (negativo) também exige justificativa (foto opcional).',
         ]),
       ],
     );
@@ -197,7 +197,7 @@ class SobrePage extends StatelessWidget {
     final status = const [
       ('Pendente', 'Material ainda não foi contado nesta sessão.', Color(0xFFFFA000)),
       ('Válido', 'Contagem dentro do esperado. Sem divergências.', Color(0xFF2E7D32)),
-      ('Alerta', 'Há divergência justificada com texto + foto. Para auditoria.', Color(0xFFFFA000)),
+      ('Alerta', 'Há divergência justificada com observação (foto opcional). Para auditoria.', Color(0xFFFFA000)),
       ('Justificado', 'Divergência com justificativa válida aceita pelo app.', Color(0xFF1565C0)),
       ('Bloqueado', 'Há erro não justificado. Exportação proibida.', Color(0xFFC62828)),
     ];
