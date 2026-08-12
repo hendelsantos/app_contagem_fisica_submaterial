@@ -1,7 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
-class SobrePage extends StatelessWidget {
+class ChangelogEntry {
+  final String versao;
+  final List<String> mudancas;
+  const ChangelogEntry(this.versao, this.mudancas);
+}
+
+List<ChangelogEntry> _changelogVazio = [];
+
+class SobrePage extends StatefulWidget {
   const SobrePage({super.key});
+
+  @override
+  State<SobrePage> createState() => _SobrePageState();
+}
+
+class _SobrePageState extends State<SobrePage> {
+  List<ChangelogEntry> _changelog = _changelogVazio;
+  String _versaoAtual = 'ver Releases';
+  bool _carregando = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _carregarChangelog();
+  }
+
+  Future<void> _carregarChangelog() async {
+    try {
+      final txt = await rootBundle.loadString('CHANGELOG.md');
+      final entries = _parseChangelog(txt);
+      if (!mounted) return;
+      setState(() {
+        _changelog = entries;
+        _versaoAtual = entries.isEmpty ? 'ver Releases' : entries.first.versao;
+        _carregando = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _carregando = false);
+    }
+  }
+
+  List<ChangelogEntry> _parseChangelog(String txt) {
+    final lines = txt.split('\n');
+    final out = <ChangelogEntry>[];
+    String? versao;
+    final mudancas = <String>[];
+    for (final raw in lines) {
+      final line = raw.trimRight();
+      if (line.startsWith('## ')) {
+        if (versao != null) out.add(ChangelogEntry(versao, List.of(mudancas)));
+        versao = line.substring(3).trim();
+        mudancas.clear();
+      } else if (line.startsWith('- ')) {
+        mudancas.add(line.substring(2).trim());
+      }
+    }
+    if (versao != null) out.add(ChangelogEntry(versao, List.of(mudancas)));
+    return out;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +78,7 @@ class SobrePage extends StatelessWidget {
           _secao('Status de cada material', _statusList()),
           _secao('Exportação para Excel e Streamlit', _export()),
           _secao('Privacidade e dados', _privacidade()),
+          _secao('Histórico de versões', _changelogWidget()),
           _rodape(),
         ],
       ),
@@ -33,8 +93,8 @@ class SobrePage extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
+          children: [
+            const Text(
               'Contagem Física HMB',
               style: TextStyle(
                 color: Colors.white,
@@ -42,15 +102,48 @@ class SobrePage extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               'App de contagem física de submateriais (offline)\n'
-              'Versão: 0.2.0 · Desenvolvido por Hendel Santos',
-              style: TextStyle(color: Colors.white70, fontSize: 13),
+              'Versão: $_versaoAtual · Desenvolvido por Hendel Santos',
+              style: const TextStyle(color: Colors.white70, fontSize: 13),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _changelogWidget() {
+    if (_carregando) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 8),
+        child: Center(child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))),
+      );
+    }
+    if (_changelog.isEmpty) {
+      return _paragrafo('Histórico de versões não disponível nesta compilação.');
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final e in _changelog) ...[
+          Container(
+            margin: const EdgeInsets.only(bottom: 4, top: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1565C0),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              e.versao,
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+            ),
+          ),
+          _lista(e.mudancas),
+          const SizedBox(height: 6),
+        ],
+      ],
     );
   }
 
