@@ -1,4 +1,5 @@
 import 'package:contagem_fisica/providers/sessao_provider.dart';
+import 'package:contagem_fisica/ui/backup_page.dart';
 import 'package:contagem_fisica/ui/export_page.dart';
 import 'package:contagem_fisica/ui/fornecedor_page.dart';
 import 'package:contagem_fisica/ui/home_page.dart';
@@ -18,15 +19,16 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final emSetup = state.matchedLocation == '/';
       final emHome = state.matchedLocation == '/home';
-      final emSobre = state.matchedLocation == '/sobre';
-      if (!temSessao && !emSobre && (emHome || state.matchedLocation.startsWith('/fornecedor') ||
-          state.matchedLocation.startsWith('/material') ||
-          state.matchedLocation == '/resumo' || state.matchedLocation == '/export')) {
-        return '/';
-      }
-      if (temSessao && emSetup && !emHome) {
-        return '/home';
-      }
+final emSobre = state.matchedLocation == '/sobre';
+        final emBackup = state.matchedLocation == '/backup';
+        if (!temSessao && !emSobre && !emBackup && (emHome || state.matchedLocation.startsWith('/fornecedor') ||
+            state.matchedLocation.startsWith('/material') ||
+            state.matchedLocation == '/resumo' || state.matchedLocation == '/export')) {
+          return '/';
+        }
+        if (temSessao && emSetup && !emHome && !emSobre && !emBackup) {
+          return '/home';
+        }
       return null;
     },
     routes: [
@@ -42,6 +44,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/resumo', builder: (c, s) => const ResumoPage()),
       GoRoute(path: '/export', builder: (c, s) => const ExportPage()),
+      GoRoute(path: '/backup', builder: (c, s) => const BackupPage()),
       GoRoute(path: '/sobre', builder: (c, s) => const SobrePage()),
     ],
   );

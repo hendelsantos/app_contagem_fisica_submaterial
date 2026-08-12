@@ -1,5 +1,14 @@
 # Changelog — Contagem Física HMB
 
+## 0.3.2
+- Novo módulo **Backup e Restauração** (tela /backup).
+- Botão de backup na barra superior da Home.
+- `exportarBackup` serializa todas as tabelas do banco SQLite (materiais, fornecedores, sessões, itens, notas fiscais, referências de estoque e exports) em um arquivo JSON.
+- `importarBackup` carrega arquivo JSON escolhido pelo usuário via file_picker e substitui os dados do aparelho (após confirmação).
+- Backup é compartilhável via share_plus (e-mail, nuvem, pen drive).
+- Observação: fotos não são incluídas no backup (apenas o caminho).
+- Adicionada dependência `file_picker`.
+
 ## 0.3.1
 - Adicionada seção "Histórico de versões" na tela Sobre do app.
 - Versão exibida no topo do Sobre passa a ser lida dinamicamente do changelog.

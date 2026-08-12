@@ -1,7 +1,7 @@
 name: contagem_fisica
 description: "App Flutter offline de contagem física de materiais (anti-erro) com exportação Excel compatível com o Streamlit HMB."
 publish_to: 'none'
-version: 0.3.1+5
+version: 0.3.2+6
 
 environment:
   sdk: ^3.5.0
@@ -32,6 +32,9 @@ dependencies:
 
   # Fotos
   image_picker: ^1.1.2
+
+  # File picker (importar backup)
+  file_picker: ^8.0.0
 
   # Util
   intl: ^0.19.0
