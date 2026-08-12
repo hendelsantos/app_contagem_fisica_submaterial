@@ -80,7 +80,9 @@ void main() {
         estoqueAnterior: 100,
         estoqueContado: 150,
         recebimentoTotal: 50,
-        notas: const [NotaRecebimentoDTO(id: 'n1', numero: '100', quantidade: 30)],
+        notas: const [
+          NotaRecebimentoDTO(id: 'n1', numero: '100', quantidade: 30)
+        ],
         status: StatusItem.pendente,
         timestamp: DateTime(2026, 8, 11),
       );
@@ -118,7 +120,7 @@ void main() {
     });
 
     test('admin: parâmetros customizados alteram tolerância aplicada', () {
-      final params = const ParametrosGlobais(
+      const params = ParametrosGlobais(
         toleranciaPct: 0.10,
         toleranciaMinKg: 5.0,
         alertaJanela: 'diaria',

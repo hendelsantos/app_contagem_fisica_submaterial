@@ -4,6 +4,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../domain/export_excel.dart';
 import '../domain/export_pdf.dart';
+import '../domain/export_zip.dart';
 import '../providers/database_provider.dart';
 import '../providers/materiais_provider.dart';
 import '../providers/sessao_provider.dart';
@@ -19,6 +20,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   bool _gerando = false;
   String? _excelPath;
   String? _pdfPath;
+  String? _zipPath;
   String? _erro;
 
   Future<void> _gerar() async {
@@ -46,12 +48,19 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         materiais: materiais,
       );
       await db.registrarExport(sessaoId: sessao.id, caminhoPdf: pdf.path);
+      final zip = await GeradorZipAuditoria().gerar(
+        sessao: sessao,
+        itens: itens,
+        excel: excel,
+        pdf: pdf,
+      );
       await ref.read(sessaoAtualProvider.notifier).finalizar();
       await db.marcarSessaoExportada(sessao.id);
 
       setState(() {
         _excelPath = excel.path;
         _pdfPath = pdf.path;
+        _zipPath = zip.path;
       });
     } catch (e) {
       setState(() => _erro = e.toString());
@@ -69,22 +78,35 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-                'O Excel é compatível com o importador do Streamlit '
+            const Text('O Excel é compatível com o importador do Streamlit '
                 '(core/importers.py::importar_stock_operador). '
                 'Importe o arquivo gerado no Streamlit, no passo de Stock do Operador.'),
             const SizedBox(height: 12),
             if (_erro != null)
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
-                child: Text('Erro: $_erro', style: const TextStyle(color: Colors.red)),
+                child: Text('Erro: $_erro',
+                    style: const TextStyle(color: Colors.red)),
               ),
             FilledButton.icon(
-              icon: const Icon(Icons.file_download),
-              label: const Text('Gerar Excel + PDF de auditoria'),
+              icon: const Icon(Icons.folder_zip),
+              label: const Text('Gerar pacote de auditoria'),
               onPressed: _gerando ? null : _gerar,
             ),
             const SizedBox(height: 16),
+            if (_zipPath != null)
+              Card(
+                child: ListTile(
+                  leading: const Icon(Icons.folder_zip, color: Colors.blueGrey),
+                  title: const Text('Pacote ZIP de auditoria gerado'),
+                  subtitle: Text(_zipPath!),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.share),
+                    onPressed: () => Share.shareXFiles([XFile(_zipPath!)],
+                        text: 'Contagem física — pacote de auditoria'),
+                  ),
+                ),
+              ),
             if (_excelPath != null)
               Card(
                 child: ListTile(

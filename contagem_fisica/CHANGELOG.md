@@ -1,5 +1,12 @@
 # Changelog — Contagem Física HMB
 
+## 0.5.0
+- Exportacao gera um pacote ZIP de auditoria com Excel, PDF e pasta `fotos/`.
+- Fotos de contagem, justificativa e notas fiscais sao copiadas para dentro do ZIP quando os arquivos ainda existem no aparelho.
+- O ZIP inclui `manifesto_fotos.txt` relacionando cada foto exportada ao caminho original e apontando fotos ausentes.
+- Tela Exportar passa a compartilhar o pacote completo, mantendo os cards separados de Excel e PDF.
+- Nova dependencia direta: `archive`.
+
 ## 0.4.0
 - Novo módulo **Admin de parâmetros** (tela `/admin`), acessível pela Home e pela tela de setup.
 - Login por PIN (padrão de fábrica `0000`, editável na própria tela).

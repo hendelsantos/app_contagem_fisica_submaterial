@@ -34,6 +34,7 @@ class _SetupOperadorPageState extends ConsumerState<SetupOperadorPage> {
       lastDate: DateTime(2100),
     );
     if (d == null) return;
+    if (!mounted) return;
     final t = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(isInicio ? _inicio : _fimPrevisto),
@@ -53,7 +54,8 @@ class _SetupOperadorPageState extends ConsumerState<SetupOperadorPage> {
     if (!_formKey.currentState!.validate()) return;
     if (!_fimPrevisto.isAfter(_inicio)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('A data/hora final precisa ser depois do início.')),
+        const SnackBar(
+            content: Text('A data/hora final precisa ser depois do início.')),
       );
       return;
     }
@@ -102,7 +104,8 @@ class _SetupOperadorPageState extends ConsumerState<SetupOperadorPage> {
                   labelText: 'Nome do operador *',
                   border: OutlineInputBorder(),
                 ),
-                validator: (v) => v == null || v.trim().isEmpty ? 'Obrigatório' : null,
+                validator: (v) =>
+                    v == null || v.trim().isEmpty ? 'Obrigatório' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
@@ -111,7 +114,8 @@ class _SetupOperadorPageState extends ConsumerState<SetupOperadorPage> {
                   labelText: 'Matrícula *',
                   border: OutlineInputBorder(),
                 ),
-                validator: (v) => v == null || v.trim().isEmpty ? 'Obrigatório' : null,
+                validator: (v) =>
+                    v == null || v.trim().isEmpty ? 'Obrigatório' : null,
               ),
               const SizedBox(height: 16),
               ListTile(

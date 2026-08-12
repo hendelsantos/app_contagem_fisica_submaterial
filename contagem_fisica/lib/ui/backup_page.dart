@@ -60,7 +60,9 @@ class _BackupPageState extends ConsumerState<BackupPage> {
           'Continuar?',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancelar')),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
@@ -128,7 +130,13 @@ class _BackupPageState extends ConsumerState<BackupPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(children: const [Icon(Icons.upload_file, color: Color(0xFF1565C0)), SizedBox(width: 8), Text('Exportar backup', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16))]),
+                    const Row(children: [
+                      Icon(Icons.upload_file, color: Color(0xFF1565C0)),
+                      SizedBox(width: 8),
+                      Text('Exportar backup',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16))
+                    ]),
                     const SizedBox(height: 8),
                     const Text(
                       'Gera um arquivo JSON com todas as sessões, itens, notas fiscais, '
@@ -153,7 +161,13 @@ class _BackupPageState extends ConsumerState<BackupPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(children: const [Icon(Icons.restore, color: Colors.red), SizedBox(width: 8), Text('Importar backup', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16))]),
+                    const Row(children: [
+                      Icon(Icons.restore, color: Colors.red),
+                      SizedBox(width: 8),
+                      Text('Importar backup',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16))
+                    ]),
                     const SizedBox(height: 8),
                     const Text(
                       'Restaura um backup de um arquivo JSON. SUBSTITUI todos os dados '
@@ -163,7 +177,8 @@ class _BackupPageState extends ConsumerState<BackupPage> {
                     const SizedBox(height: 10),
                     FilledButton.icon(
                       onPressed: _processando ? null : _importar,
-                      style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                      style:
+                          FilledButton.styleFrom(backgroundColor: Colors.red),
                       icon: const Icon(Icons.file_upload),
                       label: const Text('Escolher arquivo e importar'),
                     ),
@@ -172,13 +187,17 @@ class _BackupPageState extends ConsumerState<BackupPage> {
               ),
             ),
             const SizedBox(height: 12),
-            Card(
+            const Card(
               child: Padding(
-                padding: const EdgeInsets.all(14),
+                padding: EdgeInsets.all(14),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('Observações', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0D47A1), fontSize: 14)),
+                  children: [
+                    Text('Observações',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF0D47A1),
+                            fontSize: 14)),
                     SizedBox(height: 6),
                     Text(
                       'As fotos de divergência não são incluídas no backup (apenas o caminho '
@@ -198,16 +217,21 @@ class _BackupPageState extends ConsumerState<BackupPage> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: _erro ? Colors.red.withOpacity(0.1) : Colors.green.withOpacity(0.1),
+                  color: _erro
+                      ? Colors.red.withOpacity(0.1)
+                      : Colors.green.withOpacity(0.1),
                   border: Border.all(color: _erro ? Colors.red : Colors.green),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(_erro ? Icons.error_outline : Icons.check_circle, color: _erro ? Colors.red : Colors.green),
+                    Icon(_erro ? Icons.error_outline : Icons.check_circle,
+                        color: _erro ? Colors.red : Colors.green),
                     const SizedBox(width: 8),
-                    Expanded(child: Text(_status!, style: const TextStyle(fontSize: 14))),
+                    Expanded(
+                        child: Text(_status!,
+                            style: const TextStyle(fontSize: 14))),
                   ],
                 ),
               ),

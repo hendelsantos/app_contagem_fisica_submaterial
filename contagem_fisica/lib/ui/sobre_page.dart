@@ -118,11 +118,16 @@ class _SobrePageState extends State<SobrePage> {
     if (_carregando) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 8),
-        child: Center(child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))),
+        child: Center(
+            child: SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2))),
       );
     }
     if (_changelog.isEmpty) {
-      return _paragrafo('Histórico de versões não disponível nesta compilação.');
+      return _paragrafo(
+          'Histórico de versões não disponível nesta compilação.');
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +142,10 @@ class _SobrePageState extends State<SobrePage> {
             ),
             child: Text(
               e.versao,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13),
             ),
           ),
           _lista(e.mudancas),
@@ -157,7 +165,10 @@ class _SobrePageState extends State<SobrePage> {
           children: [
             Text(
               titulo,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Color(0xFF0D47A1)),
+              style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0D47A1)),
             ),
             const SizedBox(height: 8),
             conteudo,
@@ -167,8 +178,9 @@ class _SobrePageState extends State<SobrePage> {
     );
   }
 
-  Widget _paragrafo(String texto) =>
-      Padding(padding: const EdgeInsets.only(bottom: 6), child: Text(texto, style: const TextStyle(fontSize: 14)));
+  Widget _paragrafo(String texto) => Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text(texto, style: const TextStyle(fontSize: 14)));
 
   Widget _lista(List<String> itens) {
     return Column(
@@ -234,13 +246,13 @@ class _SobrePageState extends State<SobrePage> {
         const SizedBox(height: 4),
         _lista(const [
           '1ª contagem (linha de base): o campo "Estoque anterior" fica editável. '
-            'Digite o saldo inicial (em Kg ou L, conforme o material).',
+              'Digite o saldo inicial (em Kg ou L, conforme o material).',
           '2ª contagem em diante: o campo fica somente leitura, mostrando "Última '
-            'contagem em dd/MM/aaaa HH:mm" — é o saldo de ontem.',
+              'contagem em dd/MM/aaaa HH:mm" — é o saldo de ontem.',
           'O consumo do dia é calculado automaticamente: '
-            'consumo = (estoque anterior + recebimento) − estoque contado.',
+              'consumo = (estoque anterior + recebimento) − estoque contado.',
           'Se o contado for MAIOR que o anterior + recebimento, o app bloqueia '
-            'pedindo justificativa + foto (aumento sem recebimento).',
+              'pedindo justificativa + foto (aumento sem recebimento).',
           'Isto garante o encadeamento dia a dia sem perder o fio da meada.',
         ]),
       ],
@@ -271,7 +283,8 @@ class _SobrePageState extends State<SobrePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _paragrafo('O app aplica automaticamente as seguintes validações anti-erro:'),
+        _paragrafo(
+            'O app aplica automaticamente as seguintes validações anti-erro:'),
         _lista(const [
           'Estoque contado não pode ser negativo.',
           'Recebimento não pode ser negativo.',
@@ -279,7 +292,7 @@ class _SobrePageState extends State<SobrePage> {
           'Recebimento > 0 exige ao menos uma NF/GR cadastrada.',
           'Soma das NFs/GRs precisa bater com o recebimento total (tolerância 0,01).',
           'Aumento de estoque sem recebimento: tolera até 2% do estoque anterior '
-            'ou no mínimo 1 Kg/L. Acima disso, bloqueia e exige justificativa por escrito (foto opcional).',
+              'ou no mínimo 1 Kg/L. Acima disso, bloqueia e exige justificativa por escrito (foto opcional).',
           'Consumo fisicamente impossível (negativo) também exige justificativa (foto opcional).',
         ]),
       ],
@@ -287,12 +300,32 @@ class _SobrePageState extends State<SobrePage> {
   }
 
   Widget _statusList() {
-    final status = const [
-      ('Pendente', 'Material ainda não foi contado nesta sessão.', Color(0xFFFFA000)),
-      ('Válido', 'Contagem dentro do esperado. Sem divergências.', Color(0xFF2E7D32)),
-      ('Alerta', 'Há divergência justificada com observação (foto opcional). Para auditoria.', Color(0xFFFFA000)),
-      ('Justificado', 'Divergência com justificativa válida aceita pelo app.', Color(0xFF1565C0)),
-      ('Bloqueado', 'Há erro não justificado. Exportação proibida.', Color(0xFFC62828)),
+    const status = [
+      (
+        'Pendente',
+        'Material ainda não foi contado nesta sessão.',
+        Color(0xFFFFA000)
+      ),
+      (
+        'Válido',
+        'Contagem dentro do esperado. Sem divergências.',
+        Color(0xFF2E7D32)
+      ),
+      (
+        'Alerta',
+        'Há divergência justificada com observação (foto opcional). Para auditoria.',
+        Color(0xFFFFA000)
+      ),
+      (
+        'Justificado',
+        'Divergência com justificativa válida aceita pelo app.',
+        Color(0xFF1565C0)
+      ),
+      (
+        'Bloqueado',
+        'Há erro não justificado. Exportação proibida.',
+        Color(0xFFC62828)
+      ),
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,7 +342,9 @@ class _SobrePageState extends State<SobrePage> {
                   margin: const EdgeInsets.only(top: 3, right: 8),
                   decoration: BoxDecoration(color: cor, shape: BoxShape.circle),
                 ),
-                Expanded(child: Text('$nome — $desc', style: const TextStyle(fontSize: 14))),
+                Expanded(
+                    child: Text('$nome — $desc',
+                        style: const TextStyle(fontSize: 14))),
               ],
             ),
           ),
@@ -341,12 +376,12 @@ class _SobrePageState extends State<SobrePage> {
   Widget _privacidade() {
     return _lista(const [
       'O app funciona 100% offline. Nenhum dado sai do aparelho a não ser que '
-        'o operador compartilhe manualmente o Excel/PDF.',
+          'o operador compartilhe manualmente o Excel/PDF.',
       'O banco SQLite fica em /data/data/br.com.hmb.contagem_fisica/files.',
       'As fotos ficam na pasta do app — não são enviadas para nenhum servidor.',
       'Nomes, matrícula e notas fiscais são guardados apenas para auditoria.',
       'O histórico de sessões e o saldo de referência ficam no aparelho. Limpar '
-        'dados do app (configurações Android) apaga tudo.',
+          'dados do app (configurações Android) apaga tudo.',
     ]);
   }
 

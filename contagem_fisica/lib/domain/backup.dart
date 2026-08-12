@@ -26,11 +26,13 @@ class BackupData {
         versao: (j['versao'] as num?)?.toInt() ?? 1,
         data: DateTime.tryParse(j['data'] as String? ?? '') ?? DateTime.now(),
         tabelas: (j['tabelas'] as Map<String, dynamic>?)?.map(
-                  (k, v) => MapEntry(
-                    k,
-                    (v as List).map((e) => Map<String, dynamic>.from(e as Map)).toList(),
-                  ),
-                ) ??
+              (k, v) => MapEntry(
+                k,
+                (v as List)
+                    .map((e) => Map<String, dynamic>.from(e as Map))
+                    .toList(),
+              ),
+            ) ??
             const {},
       );
 }
@@ -67,9 +69,11 @@ Future<File> exportarBackup(AppDatabase db) async {
   if (!await backupsDir.exists()) {
     await backupsDir.create(recursive: true);
   }
-  final ts = DateTime.now().toIso8601String().replaceAll(':', '-').split('.').first;
-  final arquivo = File(p.join(backupsDir.path, 'backup_contagem_${ts}.json'));
-  await arquivo.writeAsString(const JsonEncoder.withIndent('  ').convert(backup.toJson()));
+  final ts =
+      DateTime.now().toIso8601String().replaceAll(':', '-').split('.').first;
+  final arquivo = File(p.join(backupsDir.path, 'backup_contagem_$ts.json'));
+  await arquivo.writeAsString(
+      const JsonEncoder.withIndent('  ').convert(backup.toJson()));
   return arquivo;
 }
 
@@ -132,7 +136,8 @@ Future<BackupResumoImport> importarBackup(AppDatabase db, File arquivo) async {
   );
 }
 
-MateriaisCompanion _materiaisFromJson(Map<String, dynamic> j) => MateriaisCompanion(
+MateriaisCompanion _materiaisFromJson(Map<String, dynamic> j) =>
+    MateriaisCompanion(
       codigo: Value(j['codigo'] as String),
       descricao: Value(j['descricao'] as String),
       fornecedor: Value(j['fornecedor'] as String),
@@ -143,12 +148,14 @@ MateriaisCompanion _materiaisFromJson(Map<String, dynamic> j) => MateriaisCompan
       nomeStock: Value(j['nomeStock'] as String),
     );
 
-FornecedoresCompanion _fornecedoresFromJson(Map<String, dynamic> j) => FornecedoresCompanion(
+FornecedoresCompanion _fornecedoresFromJson(Map<String, dynamic> j) =>
+    FornecedoresCompanion(
       nome: Value(j['nome'] as String),
       ordem: Value((j['ordem'] as num).toInt()),
     );
 
-EstoqueReferenciaCompanion _refsFromJson(Map<String, dynamic> j) => EstoqueReferenciaCompanion(
+EstoqueReferenciaCompanion _refsFromJson(Map<String, dynamic> j) =>
+    EstoqueReferenciaCompanion(
       materialCodigo: Value(j['materialCodigo'] as String),
       estoqueFinalKg: Value((j['estoqueFinalKg'] as num).toDouble()),
       sessaoOrigemId: Value(j['sessaoOrigemId'] as String?),
@@ -167,7 +174,8 @@ SessoesCompanion _sessoesFromJson(Map<String, dynamic> j) => SessoesCompanion(
       aparelho: Value(j['aparelho'] as String?),
     );
 
-ItensContagemCompanion _itensFromJson(Map<String, dynamic> j) => ItensContagemCompanion(
+ItensContagemCompanion _itensFromJson(Map<String, dynamic> j) =>
+    ItensContagemCompanion(
       id: Value(j['id'] as String),
       sessaoId: Value(j['sessaoId'] as String),
       materialCodigo: Value(j['materialCodigo'] as String),
@@ -182,7 +190,8 @@ ItensContagemCompanion _itensFromJson(Map<String, dynamic> j) => ItensContagemCo
       timestamp: Value(_parseDate(j['timestamp'])!),
     );
 
-NotasRecebimentoCompanion _notasFromJson(Map<String, dynamic> j) => NotasRecebimentoCompanion(
+NotasRecebimentoCompanion _notasFromJson(Map<String, dynamic> j) =>
+    NotasRecebimentoCompanion(
       id: Value(j['id'] as String),
       itemId: Value(j['itemId'] as String),
       numero: Value(j['numero'] as String),
@@ -199,7 +208,8 @@ ExportsCompanion _exportsFromJson(Map<String, dynamic> j) => ExportsCompanion(
       timestamp: Value(_parseDate(j['timestamp'])!),
     );
 
-ItensHistoricoCompanion _historicoFromJson(Map<String, dynamic> j) => ItensHistoricoCompanion(
+ItensHistoricoCompanion _historicoFromJson(Map<String, dynamic> j) =>
+    ItensHistoricoCompanion(
       id: Value(j['id'] as String),
       itemId: Value(j['itemId'] as String),
       sessaoId: Value(j['sessaoId'] as String),

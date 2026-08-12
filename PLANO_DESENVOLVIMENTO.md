@@ -5,7 +5,7 @@ Status em 12/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 ## Versão atual
 
 - **Release latest:** v0.4.0 (https://github.com/hendelsantos/app_contagem_fisica_submaterial/releases/latest)
-- **pubspec.yaml:** `0.4.0+8`
+- **pubspec.yaml:** `0.5.0+9` local, APK release gerado. Ainda falta publicar tag/release v0.5.0 no GitHub.
 - **Página de download:** https://hendelsantos.github.io/app_contagem_fisica_submaterial/  (automática via `releases/latest`)
 - **QR code aponta para:** a página acima (fixo).
 
@@ -21,13 +21,13 @@ Status em 12/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 | v0.3.2 | Backup e restauração JSON do banco local (tela `/backup`, share_plus, file_picker). |
 | v0.3.3 | Histórico/auditoria por item — tabela `itens_historico`, tela `/historico`, snapshot por edição. |
 | v0.4.0 | Admin de parâmetros — tela `/admin` com PIN (SHA-256), tolerâncias configuráveis, consumo diário esperado por material, painel de alertas. |
+| v0.5.0 | Pacote ZIP de auditoria — Excel + PDF + pasta `fotos/` e manifesto de fotos. |
 
 ## Próximos passos (fila)
 
-### 1. Zip de auditoria com fotos embutidas (decidido: antes do backend)
-- Na tela Exportar, gerar `.zip` contendo Excel + PDF + pasta `fotos/` com as imagens soltas hoje.
-- Pacote: usar `archive` (já transitivo) ou `share_plus` para compartilhar o zip.
-- Atualizar `CHANGELOG.md` com `## 0.5.0` e bump pubspec para `0.5.0+9`.
+### 1. Publicar release v0.5.0
+- APK gerado em `contagem_fisica/build/app/outputs/flutter-apk/app-release.apk`.
+- Falta commit, tag `v0.5.0`, push e criar GitHub Release com o APK anexado.
 
 ### 2. Backend Railway + dashboard web (Fase 3/4 do plano)
 - Provisionar via MCP Railway (tenho ferramentas disponíveis nesta sessão):

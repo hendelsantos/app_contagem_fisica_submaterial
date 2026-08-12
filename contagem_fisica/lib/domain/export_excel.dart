@@ -50,14 +50,16 @@ class GeradorExcel {
 
     for (final sheet in _estoqueSheets) {
       final ws = excel[sheet];
-      _escreverSheetFornecedor(ws, _sheetFornecedor(sheet), porFornecedor, sessao);
+      _escreverSheetFornecedor(
+          ws, _sheetFornecedor(sheet), porFornecedor, sessao);
     }
 
     _escreverAuditoria(excel, sessao, itens, materiais);
 
     final bytes = excel.save();
     final dir = await getApplicationDocumentsDirectory();
-    final nome = 'contagem_${sessao.id}_${DateTime.now().millisecondsSinceEpoch}.xlsx';
+    final nome =
+        'contagem_${sessao.id}_${DateTime.now().millisecondsSinceEpoch}.xlsx';
     final file = File(p.join(dir.path, 'exports', nome));
     await file.parent.create(recursive: true);
     await file.writeAsBytes(bytes!);
@@ -83,7 +85,8 @@ class GeradorExcel {
     }
   }
 
-  int _escreverBloco(Sheet ws, _Entrada entry, SessaoDTO sessao, int colInicio) {
+  int _escreverBloco(
+      Sheet ws, _Entrada entry, SessaoDTO sessao, int colInicio) {
     final m = entry.material;
     final it = entry.item;
     final totalCol = colInicio + _qtdContainers;
@@ -96,10 +99,13 @@ class GeradorExcel {
     ws.merge(_ci('${_col(colInicio)}1'), _ci('${_col(colFim)}1'));
 
     // Linha 2: sub-cabeçalhos
-    ws.cell(_ci('${_col(colInicio)}2')).value = TextCellValue('Inventário (Containers)');
-    ws.merge(_ci('${_col(colInicio)}2'), _ci('${_col(colInicio + _qtdContainers - 1)}2'));
+    ws.cell(_ci('${_col(colInicio)}2')).value =
+        TextCellValue('Inventário (Containers)');
+    ws.merge(_ci('${_col(colInicio)}2'),
+        _ci('${_col(colInicio + _qtdContainers - 1)}2'));
     ws.cell(_ci('${_col(totalCol)}2')).value = TextCellValue('Total (KG)');
-    ws.cell(_ci('${_col(sistCol)}2')).value = TextCellValue('Estoque sistêmico');
+    ws.cell(_ci('${_col(sistCol)}2')).value =
+        TextCellValue('Estoque sistêmico');
     ws.cell(_ci('${_col(recebCol)}2')).value = TextCellValue('Recebimentos');
 
     // Linha 3: numeração containers
@@ -115,14 +121,21 @@ class GeradorExcel {
     const rowAbertura = 4;
     const rowFechamento = 5;
 
-    ws.cell(_ci('A$rowAbertura')).value = TextCellValue(_fmtData.format(dataInicio));
-    ws.cell(_ci('${_col(totalCol)}$rowAbertura')).value = DoubleCellValue(it.estoqueAnterior);
-    ws.cell(_ci('${_col(recebCol)}$rowAbertura')).value = DoubleCellValue(0.0);
+    ws.cell(_ci('A$rowAbertura')).value =
+        TextCellValue(_fmtData.format(dataInicio));
+    ws.cell(_ci('${_col(totalCol)}$rowAbertura')).value =
+        DoubleCellValue(it.estoqueAnterior);
+    ws.cell(_ci('${_col(recebCol)}$rowAbertura')).value =
+        const DoubleCellValue(0.0);
 
-    ws.cell(_ci('A$rowFechamento')).value = TextCellValue(_fmtData.format(dataFim));
-    ws.cell(_ci('${_col(totalCol)}$rowFechamento')).value = DoubleCellValue(contado);
-    ws.cell(_ci('${_col(sistCol)}$rowFechamento')).value = DoubleCellValue(0.0);
-    ws.cell(_ci('${_col(recebCol)}$rowFechamento')).value = DoubleCellValue(recebTotal);
+    ws.cell(_ci('A$rowFechamento')).value =
+        TextCellValue(_fmtData.format(dataFim));
+    ws.cell(_ci('${_col(totalCol)}$rowFechamento')).value =
+        DoubleCellValue(contado);
+    ws.cell(_ci('${_col(sistCol)}$rowFechamento')).value =
+        const DoubleCellValue(0.0);
+    ws.cell(_ci('${_col(recebCol)}$rowFechamento')).value =
+        DoubleCellValue(recebTotal);
 
     return colFim + 1;
   }
@@ -167,7 +180,8 @@ class GeradorExcel {
         DoubleCellValue(it.estoqueContado ?? 0),
         DoubleCellValue(it.recebimentoTotal ?? 0),
         DoubleCellValue(it.somaNotas),
-        TextCellValue(it.notas.map((n) => '${n.numero}:${n.quantidade}').join('; ')),
+        TextCellValue(
+            it.notas.map((n) => '${n.numero}:${n.quantidade}').join('; ')),
         TextCellValue(it.status.label),
         TextCellValue(it.justificativa ?? ''),
         TextCellValue(it.fotoPath ?? it.justificativaFotoPath ?? ''),
