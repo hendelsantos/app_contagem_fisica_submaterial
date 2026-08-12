@@ -1,11 +1,16 @@
 import 'package:contagem_fisica/domain/models.dart';
+import 'package:contagem_fisica/domain/parametros.dart';
 
-/// Tolerância: max(2% do estoque anterior, mínimo 1 Kg/L)
-/// Conforme item 6.4 do plano.
-double toleranciaAumento(double estoqueAnterior) {
+/// Tolerância: max(pct% do estoque anterior, mínimo configurado em Kg/L)
+/// Conforme item 6.4 do plano. Os parâmetros vêm do admin (tabela `parametros`).
+double toleranciaAumento(
+  double estoqueAnterior, {
+  double pct = kToleranciaPctDefault,
+  double minKg = kToleranciaMinKgDefault,
+}) {
   final abs = estoqueAnterior.abs();
-  final pct = abs * 0.02;
-  return pct > 1.0 ? pct : 1.0;
+  final pctValue = abs * pct;
+  return pctValue > minKg ? pctValue : minKg;
 }
 
 enum TipoBloqueio {
@@ -36,7 +41,12 @@ class ResultadoValidacao {
 /// Valida o item de contagem conforme as regras anti-erro (item 6 do plano).
 /// onComplete define se está tentando concluir o material (true) ou apenas
 /// salvando parcial (false).
-ResultadoValidacao validarItem(ItemContagemDTO item, {bool onComplete = true}) {
+ResultadoValidacao validarItem(
+  ItemContagemDTO item, {
+  bool onComplete = true,
+  ParametrosGlobais? params,
+}) {
+  final p = params ?? ParametrosGlobais.padrao();
   final blocos = <TipoBloqueio>[];
   final avisos = <String>[];
 
@@ -84,7 +94,11 @@ ResultadoValidacao validarItem(ItemContagemDTO item, {bool onComplete = true}) {
   var aumentoSemRecebimento = 0.0;
   if (onComplete && contado != null && receb != null) {
     final aumento = contado - item.estoqueAnterior - receb;
-    final tol = toleranciaAumento(item.estoqueAnterior);
+    final tol = toleranciaAumento(
+      item.estoqueAnterior,
+      pct: p.toleranciaPct,
+      minKg: p.toleranciaMinKg,
+    );
     if (aumento > tol) {
       aumentoSemRecebimento = aumento;
       final justificado = (item.justificativa != null && item.justificativa!.trim().isNotEmpty);
@@ -112,12 +126,17 @@ ResultadoValidacao validarItem(ItemContagemDTO item, {bool onComplete = true}) {
 /// - já existe justificativa preenchida.
 /// A foto torna-se opcional — apenas a observação escrita é exigida para
 /// considerar a divergência justificada.
-bool requerJustificativa(ItemContagemDTO item) {
+bool requerJustificativa(ItemContagemDTO item, {ParametrosGlobais? params}) {
+  final p = params ?? ParametrosGlobais.padrao();
   final contado = item.estoqueContado;
   final receb = item.recebimentoTotal;
   if (contado == null || receb == null) return false;
   final aumento = contado - item.estoqueAnterior - receb;
-  final tol = toleranciaAumento(item.estoqueAnterior);
+  final tol = toleranciaAumento(
+    item.estoqueAnterior,
+    pct: p.toleranciaPct,
+    minKg: p.toleranciaMinKg,
+  );
   if (aumento > tol) return true;
   final consumo = item.consumoFisicoEstimado;
   if (consumo < 0) return true;

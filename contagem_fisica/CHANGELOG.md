@@ -1,5 +1,20 @@
 # Changelog — Contagem Física HMB
 
+## 0.4.0
+- Novo módulo **Admin de parâmetros** (tela `/admin`), acessível pela Home e pela tela de setup.
+- Login por PIN (padrão de fábrica `0000`, editável na própria tela).
+  - PIN é guardado hasheado com SHA-256 no banco SQLite (nunca em texto plano).
+  - Troca de PIN exige informar o PIN atual e confirmação do novo (mín. 4 dígitos).
+- Parâmetros globais configuráveis (tabela `parametros`, singleton):
+  - `tolerancia_pct` (fração do estoque anterior, ex: 0.02 = 2%).
+  - `tolerancia_min_kg` (mínimo absoluto em Kg/L).
+  - `alerta_janela` (`diaria` ou `semanal`).
+- Consumo diário esperado por material (tabela `consumo_esperado`, cadastrado manualmente no admin).
+- Painel de Alertas: consumo real fora de [50%, 150%] do esperado na última sessão finalizada.
+- `domain/validacao.dart` passa a ler tolerâncias dos parâmetros (em vez de constantes fixas). Defaults preservam comportamento anterior (2% / mínimo 1 Kg/L).
+- Novas dependências: `crypto` (hash do PIN).
+- schemaVersion 4 (migration cria `parametros` e `consumo_esperado` com defaults).
+
 ## 0.3.3
 - Novo módulo **Auditoria do item** (tela /historico).
 - Cada adição/edição de item agora grava um registro de histórico com:

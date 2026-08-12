@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:contagem_fisica/data/seed.dart';
 import 'package:contagem_fisica/data/tables.dart';
+import 'package:contagem_fisica/domain/parametros.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
@@ -18,6 +19,8 @@ part 'database.g.dart';
   NotasRecebimento,
   Exports,
   ItensHistorico,
+  Parametros,
+  ConsumoEsperado,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
@@ -25,13 +28,14 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
         onCreate: (m) async {
           await m.createAll();
           await _semear();
+          await _semearParametros();
         },
         onUpgrade: (m, from, to) async {
           if (from < 2) {
@@ -42,12 +46,33 @@ class AppDatabase extends _$AppDatabase {
           if (from < 3) {
             await m.createTable(itensHistorico);
           }
+          if (from < 4) {
+            await m.createTable(parametros);
+            await m.createTable(consumoEsperado);
+            await _semearParametros();
+          }
         },
         beforeOpen: (details) async {
           if (details.wasCreated) return;
           await _garantirSeed();
+          await _garantirParametros();
         },
       );
+
+  Future<void> _semearParametros() async {
+    await into(parametros).insert(ParametrosCompanion(
+      id: const Value(1),
+      toleranciaPct: const Value(kToleranciaPctDefault),
+      toleranciaMinKg: const Value(kToleranciaMinKgDefault),
+      alertaJanela: const Value(kAlertaJanelaDefault),
+      pinAdminHash: Value(hashPin(kPinDefault)),
+    ));
+  }
+
+  Future<void> _garantirParametros() async {
+    final r = await (select(parametros)..where((t) => t.id.equals(1))).getSingleOrNull();
+    if (r == null) await _semearParametros();
+  }
 
   Future<void> _semear() async {
     await batch((b) {
@@ -341,6 +366,59 @@ class AppDatabase extends _$AppDatabase {
       caminhoPdf: Value(caminhoPdf),
       timestamp: Value(DateTime.now()),
     ));
+  }
+
+  Future<ParametrosRow> obterParametros() {
+    return (select(parametros)..where((t) => t.id.equals(1))).getSingle();
+  }
+
+  Future<void> salvarParametros({
+    required double toleranciaPct,
+    required double toleranciaMinKg,
+    required String alertaJanela,
+  }) async {
+    await (update(parametros)..where((t) => t.id.equals(1))).write(
+      ParametrosCompanion(
+        toleranciaPct: Value(toleranciaPct),
+        toleranciaMinKg: Value(toleranciaMinKg),
+        alertaJanela: Value(alertaJanela),
+      ),
+    );
+  }
+
+  Future<bool> verificarPin(String pinEmTexto) async {
+    final r = await obterParametros();
+    return r.pinAdminHash == hashPin(pinEmTexto);
+  }
+
+  Future<void> alterarPin(String novoPinEmTexto) async {
+    await (update(parametros)..where((t) => t.id.equals(1))).write(
+      ParametrosCompanion(pinAdminHash: Value(hashPin(novoPinEmTexto))),
+    );
+  }
+
+  Future<void> salvarConsumoEsperado(String materialCodigo, double consumoDiarioKg) async {
+    await into(consumoEsperado).insertOnConflictUpdate(
+      ConsumoEsperadoCompanion(
+        materialCodigo: Value(materialCodigo),
+        consumoDiarioKg: Value(consumoDiarioKg),
+      ),
+    );
+  }
+
+  Future<void> removerConsumoEsperado(String materialCodigo) async {
+    await (delete(consumoEsperado)..where((t) => t.materialCodigo.equals(materialCodigo))).go();
+  }
+
+  Future<double?> consumoEsperadoDoMaterial(String materialCodigo) async {
+    final r = await (select(consumoEsperado)
+          ..where((t) => t.materialCodigo.equals(materialCodigo)))
+        .getSingleOrNull();
+    return r?.consumoDiarioKg;
+  }
+
+  Future<List<ConsumoEsperadoRow>> listarConsumoEsperado() {
+    return (select(consumoEsperado)).get();
   }
 }
 

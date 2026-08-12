@@ -8,9 +8,11 @@ import 'package:path/path.dart' as ppath;
 import 'package:path_provider/path_provider.dart';
 
 import '../domain/models.dart';
+import '../domain/parametros.dart';
 import '../domain/validacao.dart';
 import '../providers/database_provider.dart';
 import '../providers/materiais_provider.dart';
+import '../providers/parametros_provider.dart';
 import '../providers/sessao_provider.dart';
 
 class MaterialPage extends ConsumerStatefulWidget {
@@ -202,7 +204,11 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       timestamp: DateTime.now(),
       notas: _notas,
     );
-    final r = validarItem(item, onComplete: true);
+    final r = validarItem(
+      item,
+      onComplete: true,
+      params: ref.read(parametrosProvider).valueOrNull ?? ParametrosGlobais.padrao(),
+    );
     final status = statusResultante(item, r);
     await db.upsertItem(
       sessaoId: sessao.id,
@@ -297,8 +303,9 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
 
   Widget _buildForm(MaterialDTO mat) {
     final item = _itemAtual();
-    final r = validarItem(item, onComplete: true);
-    _requerJustificativa = requerJustificativa(item);
+    final parametros = ref.watch(parametrosProvider).valueOrNull ?? ParametrosGlobais.padrao();
+    final r = validarItem(item, onComplete: true, params: parametros);
+    _requerJustificativa = requerJustificativa(item, params: parametros);
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Form(

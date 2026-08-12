@@ -20,6 +20,11 @@ class HomePage extends ConsumerWidget {
         title: const Text('Contagem Física'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Admin',
+            onPressed: () => context.push('/admin'),
+          ),
+          IconButton(
             icon: const Icon(Icons.backup_outlined),
             tooltip: 'Backup',
             onPressed: () => context.push('/backup'),

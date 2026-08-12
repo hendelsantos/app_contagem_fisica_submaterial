@@ -95,6 +95,27 @@ class Exports extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+@DataClassName('ParametrosRow')
+class Parametros extends Table {
+  IntColumn get id => integer()();
+  RealColumn get toleranciaPct => real().withDefault(const Constant(0.02))();
+  RealColumn get toleranciaMinKg => real().withDefault(const Constant(1.0))();
+  TextColumn get alertaJanela => text().withDefault(const Constant('diaria'))();
+  TextColumn get pinAdminHash => text()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+@DataClassName('ConsumoEsperadoRow')
+class ConsumoEsperado extends Table {
+  TextColumn get materialCodigo => text()();
+  RealColumn get consumoDiarioKg => real()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {materialCodigo};
+}
+
 @DataClassName('ItemHistoricoRow')
 class ItensHistorico extends Table {
   TextColumn get id => text()();

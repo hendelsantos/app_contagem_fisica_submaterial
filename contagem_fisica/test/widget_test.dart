@@ -1,4 +1,5 @@
 import 'package:contagem_fisica/domain/models.dart';
+import 'package:contagem_fisica/domain/parametros.dart';
 import 'package:contagem_fisica/domain/validacao.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -114,6 +115,45 @@ void main() {
       );
       final r = validarItem(item);
       expect(r.ok, isTrue);
+    });
+
+    test('admin: parâmetros customizados alteram tolerância aplicada', () {
+      final params = const ParametrosGlobais(
+        toleranciaPct: 0.10,
+        toleranciaMinKg: 5.0,
+        alertaJanela: 'diaria',
+        pinAdminHash: '',
+      );
+      final item = ItemContagemDTO(
+        id: '8',
+        sessaoId: 's',
+        materialCodigo: 'c',
+        estoqueAnterior: 100,
+        estoqueContado: 108,
+        recebimentoTotal: 0,
+        status: StatusItem.pendente,
+        timestamp: DateTime(2026, 8, 11),
+      );
+      expect(validarItem(item, params: params).ok, isTrue,
+          reason: '8 de aumento < 10 (10% de 100)');
+      final item2 = ItemContagemDTO(
+        id: '9',
+        sessaoId: 's',
+        materialCodigo: 'c',
+        estoqueAnterior: 100,
+        estoqueContado: 115,
+        recebimentoTotal: 0,
+        status: StatusItem.pendente,
+        timestamp: DateTime(2026, 8, 11),
+      );
+      expect(validarItem(item2, params: params).ok, isFalse,
+          reason: '15 de aumento > 10 (10% de 100)');
+    });
+
+    test('hashPin é determinístico e SHA-256', () {
+      expect(hashPin('0000'), hashPin('0000'));
+      expect(hashPin('0000'), isNot(hashPin('1234')));
+      expect(hashPin('0000').length, 64);
     });
   });
 }

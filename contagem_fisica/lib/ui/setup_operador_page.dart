@@ -74,6 +74,11 @@ class _SetupOperadorPageState extends ConsumerState<SetupOperadorPage> {
         title: const Text('Início da contagem'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Admin',
+            onPressed: () => context.push('/admin'),
+          ),
+          IconButton(
             icon: const Icon(Icons.info_outline),
             tooltip: 'Sobre o app',
             onPressed: () => context.push('/sobre'),

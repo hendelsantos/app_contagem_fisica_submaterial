@@ -3400,6 +3400,521 @@ class ItensHistoricoCompanion extends UpdateCompanion<ItemHistoricoRow> {
   }
 }
 
+class $ParametrosTable extends Parametros
+    with TableInfo<$ParametrosTable, ParametrosRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ParametrosTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _toleranciaPctMeta =
+      const VerificationMeta('toleranciaPct');
+  @override
+  late final GeneratedColumn<double> toleranciaPct = GeneratedColumn<double>(
+      'tolerancia_pct', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.02));
+  static const VerificationMeta _toleranciaMinKgMeta =
+      const VerificationMeta('toleranciaMinKg');
+  @override
+  late final GeneratedColumn<double> toleranciaMinKg = GeneratedColumn<double>(
+      'tolerancia_min_kg', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1.0));
+  static const VerificationMeta _alertaJanelaMeta =
+      const VerificationMeta('alertaJanela');
+  @override
+  late final GeneratedColumn<String> alertaJanela = GeneratedColumn<String>(
+      'alerta_janela', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('diaria'));
+  static const VerificationMeta _pinAdminHashMeta =
+      const VerificationMeta('pinAdminHash');
+  @override
+  late final GeneratedColumn<String> pinAdminHash = GeneratedColumn<String>(
+      'pin_admin_hash', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, toleranciaPct, toleranciaMinKg, alertaJanela, pinAdminHash];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'parametros';
+  @override
+  VerificationContext validateIntegrity(Insertable<ParametrosRow> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('tolerancia_pct')) {
+      context.handle(
+          _toleranciaPctMeta,
+          toleranciaPct.isAcceptableOrUnknown(
+              data['tolerancia_pct']!, _toleranciaPctMeta));
+    }
+    if (data.containsKey('tolerancia_min_kg')) {
+      context.handle(
+          _toleranciaMinKgMeta,
+          toleranciaMinKg.isAcceptableOrUnknown(
+              data['tolerancia_min_kg']!, _toleranciaMinKgMeta));
+    }
+    if (data.containsKey('alerta_janela')) {
+      context.handle(
+          _alertaJanelaMeta,
+          alertaJanela.isAcceptableOrUnknown(
+              data['alerta_janela']!, _alertaJanelaMeta));
+    }
+    if (data.containsKey('pin_admin_hash')) {
+      context.handle(
+          _pinAdminHashMeta,
+          pinAdminHash.isAcceptableOrUnknown(
+              data['pin_admin_hash']!, _pinAdminHashMeta));
+    } else if (isInserting) {
+      context.missing(_pinAdminHashMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ParametrosRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ParametrosRow(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      toleranciaPct: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}tolerancia_pct'])!,
+      toleranciaMinKg: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}tolerancia_min_kg'])!,
+      alertaJanela: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}alerta_janela'])!,
+      pinAdminHash: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}pin_admin_hash'])!,
+    );
+  }
+
+  @override
+  $ParametrosTable createAlias(String alias) {
+    return $ParametrosTable(attachedDatabase, alias);
+  }
+}
+
+class ParametrosRow extends DataClass implements Insertable<ParametrosRow> {
+  final int id;
+  final double toleranciaPct;
+  final double toleranciaMinKg;
+  final String alertaJanela;
+  final String pinAdminHash;
+  const ParametrosRow(
+      {required this.id,
+      required this.toleranciaPct,
+      required this.toleranciaMinKg,
+      required this.alertaJanela,
+      required this.pinAdminHash});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['tolerancia_pct'] = Variable<double>(toleranciaPct);
+    map['tolerancia_min_kg'] = Variable<double>(toleranciaMinKg);
+    map['alerta_janela'] = Variable<String>(alertaJanela);
+    map['pin_admin_hash'] = Variable<String>(pinAdminHash);
+    return map;
+  }
+
+  ParametrosCompanion toCompanion(bool nullToAbsent) {
+    return ParametrosCompanion(
+      id: Value(id),
+      toleranciaPct: Value(toleranciaPct),
+      toleranciaMinKg: Value(toleranciaMinKg),
+      alertaJanela: Value(alertaJanela),
+      pinAdminHash: Value(pinAdminHash),
+    );
+  }
+
+  factory ParametrosRow.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ParametrosRow(
+      id: serializer.fromJson<int>(json['id']),
+      toleranciaPct: serializer.fromJson<double>(json['toleranciaPct']),
+      toleranciaMinKg: serializer.fromJson<double>(json['toleranciaMinKg']),
+      alertaJanela: serializer.fromJson<String>(json['alertaJanela']),
+      pinAdminHash: serializer.fromJson<String>(json['pinAdminHash']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'toleranciaPct': serializer.toJson<double>(toleranciaPct),
+      'toleranciaMinKg': serializer.toJson<double>(toleranciaMinKg),
+      'alertaJanela': serializer.toJson<String>(alertaJanela),
+      'pinAdminHash': serializer.toJson<String>(pinAdminHash),
+    };
+  }
+
+  ParametrosRow copyWith(
+          {int? id,
+          double? toleranciaPct,
+          double? toleranciaMinKg,
+          String? alertaJanela,
+          String? pinAdminHash}) =>
+      ParametrosRow(
+        id: id ?? this.id,
+        toleranciaPct: toleranciaPct ?? this.toleranciaPct,
+        toleranciaMinKg: toleranciaMinKg ?? this.toleranciaMinKg,
+        alertaJanela: alertaJanela ?? this.alertaJanela,
+        pinAdminHash: pinAdminHash ?? this.pinAdminHash,
+      );
+  ParametrosRow copyWithCompanion(ParametrosCompanion data) {
+    return ParametrosRow(
+      id: data.id.present ? data.id.value : this.id,
+      toleranciaPct: data.toleranciaPct.present
+          ? data.toleranciaPct.value
+          : this.toleranciaPct,
+      toleranciaMinKg: data.toleranciaMinKg.present
+          ? data.toleranciaMinKg.value
+          : this.toleranciaMinKg,
+      alertaJanela: data.alertaJanela.present
+          ? data.alertaJanela.value
+          : this.alertaJanela,
+      pinAdminHash: data.pinAdminHash.present
+          ? data.pinAdminHash.value
+          : this.pinAdminHash,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ParametrosRow(')
+          ..write('id: $id, ')
+          ..write('toleranciaPct: $toleranciaPct, ')
+          ..write('toleranciaMinKg: $toleranciaMinKg, ')
+          ..write('alertaJanela: $alertaJanela, ')
+          ..write('pinAdminHash: $pinAdminHash')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id, toleranciaPct, toleranciaMinKg, alertaJanela, pinAdminHash);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ParametrosRow &&
+          other.id == this.id &&
+          other.toleranciaPct == this.toleranciaPct &&
+          other.toleranciaMinKg == this.toleranciaMinKg &&
+          other.alertaJanela == this.alertaJanela &&
+          other.pinAdminHash == this.pinAdminHash);
+}
+
+class ParametrosCompanion extends UpdateCompanion<ParametrosRow> {
+  final Value<int> id;
+  final Value<double> toleranciaPct;
+  final Value<double> toleranciaMinKg;
+  final Value<String> alertaJanela;
+  final Value<String> pinAdminHash;
+  const ParametrosCompanion({
+    this.id = const Value.absent(),
+    this.toleranciaPct = const Value.absent(),
+    this.toleranciaMinKg = const Value.absent(),
+    this.alertaJanela = const Value.absent(),
+    this.pinAdminHash = const Value.absent(),
+  });
+  ParametrosCompanion.insert({
+    this.id = const Value.absent(),
+    this.toleranciaPct = const Value.absent(),
+    this.toleranciaMinKg = const Value.absent(),
+    this.alertaJanela = const Value.absent(),
+    required String pinAdminHash,
+  }) : pinAdminHash = Value(pinAdminHash);
+  static Insertable<ParametrosRow> custom({
+    Expression<int>? id,
+    Expression<double>? toleranciaPct,
+    Expression<double>? toleranciaMinKg,
+    Expression<String>? alertaJanela,
+    Expression<String>? pinAdminHash,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (toleranciaPct != null) 'tolerancia_pct': toleranciaPct,
+      if (toleranciaMinKg != null) 'tolerancia_min_kg': toleranciaMinKg,
+      if (alertaJanela != null) 'alerta_janela': alertaJanela,
+      if (pinAdminHash != null) 'pin_admin_hash': pinAdminHash,
+    });
+  }
+
+  ParametrosCompanion copyWith(
+      {Value<int>? id,
+      Value<double>? toleranciaPct,
+      Value<double>? toleranciaMinKg,
+      Value<String>? alertaJanela,
+      Value<String>? pinAdminHash}) {
+    return ParametrosCompanion(
+      id: id ?? this.id,
+      toleranciaPct: toleranciaPct ?? this.toleranciaPct,
+      toleranciaMinKg: toleranciaMinKg ?? this.toleranciaMinKg,
+      alertaJanela: alertaJanela ?? this.alertaJanela,
+      pinAdminHash: pinAdminHash ?? this.pinAdminHash,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (toleranciaPct.present) {
+      map['tolerancia_pct'] = Variable<double>(toleranciaPct.value);
+    }
+    if (toleranciaMinKg.present) {
+      map['tolerancia_min_kg'] = Variable<double>(toleranciaMinKg.value);
+    }
+    if (alertaJanela.present) {
+      map['alerta_janela'] = Variable<String>(alertaJanela.value);
+    }
+    if (pinAdminHash.present) {
+      map['pin_admin_hash'] = Variable<String>(pinAdminHash.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ParametrosCompanion(')
+          ..write('id: $id, ')
+          ..write('toleranciaPct: $toleranciaPct, ')
+          ..write('toleranciaMinKg: $toleranciaMinKg, ')
+          ..write('alertaJanela: $alertaJanela, ')
+          ..write('pinAdminHash: $pinAdminHash')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ConsumoEsperadoTable extends ConsumoEsperado
+    with TableInfo<$ConsumoEsperadoTable, ConsumoEsperadoRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ConsumoEsperadoTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _materialCodigoMeta =
+      const VerificationMeta('materialCodigo');
+  @override
+  late final GeneratedColumn<String> materialCodigo = GeneratedColumn<String>(
+      'material_codigo', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _consumoDiarioKgMeta =
+      const VerificationMeta('consumoDiarioKg');
+  @override
+  late final GeneratedColumn<double> consumoDiarioKg = GeneratedColumn<double>(
+      'consumo_diario_kg', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [materialCodigo, consumoDiarioKg];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'consumo_esperado';
+  @override
+  VerificationContext validateIntegrity(Insertable<ConsumoEsperadoRow> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('material_codigo')) {
+      context.handle(
+          _materialCodigoMeta,
+          materialCodigo.isAcceptableOrUnknown(
+              data['material_codigo']!, _materialCodigoMeta));
+    } else if (isInserting) {
+      context.missing(_materialCodigoMeta);
+    }
+    if (data.containsKey('consumo_diario_kg')) {
+      context.handle(
+          _consumoDiarioKgMeta,
+          consumoDiarioKg.isAcceptableOrUnknown(
+              data['consumo_diario_kg']!, _consumoDiarioKgMeta));
+    } else if (isInserting) {
+      context.missing(_consumoDiarioKgMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {materialCodigo};
+  @override
+  ConsumoEsperadoRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ConsumoEsperadoRow(
+      materialCodigo: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}material_codigo'])!,
+      consumoDiarioKg: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}consumo_diario_kg'])!,
+    );
+  }
+
+  @override
+  $ConsumoEsperadoTable createAlias(String alias) {
+    return $ConsumoEsperadoTable(attachedDatabase, alias);
+  }
+}
+
+class ConsumoEsperadoRow extends DataClass
+    implements Insertable<ConsumoEsperadoRow> {
+  final String materialCodigo;
+  final double consumoDiarioKg;
+  const ConsumoEsperadoRow(
+      {required this.materialCodigo, required this.consumoDiarioKg});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['material_codigo'] = Variable<String>(materialCodigo);
+    map['consumo_diario_kg'] = Variable<double>(consumoDiarioKg);
+    return map;
+  }
+
+  ConsumoEsperadoCompanion toCompanion(bool nullToAbsent) {
+    return ConsumoEsperadoCompanion(
+      materialCodigo: Value(materialCodigo),
+      consumoDiarioKg: Value(consumoDiarioKg),
+    );
+  }
+
+  factory ConsumoEsperadoRow.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ConsumoEsperadoRow(
+      materialCodigo: serializer.fromJson<String>(json['materialCodigo']),
+      consumoDiarioKg: serializer.fromJson<double>(json['consumoDiarioKg']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'materialCodigo': serializer.toJson<String>(materialCodigo),
+      'consumoDiarioKg': serializer.toJson<double>(consumoDiarioKg),
+    };
+  }
+
+  ConsumoEsperadoRow copyWith(
+          {String? materialCodigo, double? consumoDiarioKg}) =>
+      ConsumoEsperadoRow(
+        materialCodigo: materialCodigo ?? this.materialCodigo,
+        consumoDiarioKg: consumoDiarioKg ?? this.consumoDiarioKg,
+      );
+  ConsumoEsperadoRow copyWithCompanion(ConsumoEsperadoCompanion data) {
+    return ConsumoEsperadoRow(
+      materialCodigo: data.materialCodigo.present
+          ? data.materialCodigo.value
+          : this.materialCodigo,
+      consumoDiarioKg: data.consumoDiarioKg.present
+          ? data.consumoDiarioKg.value
+          : this.consumoDiarioKg,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ConsumoEsperadoRow(')
+          ..write('materialCodigo: $materialCodigo, ')
+          ..write('consumoDiarioKg: $consumoDiarioKg')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(materialCodigo, consumoDiarioKg);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ConsumoEsperadoRow &&
+          other.materialCodigo == this.materialCodigo &&
+          other.consumoDiarioKg == this.consumoDiarioKg);
+}
+
+class ConsumoEsperadoCompanion extends UpdateCompanion<ConsumoEsperadoRow> {
+  final Value<String> materialCodigo;
+  final Value<double> consumoDiarioKg;
+  final Value<int> rowid;
+  const ConsumoEsperadoCompanion({
+    this.materialCodigo = const Value.absent(),
+    this.consumoDiarioKg = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ConsumoEsperadoCompanion.insert({
+    required String materialCodigo,
+    required double consumoDiarioKg,
+    this.rowid = const Value.absent(),
+  })  : materialCodigo = Value(materialCodigo),
+        consumoDiarioKg = Value(consumoDiarioKg);
+  static Insertable<ConsumoEsperadoRow> custom({
+    Expression<String>? materialCodigo,
+    Expression<double>? consumoDiarioKg,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (materialCodigo != null) 'material_codigo': materialCodigo,
+      if (consumoDiarioKg != null) 'consumo_diario_kg': consumoDiarioKg,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ConsumoEsperadoCompanion copyWith(
+      {Value<String>? materialCodigo,
+      Value<double>? consumoDiarioKg,
+      Value<int>? rowid}) {
+    return ConsumoEsperadoCompanion(
+      materialCodigo: materialCodigo ?? this.materialCodigo,
+      consumoDiarioKg: consumoDiarioKg ?? this.consumoDiarioKg,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (materialCodigo.present) {
+      map['material_codigo'] = Variable<String>(materialCodigo.value);
+    }
+    if (consumoDiarioKg.present) {
+      map['consumo_diario_kg'] = Variable<double>(consumoDiarioKg.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ConsumoEsperadoCompanion(')
+          ..write('materialCodigo: $materialCodigo, ')
+          ..write('consumoDiarioKg: $consumoDiarioKg, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -3413,6 +3928,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       $NotasRecebimentoTable(this);
   late final $ExportsTable exports = $ExportsTable(this);
   late final $ItensHistoricoTable itensHistorico = $ItensHistoricoTable(this);
+  late final $ParametrosTable parametros = $ParametrosTable(this);
+  late final $ConsumoEsperadoTable consumoEsperado =
+      $ConsumoEsperadoTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -3425,7 +3943,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         itensContagem,
         notasRecebimento,
         exports,
-        itensHistorico
+        itensHistorico,
+        parametros,
+        consumoEsperado
       ];
 }
 
@@ -5125,6 +5645,309 @@ typedef $$ItensHistoricoTableProcessedTableManager = ProcessedTableManager<
     ),
     ItemHistoricoRow,
     PrefetchHooks Function()>;
+typedef $$ParametrosTableCreateCompanionBuilder = ParametrosCompanion Function({
+  Value<int> id,
+  Value<double> toleranciaPct,
+  Value<double> toleranciaMinKg,
+  Value<String> alertaJanela,
+  required String pinAdminHash,
+});
+typedef $$ParametrosTableUpdateCompanionBuilder = ParametrosCompanion Function({
+  Value<int> id,
+  Value<double> toleranciaPct,
+  Value<double> toleranciaMinKg,
+  Value<String> alertaJanela,
+  Value<String> pinAdminHash,
+});
+
+class $$ParametrosTableFilterComposer
+    extends Composer<_$AppDatabase, $ParametrosTable> {
+  $$ParametrosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get toleranciaPct => $composableBuilder(
+      column: $table.toleranciaPct, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get toleranciaMinKg => $composableBuilder(
+      column: $table.toleranciaMinKg,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get alertaJanela => $composableBuilder(
+      column: $table.alertaJanela, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get pinAdminHash => $composableBuilder(
+      column: $table.pinAdminHash, builder: (column) => ColumnFilters(column));
+}
+
+class $$ParametrosTableOrderingComposer
+    extends Composer<_$AppDatabase, $ParametrosTable> {
+  $$ParametrosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get toleranciaPct => $composableBuilder(
+      column: $table.toleranciaPct,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get toleranciaMinKg => $composableBuilder(
+      column: $table.toleranciaMinKg,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get alertaJanela => $composableBuilder(
+      column: $table.alertaJanela,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get pinAdminHash => $composableBuilder(
+      column: $table.pinAdminHash,
+      builder: (column) => ColumnOrderings(column));
+}
+
+class $$ParametrosTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ParametrosTable> {
+  $$ParametrosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<double> get toleranciaPct => $composableBuilder(
+      column: $table.toleranciaPct, builder: (column) => column);
+
+  GeneratedColumn<double> get toleranciaMinKg => $composableBuilder(
+      column: $table.toleranciaMinKg, builder: (column) => column);
+
+  GeneratedColumn<String> get alertaJanela => $composableBuilder(
+      column: $table.alertaJanela, builder: (column) => column);
+
+  GeneratedColumn<String> get pinAdminHash => $composableBuilder(
+      column: $table.pinAdminHash, builder: (column) => column);
+}
+
+class $$ParametrosTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ParametrosTable,
+    ParametrosRow,
+    $$ParametrosTableFilterComposer,
+    $$ParametrosTableOrderingComposer,
+    $$ParametrosTableAnnotationComposer,
+    $$ParametrosTableCreateCompanionBuilder,
+    $$ParametrosTableUpdateCompanionBuilder,
+    (
+      ParametrosRow,
+      BaseReferences<_$AppDatabase, $ParametrosTable, ParametrosRow>
+    ),
+    ParametrosRow,
+    PrefetchHooks Function()> {
+  $$ParametrosTableTableManager(_$AppDatabase db, $ParametrosTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ParametrosTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ParametrosTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ParametrosTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<double> toleranciaPct = const Value.absent(),
+            Value<double> toleranciaMinKg = const Value.absent(),
+            Value<String> alertaJanela = const Value.absent(),
+            Value<String> pinAdminHash = const Value.absent(),
+          }) =>
+              ParametrosCompanion(
+            id: id,
+            toleranciaPct: toleranciaPct,
+            toleranciaMinKg: toleranciaMinKg,
+            alertaJanela: alertaJanela,
+            pinAdminHash: pinAdminHash,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<double> toleranciaPct = const Value.absent(),
+            Value<double> toleranciaMinKg = const Value.absent(),
+            Value<String> alertaJanela = const Value.absent(),
+            required String pinAdminHash,
+          }) =>
+              ParametrosCompanion.insert(
+            id: id,
+            toleranciaPct: toleranciaPct,
+            toleranciaMinKg: toleranciaMinKg,
+            alertaJanela: alertaJanela,
+            pinAdminHash: pinAdminHash,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$ParametrosTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $ParametrosTable,
+    ParametrosRow,
+    $$ParametrosTableFilterComposer,
+    $$ParametrosTableOrderingComposer,
+    $$ParametrosTableAnnotationComposer,
+    $$ParametrosTableCreateCompanionBuilder,
+    $$ParametrosTableUpdateCompanionBuilder,
+    (
+      ParametrosRow,
+      BaseReferences<_$AppDatabase, $ParametrosTable, ParametrosRow>
+    ),
+    ParametrosRow,
+    PrefetchHooks Function()>;
+typedef $$ConsumoEsperadoTableCreateCompanionBuilder = ConsumoEsperadoCompanion
+    Function({
+  required String materialCodigo,
+  required double consumoDiarioKg,
+  Value<int> rowid,
+});
+typedef $$ConsumoEsperadoTableUpdateCompanionBuilder = ConsumoEsperadoCompanion
+    Function({
+  Value<String> materialCodigo,
+  Value<double> consumoDiarioKg,
+  Value<int> rowid,
+});
+
+class $$ConsumoEsperadoTableFilterComposer
+    extends Composer<_$AppDatabase, $ConsumoEsperadoTable> {
+  $$ConsumoEsperadoTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get materialCodigo => $composableBuilder(
+      column: $table.materialCodigo,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get consumoDiarioKg => $composableBuilder(
+      column: $table.consumoDiarioKg,
+      builder: (column) => ColumnFilters(column));
+}
+
+class $$ConsumoEsperadoTableOrderingComposer
+    extends Composer<_$AppDatabase, $ConsumoEsperadoTable> {
+  $$ConsumoEsperadoTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get materialCodigo => $composableBuilder(
+      column: $table.materialCodigo,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get consumoDiarioKg => $composableBuilder(
+      column: $table.consumoDiarioKg,
+      builder: (column) => ColumnOrderings(column));
+}
+
+class $$ConsumoEsperadoTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ConsumoEsperadoTable> {
+  $$ConsumoEsperadoTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get materialCodigo => $composableBuilder(
+      column: $table.materialCodigo, builder: (column) => column);
+
+  GeneratedColumn<double> get consumoDiarioKg => $composableBuilder(
+      column: $table.consumoDiarioKg, builder: (column) => column);
+}
+
+class $$ConsumoEsperadoTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ConsumoEsperadoTable,
+    ConsumoEsperadoRow,
+    $$ConsumoEsperadoTableFilterComposer,
+    $$ConsumoEsperadoTableOrderingComposer,
+    $$ConsumoEsperadoTableAnnotationComposer,
+    $$ConsumoEsperadoTableCreateCompanionBuilder,
+    $$ConsumoEsperadoTableUpdateCompanionBuilder,
+    (
+      ConsumoEsperadoRow,
+      BaseReferences<_$AppDatabase, $ConsumoEsperadoTable, ConsumoEsperadoRow>
+    ),
+    ConsumoEsperadoRow,
+    PrefetchHooks Function()> {
+  $$ConsumoEsperadoTableTableManager(
+      _$AppDatabase db, $ConsumoEsperadoTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ConsumoEsperadoTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ConsumoEsperadoTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ConsumoEsperadoTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> materialCodigo = const Value.absent(),
+            Value<double> consumoDiarioKg = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ConsumoEsperadoCompanion(
+            materialCodigo: materialCodigo,
+            consumoDiarioKg: consumoDiarioKg,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String materialCodigo,
+            required double consumoDiarioKg,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ConsumoEsperadoCompanion.insert(
+            materialCodigo: materialCodigo,
+            consumoDiarioKg: consumoDiarioKg,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$ConsumoEsperadoTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $ConsumoEsperadoTable,
+    ConsumoEsperadoRow,
+    $$ConsumoEsperadoTableFilterComposer,
+    $$ConsumoEsperadoTableOrderingComposer,
+    $$ConsumoEsperadoTableAnnotationComposer,
+    $$ConsumoEsperadoTableCreateCompanionBuilder,
+    $$ConsumoEsperadoTableUpdateCompanionBuilder,
+    (
+      ConsumoEsperadoRow,
+      BaseReferences<_$AppDatabase, $ConsumoEsperadoTable, ConsumoEsperadoRow>
+    ),
+    ConsumoEsperadoRow,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5145,4 +5968,8 @@ class $AppDatabaseManager {
       $$ExportsTableTableManager(_db, _db.exports);
   $$ItensHistoricoTableTableManager get itensHistorico =>
       $$ItensHistoricoTableTableManager(_db, _db.itensHistorico);
+  $$ParametrosTableTableManager get parametros =>
+      $$ParametrosTableTableManager(_db, _db.parametros);
+  $$ConsumoEsperadoTableTableManager get consumoEsperado =>
+      $$ConsumoEsperadoTableTableManager(_db, _db.consumoEsperado);
 }

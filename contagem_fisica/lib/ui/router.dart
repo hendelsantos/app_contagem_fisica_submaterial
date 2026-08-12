@@ -1,4 +1,5 @@
 import 'package:contagem_fisica/providers/sessao_provider.dart';
+import 'package:contagem_fisica/ui/admin_page.dart';
 import 'package:contagem_fisica/ui/backup_page.dart';
 import 'package:contagem_fisica/ui/export_page.dart';
 import 'package:contagem_fisica/ui/fornecedor_page.dart';
@@ -22,12 +23,13 @@ final routerProvider = Provider<GoRouter>((ref) {
       final emHome = state.matchedLocation == '/home';
 final emSobre = state.matchedLocation == '/sobre';
         final emBackup = state.matchedLocation == '/backup';
-        if (!temSessao && !emSobre && !emBackup && (emHome || state.matchedLocation.startsWith('/fornecedor') ||
+        final emAdmin = state.matchedLocation == '/admin';
+        if (!temSessao && !emSobre && !emBackup && !emAdmin && (emHome || state.matchedLocation.startsWith('/fornecedor') ||
             state.matchedLocation.startsWith('/material') ||
             state.matchedLocation == '/resumo' || state.matchedLocation == '/export')) {
           return '/';
         }
-        if (temSessao && emSetup && !emHome && !emSobre && !emBackup) {
+        if (temSessao && emSetup && !emHome && !emSobre && !emBackup && !emAdmin) {
           return '/home';
         }
       return null;
@@ -50,6 +52,7 @@ final emSobre = state.matchedLocation == '/sobre';
       GoRoute(path: '/resumo', builder: (c, s) => const ResumoPage()),
       GoRoute(path: '/export', builder: (c, s) => const ExportPage()),
       GoRoute(path: '/backup', builder: (c, s) => const BackupPage()),
+      GoRoute(path: '/admin', builder: (c, s) => const AdminPage()),
       GoRoute(path: '/sobre', builder: (c, s) => const SobrePage()),
     ],
   );
