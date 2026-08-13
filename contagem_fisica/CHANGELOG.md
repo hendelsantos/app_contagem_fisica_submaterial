@@ -1,5 +1,10 @@
 # Changelog — Contagem Física HMB
 
+## 0.6.1
+- Backend passa a persistir e exibir os números das notas fiscais de recebimento.
+- API de detalhe retorna `itens[].notas[]` com número, quantidade, data e caminho de foto.
+- Tela de detalhe do dashboard mostra as NFs vinculadas a cada material.
+
 ## 0.6.0
 - Adicionado envio dos dados da contagem para o backend Django no Railway.
 - Tela Exportar ganha o botão **Compartilhar dados no backend**.

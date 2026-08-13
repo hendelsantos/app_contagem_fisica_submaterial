@@ -5,7 +5,7 @@ Status em 12/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 ## Versão atual
 
 - **Release latest:** v0.4.0 (https://github.com/hendelsantos/app_contagem_fisica_submaterial/releases/latest)
-- **pubspec.yaml:** `0.6.0+10` local em desenvolvimento. `v0.5.0` já teve commit/tag/push; falta criar GitHub Release se o `gh auth` não for concluído.
+- **pubspec.yaml:** `0.6.1+11` local em desenvolvimento. Falta criar GitHub Release se o `gh auth` não for concluído.
 - **Página de download:** https://hendelsantos.github.io/app_contagem_fisica_submaterial/  (automática via `releases/latest`)
 - **QR code aponta para:** a página acima (fixo).
 
@@ -23,12 +23,13 @@ Status em 12/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 | v0.4.0 | Admin de parâmetros — tela `/admin` com PIN (SHA-256), tolerâncias configuráveis, consumo diário esperado por material, painel de alertas. |
 | v0.5.0 | Pacote ZIP de auditoria — Excel + PDF + pasta `fotos/` e manifesto de fotos. |
 | v0.6.0 | Backend Django/MySQL no Railway + envio da contagem pelo app via API. |
+| v0.6.1 | Correção backend — números das NFs passam a ser persistidos e exibidos no dashboard/API. |
 
 ## Próximos passos (fila)
 
 ### 1. Fechar publicação GitHub
 - `v0.5.0`: commit/tag/push feitos. Falta GitHub Release se `gh auth` não for concluído.
-- `v0.6.0`: gerar APK com `--dart-define=BACKEND_URL=... --dart-define=APP_API_TOKEN=...`, commit, tag e release.
+- `v0.6.1`: gerar APK com `--dart-define=BACKEND_URL=... --dart-define=APP_API_TOKEN=...`, commit, tag e release.
 
 ### 2. Próximo polimento backend/app
 - Dashboard Django no Railway publicado em `https://backend-production-3a35.up.railway.app`.
@@ -38,6 +39,7 @@ Status em 12/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
   - `POST /api/contagens/` recebe JSON da sessão completa + itens + notas.
   - `GET /api/contagens/` lista contagens para usuário logado.
   - `GET /api/contagens/{id}/` detalhe.
+- NFs: tabela `NotaRecebimento`; números aparecem no detalhe da contagem e na API.
 - Próximo passo técnico: transformar o botão do app em envio automático após gerar pacote, se o fluxo real pedir.
 
 ### 3. Itens menores (pode fazer antes do backend, se aparecer prioridade)
