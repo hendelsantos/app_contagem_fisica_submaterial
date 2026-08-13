@@ -48,8 +48,12 @@ class HomePage extends ConsumerWidget {
                     'Continuar?',
                   ),
                   actions: [
-                    TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancelar')),
-                    FilledButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Sair')),
+                    TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('Cancelar')),
+                    FilledButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: const Text('Sair')),
                   ],
                 ),
               );
@@ -70,8 +74,9 @@ class HomePage extends ConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    'Operador: ${sessao.operadorNome} (${sessao.operadorMatricula})\n'
-                    'Início: ${_fmt(sessao.dataInicio)}  |  Fim previsto: ${_fmt(sessao.dataFimPrevista ?? sessao.dataInicio)}',
+                    'Operador: ${_operador(sessao)}\n'
+                    'Início pelo celular: ${_fmt(sessao.dataInicio)}'
+                    '${sessao.dataFimPrevista == null ? '' : '  |  Fim previsto: ${_fmt(sessao.dataFimPrevista!)}'}',
                   ),
                 ),
               ),
@@ -115,7 +120,14 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  String _fmt(DateTime d) => '${d.day}/${d.month}/${d.year} ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+  String _fmt(DateTime d) =>
+      '${d.day}/${d.month}/${d.year} ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+
+  String _operador(SessaoDTO sessao) {
+    final matricula = sessao.operadorMatricula.trim();
+    if (matricula.isEmpty) return sessao.operadorNome;
+    return '${sessao.operadorNome} ($matricula)';
+  }
 }
 
 class _CardFornecedor extends StatelessWidget {
@@ -124,7 +136,8 @@ class _CardFornecedor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final concluido = resumo.concluido && resumo.contados == resumo.totalMateriais;
+    final concluido =
+        resumo.concluido && resumo.contados == resumo.totalMateriais;
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: ListTile(
@@ -138,7 +151,8 @@ class _CardFornecedor extends StatelessWidget {
                       : Colors.blue,
           child: const Icon(Icons.factory, color: Colors.white),
         ),
-        title: Text(resumo.fornecedor, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(resumo.fornecedor,
+            style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(
             'Total: ${resumo.totalMateriais} | Contados: ${resumo.contados} | Pendentes: ${resumo.pendentes} | Alertas: ${resumo.comAlerta} | Bloqueios: ${resumo.bloqueados}'),
         trailing: const Icon(Icons.chevron_right),

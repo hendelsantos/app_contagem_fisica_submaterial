@@ -223,14 +223,15 @@ class _SobrePageState extends State<SobrePage> {
 
   Widget _fluxoDiario() {
     return _lista(const [
-      '1. Ao abrir o app, o operador informa nome, matrícula e período da contagem.',
+      '1. Ao abrir o app, o operador informa apenas o nome.',
       '2. Vai para a Home. Cada fornecedor é um card mostrando o progresso do dia.',
       '3. Toca num fornecedor → lista de materiais daquele fornecedor.',
       '4. Em cada material, digita: estoque contado no dia e recebimento total do período.',
-      '5. Se houve recebimento, anexa as NFs/GRs (número + quantidade). A soma precisa bater.',
-      '6. Se aparecer divergência, anexa justificativa + foto da etiqueta/tambor.',
-      '7. Ao concluir todos os materiais, abre Resumo → Exportar → gera Excel + PDF.',
-      '8. Compartilha o Excel com a coordination/Streamlit e está pronto o dia.',
+      '5. O horário de cada material é registrado automaticamente pela hora do celular.',
+      '6. Se houve recebimento, anexa as NFs/GRs (número + quantidade). A soma precisa bater.',
+      '7. Se aparecer divergência, anexa justificativa + foto da etiqueta/tambor.',
+      '8. Ao concluir todos os materiais, abre Resumo → Exportar → gera Excel + PDF.',
+      '9. Compartilha o Excel pelo WhatsApp e está pronto o dia.',
     ]);
   }
 
@@ -363,11 +364,9 @@ class _SobrePageState extends State<SobrePage> {
           'e uma aba extra "Auditoria App" com fotos, justificativas e NFs.',
         ),
         _paragrafo(
-          'No Streamlit HMB, o operador (ou coordenador) entra na página "Stock '
-          'Operador", escolhe o período da contagem e faz upload do .xlsx. O '
-          'Streamlit cruza com BOM, Paint Out e SAP e mostra o fechamento com '
-          'divergências. Importante: o período no Streamlit precisa cobrir as '
-          'datas preenchidas no setup do app.',
+          'O Excel também traz uma aba de auditoria com o horário registrado em '
+          'cada material, usando a hora do próprio celular no momento do '
+          'salvamento/conclusão.',
         ),
       ],
     );
@@ -379,7 +378,7 @@ class _SobrePageState extends State<SobrePage> {
           'o operador compartilhe manualmente o Excel/PDF.',
       'O banco SQLite fica em /data/data/br.com.hmb.contagem_fisica/files.',
       'As fotos ficam na pasta do app — não são enviadas para nenhum servidor.',
-      'Nomes, matrícula e notas fiscais são guardados apenas para auditoria.',
+      'Nomes, horários de contagem e notas fiscais são guardados apenas para auditoria.',
       'O histórico de sessões e o saldo de referência ficam no aparelho. Limpar '
           'dados do app (configurações Android) apaga tudo.',
     ]);

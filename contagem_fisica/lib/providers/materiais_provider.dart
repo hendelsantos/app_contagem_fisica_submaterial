@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final fornecedoresProvider = FutureProvider<List<String>>((ref) async {
   final db = ref.watch(databaseProvider);
-  final rows =
-      await (db.select(db.fornecedores)..orderBy([(t) => OrderingTerm.asc(t.ordem)]))
-          .get();
+  final rows = await (db.select(db.fornecedores)
+        ..orderBy([(t) => OrderingTerm.asc(t.ordem)]))
+      .get();
   return rows.map((r) => r.nome).toList();
 });
 

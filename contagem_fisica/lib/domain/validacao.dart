@@ -101,7 +101,8 @@ ResultadoValidacao validarItem(
     );
     if (aumento > tol) {
       aumentoSemRecebimento = aumento;
-      final justificado = (item.justificativa != null && item.justificativa!.trim().isNotEmpty);
+      final justificado =
+          (item.justificativa != null && item.justificativa!.trim().isNotEmpty);
       avisos.add(
           'Estoque aumentou ${aumento.toStringAsFixed(2)} sem recebimento registrado. Tolerância: ${tol.toStringAsFixed(2)}.');
       if (!justificado) {
@@ -140,7 +141,8 @@ bool requerJustificativa(ItemContagemDTO item, {ParametrosGlobais? params}) {
   if (aumento > tol) return true;
   final consumo = item.consumoFisicoEstimado;
   if (consumo < 0) return true;
-  if (item.justificativa != null && item.justificativa!.trim().isNotEmpty) return true;
+  if (item.justificativa != null && item.justificativa!.trim().isNotEmpty)
+    return true;
   return false;
 }
 
@@ -149,8 +151,7 @@ StatusItem statusResultante(ItemContagemDTO item, ResultadoValidacao r) {
     return StatusItem.pendente;
   }
   if (r.bloqueado) return StatusItem.bloqueado;
-  if (r.avisos.isNotEmpty &&
-      r.avisos.any((a) => a.contains('justificada'))) {
+  if (r.avisos.isNotEmpty && r.avisos.any((a) => a.contains('justificada'))) {
     return StatusItem.justificado;
   }
   if (r.avisos.isNotEmpty) return StatusItem.alerta;

@@ -52,7 +52,7 @@ lib/
 │   └── sessao_provider.dart     # sessaoAtualProvider, itens, resumos
 └── ui/
     ├── router.dart              # GoRouter com redirect por sessão
-    ├── setup_operador_page.dart # início de turno (operador + período)
+    ├── setup_operador_page.dart # início de turno (nome do operador)
     ├── home_page.dart           # cards por fornecedor
     ├── fornecedor_page.dart     # materiais do fornecedor
     ├── material_page.dart       # contagem guiada (coração do app)
@@ -81,17 +81,18 @@ dart run build_runner build --delete-conflicting-outputs
 
 ## Fluxo do app
 
-1. **Setup**: operador informa nome + matrícula + período da contagem.
+1. **Setup**: operador informa apenas o nome; o app registra o início pela hora do celular.
 2. **Home**: cards por fornecedor (Henkel, PPG, Shinsung, Wax, Axalta) com
    contadores (total / contados / pendentes / alertas / bloqueios).
-3. **Fornecedor**: lista materiais cadastrados (unidade fixa, código, família).
+3. **Fornecedor**: lista materiais cadastrados (unidade fixa, código, família) e mostra o horário salvo de cada material contado.
 4. **Material (guiado)**: digita estoque anterior (1ª vez), estoque contado,
    recebimento total; adiciona NFs/GRs; anexa foto e justificativa se
    divergência. As regras anti-erro bloqueiam conclusão se houver problema.
 5. **Resumo**: mostra andamento completo, bloqueia exportação enquanto houver
    material pendente/bloqueado.
 6. **Exportar**: gera `.xlsx` compatível com Streamlit (Stock do Operador) +
-   PDF de auditoria. Compartilha via `share_plus`.
+   PDF de auditoria com horário por material. Compartilha via `share_plus`,
+   incluindo envio do Excel pelo WhatsApp.
 
 ## Compatibilidade do Excel
 

@@ -128,7 +128,8 @@ String statusParaDb(StatusItem s) {
 
 /// Resumo por fornecedor considerando sessão atual.
 final resumosFornecedoresProvider =
-    FutureProvider.family<List<ResumoFornecedor>, String>((ref, sessaoId) async {
+    FutureProvider.family<List<ResumoFornecedor>, String>(
+        (ref, sessaoId) async {
   final fornecedores = await ref.watch(fornecedoresProvider.future);
   final itens = await ref.watch(itensSessaoProvider(sessaoId).future);
   final db = ref.read(databaseProvider);
@@ -136,8 +137,10 @@ final resumosFornecedoresProvider =
   for (final f in fornecedores) {
     final mats = await db.listarMateriais(fornecedor: f);
     final codigos = mats.map((m) => m.codigo).toSet();
-    final itensF = itens.where((i) => codigos.contains(i.materialCodigo)).toList();
-    final naoPendentes = itensF.where((i) => i.status != StatusItem.pendente).length;
+    final itensF =
+        itens.where((i) => codigos.contains(i.materialCodigo)).toList();
+    final naoPendentes =
+        itensF.where((i) => i.status != StatusItem.pendente).length;
     out.add(ResumoFornecedor(
       fornecedor: f,
       totalMateriais: mats.length,

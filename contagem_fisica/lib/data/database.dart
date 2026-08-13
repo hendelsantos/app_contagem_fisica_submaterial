@@ -70,7 +70,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> _garantirParametros() async {
-    final r = await (select(parametros)..where((t) => t.id.equals(1))).getSingleOrNull();
+    final r = await (select(parametros)..where((t) => t.id.equals(1)))
+        .getSingleOrNull();
     if (r == null) await _semearParametros();
   }
 
@@ -105,7 +106,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<MaterialCadastro>> listarMateriais({String? fornecedor}) {
-    final q = select(materiais)..orderBy([(t) => OrderingTerm.asc(t.descricao)]);
+    final q = select(materiais)
+      ..orderBy([(t) => OrderingTerm.asc(t.descricao)]);
     if (fornecedor != null) {
       q.where((t) => t.fornecedor.equals(fornecedor) & t.ativo.equals(true));
     } else {
@@ -115,11 +117,14 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<MaterialCadastro?> materialPorCodigo(String codigo) {
-    return (select(materiais)..where((t) => t.codigo.equals(codigo))).getSingleOrNull();
+    return (select(materiais)..where((t) => t.codigo.equals(codigo)))
+        .getSingleOrNull();
   }
 
   Future<EstoqueReferenciaRow?> referenciaDoMaterial(String codigo) {
-    return (select(estoqueReferencia)..where((t) => t.materialCodigo.equals(codigo))).getSingleOrNull();
+    return (select(estoqueReferencia)
+          ..where((t) => t.materialCodigo.equals(codigo)))
+        .getSingleOrNull();
   }
 
   Future<void> salvarReferencia({
@@ -171,7 +176,8 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> finalizarSessao(String id, DateTime dataFimReal) async {
     await (update(sessoes)..where((t) => t.id.equals(id))).write(
-      SessoesCompanion(status: const Value('finalizada'), dataFimReal: Value(dataFimReal)),
+      SessoesCompanion(
+          status: const Value('finalizada'), dataFimReal: Value(dataFimReal)),
     );
   }
 
@@ -182,12 +188,16 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<List<ItemContagemRow>> itensDaSessao(String sessaoId) {
-    return (select(itensContagem)..where((t) => t.sessaoId.equals(sessaoId))).get();
+    return (select(itensContagem)..where((t) => t.sessaoId.equals(sessaoId)))
+        .get();
   }
 
-  Future<ItemContagemRow?> itemDaSessaoPorMaterial(String sessaoId, String materialCodigo) {
+  Future<ItemContagemRow?> itemDaSessaoPorMaterial(
+      String sessaoId, String materialCodigo) {
     return (select(itensContagem)
-          ..where((t) => t.sessaoId.equals(sessaoId) & t.materialCodigo.equals(materialCodigo)))
+          ..where((t) =>
+              t.sessaoId.equals(sessaoId) &
+              t.materialCodigo.equals(materialCodigo)))
         .getSingleOrNull();
   }
 
@@ -208,7 +218,8 @@ class AppDatabase extends _$AppDatabase {
     final existente = await itemDaSessaoPorMaterial(sessaoId, materialCodigo);
     final agora = timestamp ?? DateTime.now();
     if (existente == null) {
-      final id = '${sessaoId}_${materialCodigo}_${agora.millisecondsSinceEpoch}';
+      final id =
+          '${sessaoId}_${materialCodigo}_${agora.millisecondsSinceEpoch}';
       await into(itensContagem).insert(ItensContagemCompanion(
         id: Value(id),
         sessaoId: Value(sessaoId),
@@ -245,7 +256,8 @@ class AppDatabase extends _$AppDatabase {
         existente.status != status ||
         existente.observacao != observacao ||
         existente.justificativa != justificativa;
-    await (update(itensContagem)..where((t) => t.id.equals(existente.id))).write(
+    await (update(itensContagem)..where((t) => t.id.equals(existente.id)))
+        .write(
       ItensContagemCompanion(
         estoqueAnterior: Value(estoqueAnterior),
         estoqueContado: Value(estoqueContado),
@@ -291,7 +303,8 @@ class AppDatabase extends _$AppDatabase {
     String? justificativa,
     required DateTime timestamp,
   }) async {
-    final id = '${itemId}_hist_${timestamp.microsecondsSinceEpoch}_${acao.hashCode.abs()}';
+    final id =
+        '${itemId}_hist_${timestamp.microsecondsSinceEpoch}_${acao.hashCode.abs()}';
     await into(itensHistorico).insert(ItensHistoricoCompanion(
       id: Value(id),
       itemId: Value(itemId),
@@ -316,15 +329,19 @@ class AppDatabase extends _$AppDatabase {
         .get();
   }
 
-  Future<List<ItemHistoricoRow>> historicoDoMaterialNaSessao(String sessaoId, String materialCodigo) {
+  Future<List<ItemHistoricoRow>> historicoDoMaterialNaSessao(
+      String sessaoId, String materialCodigo) {
     return (select(itensHistorico)
-          ..where((t) => t.sessaoId.equals(sessaoId) & t.materialCodigo.equals(materialCodigo))
+          ..where((t) =>
+              t.sessaoId.equals(sessaoId) &
+              t.materialCodigo.equals(materialCodigo))
           ..orderBy([(t) => OrderingTerm.desc(t.timestamp)]))
         .get();
   }
 
   Future<List<NotaRecebimentoRow>> notasDoItem(String itemId) {
-    return (select(notasRecebimento)..where((t) => t.itemId.equals(itemId))).get();
+    return (select(notasRecebimento)..where((t) => t.itemId.equals(itemId)))
+        .get();
   }
 
   Future<void> adicionarNota({
@@ -350,7 +367,8 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> removerNotasDoItem(String itemId) async {
-    await (delete(notasRecebimento)..where((t) => t.itemId.equals(itemId))).go();
+    await (delete(notasRecebimento)..where((t) => t.itemId.equals(itemId)))
+        .go();
   }
 
   Future<void> registrarExport({
@@ -397,7 +415,8 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
-  Future<void> salvarConsumoEsperado(String materialCodigo, double consumoDiarioKg) async {
+  Future<void> salvarConsumoEsperado(
+      String materialCodigo, double consumoDiarioKg) async {
     await into(consumoEsperado).insertOnConflictUpdate(
       ConsumoEsperadoCompanion(
         materialCodigo: Value(materialCodigo),
@@ -407,7 +426,9 @@ class AppDatabase extends _$AppDatabase {
   }
 
   Future<void> removerConsumoEsperado(String materialCodigo) async {
-    await (delete(consumoEsperado)..where((t) => t.materialCodigo.equals(materialCodigo))).go();
+    await (delete(consumoEsperado)
+          ..where((t) => t.materialCodigo.equals(materialCodigo)))
+        .go();
   }
 
   Future<double?> consumoEsperadoDoMaterial(String materialCodigo) async {

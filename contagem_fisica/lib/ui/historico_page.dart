@@ -92,20 +92,26 @@ class _HistoricoPageState extends ConsumerState<HistoricoPage> {
                       title: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
                               color: _acaoCor(h.acao),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
                               _acaoLabel(h.acao),
-                              style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              h.operadorNome.isEmpty ? 'Operador' : h.operadorNome,
+                              h.operadorNome.isEmpty
+                                  ? 'Operador'
+                                  : h.operadorNome,
                               style: const TextStyle(fontSize: 13),
                             ),
                           ),
@@ -117,27 +123,34 @@ class _HistoricoPageState extends ConsumerState<HistoricoPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(_fmt(h.timestamp),
-                                style: const TextStyle(fontSize: 12, color: Color(0xFF757575))),
+                                style: const TextStyle(
+                                    fontSize: 12, color: Color(0xFF757575))),
                             const SizedBox(height: 4),
                             Wrap(
                               spacing: 10,
                               runSpacing: 2,
                               children: [
                                 if (h.estoqueContado != null)
-                                  _chip('Contado', h.estoqueContado!.toStringAsFixed(2)),
+                                  _chip('Contado',
+                                      h.estoqueContado!.toStringAsFixed(2)),
                                 if (h.recebimentoTotal != null)
-                                  _chip('Recebimento', h.recebimentoTotal!.toStringAsFixed(2)),
+                                  _chip('Recebimento',
+                                      h.recebimentoTotal!.toStringAsFixed(2)),
                                 if (h.estoqueAnterior != null)
-                                  _chip('Anterior', h.estoqueAnterior!.toStringAsFixed(2)),
+                                  _chip('Anterior',
+                                      h.estoqueAnterior!.toStringAsFixed(2)),
                                 if (h.status != null)
-                                  _chip('Status', h.status!, color: _statusCor(h.status!)),
+                                  _chip('Status', h.status!,
+                                      color: _statusCor(h.status!)),
                               ],
                             ),
-                            if (h.justificativa != null && h.justificativa!.isNotEmpty) ...[
+                            if (h.justificativa != null &&
+                                h.justificativa!.isNotEmpty) ...[
                               const SizedBox(height: 4),
                               Text(
                                 'Justificativa: ${h.justificativa}',
-                                style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                                style: const TextStyle(
+                                    fontSize: 12, fontStyle: FontStyle.italic),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
                               ),

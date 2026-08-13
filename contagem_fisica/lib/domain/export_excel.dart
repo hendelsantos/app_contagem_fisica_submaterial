@@ -19,6 +19,7 @@ class GeradorExcel {
 
   static const _qtdContainers = 6;
   static final _fmtData = DateFormat('dd/MM/yyyy');
+  static final _fmtDataHora = DateFormat('dd/MM/yyyy HH:mm');
 
   String _sheetFornecedor(String sheet) => sheet.replaceFirst('Estoque ', '');
 
@@ -163,6 +164,7 @@ class GeradorExcel {
       'status',
       'justificativa',
       'foto',
+      'horario_celular_material',
       'timestamp_item',
     ];
     ws.appendRow(cabecalho.map((c) => TextCellValue(c)).toList());
@@ -185,6 +187,7 @@ class GeradorExcel {
         TextCellValue(it.status.label),
         TextCellValue(it.justificativa ?? ''),
         TextCellValue(it.fotoPath ?? it.justificativaFotoPath ?? ''),
+        TextCellValue(_fmtDataHora.format(it.timestamp)),
         TextCellValue(it.timestamp.toIso8601String()),
       ]);
     }

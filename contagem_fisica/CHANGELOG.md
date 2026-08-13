@@ -1,5 +1,11 @@
 # Changelog — Contagem Física HMB
 
+## 0.7.2
+- Tela inicial simplificada: o operador informa apenas o nome.
+- Início da sessão passa a usar automaticamente a hora do celular.
+- Cada material exibe o horário registrado pelo celular na ficha e na lista do fornecedor.
+- Excel e PDF deixam explícito o horário de registro por material para auditoria.
+
 ## 0.7.1
 - Tela Exportar ganha ação direta **Enviar Excel pelo WhatsApp** após gerar a contagem.
 - O envio compartilha apenas o arquivo Excel, facilitando o fluxo operacional com WhatsApp.

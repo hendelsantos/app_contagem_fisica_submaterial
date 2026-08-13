@@ -21,17 +21,28 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final emSetup = state.matchedLocation == '/';
       final emHome = state.matchedLocation == '/home';
-final emSobre = state.matchedLocation == '/sobre';
-        final emBackup = state.matchedLocation == '/backup';
-        final emAdmin = state.matchedLocation == '/admin';
-        if (!temSessao && !emSobre && !emBackup && !emAdmin && (emHome || state.matchedLocation.startsWith('/fornecedor') ||
-            state.matchedLocation.startsWith('/material') ||
-            state.matchedLocation == '/resumo' || state.matchedLocation == '/export')) {
-          return '/';
-        }
-        if (temSessao && emSetup && !emHome && !emSobre && !emBackup && !emAdmin) {
-          return '/home';
-        }
+      final emSobre = state.matchedLocation == '/sobre';
+      final emBackup = state.matchedLocation == '/backup';
+      final emAdmin = state.matchedLocation == '/admin';
+      if (!temSessao &&
+          !emSobre &&
+          !emBackup &&
+          !emAdmin &&
+          (emHome ||
+              state.matchedLocation.startsWith('/fornecedor') ||
+              state.matchedLocation.startsWith('/material') ||
+              state.matchedLocation == '/resumo' ||
+              state.matchedLocation == '/export')) {
+        return '/';
+      }
+      if (temSessao &&
+          emSetup &&
+          !emHome &&
+          !emSobre &&
+          !emBackup &&
+          !emAdmin) {
+        return '/home';
+      }
       return null;
     },
     routes: [

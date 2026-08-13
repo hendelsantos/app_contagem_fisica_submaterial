@@ -56,7 +56,8 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     super.dispose();
   }
 
-  void _carregar(ItemContagemDTO? it, ReferenciaMaterialDTO? ref, MaterialDTO mat) {
+  void _carregar(
+      ItemContagemDTO? it, ReferenciaMaterialDTO? ref, MaterialDTO mat) {
     _item = it;
     _material = mat;
     _ref = ref;
@@ -85,7 +86,8 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
   }
 
   ItemContagemDTO _itemAtual() {
-    final anterior = double.tryParse(_estoqueAntCtrl.text.replaceAll(',', '.')) ?? 0;
+    final anterior =
+        double.tryParse(_estoqueAntCtrl.text.replaceAll(',', '.')) ?? 0;
     final contado = double.tryParse(_contadoCtrl.text.replaceAll(',', '.'));
     final receb = double.tryParse(_recebCtrl.text.replaceAll(',', '.'));
     return ItemContagemDTO(
@@ -107,7 +109,8 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
 
   Future<void> _tirarFoto(bool isJustificativa) async {
     final picker = ImagePicker();
-    final x = await picker.pickImage(source: ImageSource.camera, imageQuality: 70);
+    final x =
+        await picker.pickImage(source: ImageSource.camera, imageQuality: 70);
     if (x == null) return;
     Directory dir;
     try {
@@ -118,7 +121,8 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       dir = Directory(ppath.join(appDir.path, 'fotos'));
       await dir.create(recursive: true);
     }
-    final nome = '${widget.codigo}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final nome =
+        '${widget.codigo}_${DateTime.now().millisecondsSinceEpoch}.jpg';
     final caminho = ppath.join(dir.path, nome);
     final bytes = await x.readAsBytes();
     await File(caminho).writeAsBytes(bytes);
@@ -139,13 +143,17 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       return;
     }
     setState(() {
-      _notas = [..._notas, NotaRecebimentoDTO(id: '', numero: num, quantidade: qtd)];
+      _notas = [
+        ..._notas,
+        NotaRecebimentoDTO(id: '', numero: num, quantidade: qtd)
+      ];
       _notaNumCtrl.clear();
       _notaQtdCtrl.clear();
     });
   }
 
-  void _removeNota(int i) => setState(() => _notas = List.of(_notas)..removeAt(i));
+  void _removeNota(int i) =>
+      setState(() => _notas = List.of(_notas)..removeAt(i));
 
   void _snack(String msg) {
     if (!mounted) return;
@@ -157,11 +165,16 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     final sessao = ref.read(sessaoAtualProvider).valueOrNull;
     if (sessao == null || _material == null) return;
 
-    final anterior = double.tryParse(_estoqueAntCtrl.text.replaceAll(',', '.')) ?? 0;
-    final contado = concluir ? double.tryParse(_contadoCtrl.text.replaceAll(',', '.')) : null;
-    final receb = concluir ? double.tryParse(_recebCtrl.text.replaceAll(',', '.')) : null;
+    final anterior =
+        double.tryParse(_estoqueAntCtrl.text.replaceAll(',', '.')) ?? 0;
+    final contado = concluir
+        ? double.tryParse(_contadoCtrl.text.replaceAll(',', '.'))
+        : null;
+    final receb =
+        concluir ? double.tryParse(_recebCtrl.text.replaceAll(',', '.')) : null;
 
     final db = ref.read(databaseProvider);
+    final salvoEm = DateTime.now();
     final itemId = await db.upsertItem(
       sessaoId: sessao.id,
       materialCodigo: widget.codigo,
@@ -173,6 +186,7 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       justificativaFotoPath: _justFotoPath,
       fotoPath: _fotoPath,
       status: concluir ? 'pendente' : 'pendente',
+      timestamp: salvoEm,
       operadorNome: sessao.operadorNome,
     );
     await db.removerNotasDoItem(itemId);
@@ -185,6 +199,25 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     }
 
     if (!concluir) {
+      setState(() {
+        _item = ItemContagemDTO(
+          id: itemId,
+          sessaoId: sessao.id,
+          materialCodigo: widget.codigo,
+          estoqueAnterior: anterior,
+          estoqueContado: contado,
+          recebimentoTotal: receb,
+          observacao: _obsCtrl.text,
+          justificativa: _justCtrl.text,
+          justificativaFotoPath: _justFotoPath,
+          fotoPath: _fotoPath,
+          status: StatusItem.pendente,
+          timestamp: salvoEm,
+          notas: _notas,
+        );
+      });
+      ref.invalidate(itensSessaoProvider(sessao.id));
+      ref.invalidate(resumosFornecedoresProvider(sessao.id));
       _snack('Parcial salvo.');
       return;
     }
@@ -207,9 +240,11 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     final r = validarItem(
       item,
       onComplete: true,
-      params: ref.read(parametrosProvider).valueOrNull ?? ParametrosGlobais.padrao(),
+      params: ref.read(parametrosProvider).valueOrNull ??
+          ParametrosGlobais.padrao(),
     );
     final status = statusResultante(item, r);
+    final concluidoEm = DateTime.now();
     await db.upsertItem(
       sessaoId: sessao.id,
       materialCodigo: widget.codigo,
@@ -221,7 +256,23 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       justificativaFotoPath: _justFotoPath,
       fotoPath: _fotoPath,
       status: statusParaDb(status),
+      timestamp: concluidoEm,
       operadorNome: sessao.operadorNome,
+    );
+    _item = ItemContagemDTO(
+      id: itemId,
+      sessaoId: sessao.id,
+      materialCodigo: widget.codigo,
+      estoqueAnterior: anterior,
+      estoqueContado: contado,
+      recebimentoTotal: receb,
+      observacao: _obsCtrl.text,
+      justificativa: _justCtrl.text,
+      justificativaFotoPath: _justFotoPath,
+      fotoPath: _fotoPath,
+      status: status,
+      timestamp: concluidoEm,
+      notas: _notas,
     );
     if (r.bloqueado) {
       ref.invalidate(itensSessaoProvider(sessao.id));
@@ -257,22 +308,24 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     final itensAsync = sessao == null
         ? const AsyncValue<List<ItemContagemDTO>>.loading()
         : ref.watch(itensSessaoProvider(sessao.id));
-    final refAsync = ref.watch(referenciaMaterialCompletaProvider(widget.codigo));
+    final refAsync =
+        ref.watch(referenciaMaterialCompletaProvider(widget.codigo));
 
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Contagem do material'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.history),
-              tooltip: 'Auditoria do item',
-              onPressed: () => context.push('/historico/${widget.codigo}'),
-            ),
-          ],
-        ),
+        title: const Text('Contagem do material'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Auditoria do item',
+            onPressed: () => context.push('/historico/${widget.codigo}'),
+          ),
+        ],
+      ),
       body: matAsync.when(
         data: (mat) {
-          if (mat == null) return const Center(child: Text('Material não cadastrado.'));
+          if (mat == null)
+            return const Center(child: Text('Material não cadastrado.'));
           return itensAsync.when(
             data: (itens) {
               if (!_inicializado) {
@@ -303,9 +356,12 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
 
   Widget _buildForm(MaterialDTO mat) {
     final item = _itemAtual();
-    final parametros = ref.watch(parametrosProvider).valueOrNull ?? ParametrosGlobais.padrao();
+    final parametros =
+        ref.watch(parametrosProvider).valueOrNull ?? ParametrosGlobais.padrao();
     final r = validarItem(item, onComplete: true, params: parametros);
     _requerJustificativa = requerJustificativa(item, params: parametros);
+    final horarioRegistrado =
+        _item != null && _item!.id.isNotEmpty ? _item!.timestamp : null;
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Form(
@@ -319,9 +375,25 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(mat.descricao,
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
                     Text('Código: ${mat.codigo}'),
-                    Text('Família: ${mat.familia}  •  Unidade: ${mat.unidade} (fixa)  •  Fornecedor: ${mat.fornecedor}'),
+                    Text(
+                        'Família: ${mat.familia}  •  Unidade: ${mat.unidade} (fixa)  •  Fornecedor: ${mat.fornecedor}'),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(Icons.schedule, size: 18),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            horarioRegistrado == null
+                                ? 'Horário do material: será registrado pela hora do celular.'
+                                : 'Registrado pelo celular: ${_fmtData(horarioRegistrado)}',
+                          ),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 8),
                     if (r.avisos.isNotEmpty)
                       Container(
@@ -349,17 +421,16 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
                 border: const OutlineInputBorder(),
                 helperText: _ref != null
                     ? 'Última contagem em ${_fmtData(_ref!.dataReferencia)}.\n'
-                      'Ponderado automaticamente pelo app.'
+                        'Ponderado automaticamente pelo app.'
                     : 'Primeira contagem: digite o estoque inicial '
-                      '(em ${mat.unidade}). Próximas contagens usarão '
-                      'o saldo automaticamente.',
+                        '(em ${mat.unidade}). Próximas contagens usarão '
+                        'o saldo automaticamente.',
                 suffixText: mat.unidade,
                 filled: !_estoqueAntEditavel,
-                fillColor: !_estoqueAntEditavel
-                    ? Colors.grey.shade100
-                    : null,
+                fillColor: !_estoqueAntEditavel ? Colors.grey.shade100 : null,
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
             ),
             const SizedBox(height: 8),
             TextFormField(
@@ -369,7 +440,8 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
                 border: const OutlineInputBorder(),
                 suffixText: mat.unidade,
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               validator: (v) {
                 final n = double.tryParse(v?.replaceAll(',', '.') ?? '');
                 if (n == null) return 'Número inválido';
@@ -385,7 +457,8 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
                 border: const OutlineInputBorder(),
                 suffixText: mat.unidade,
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               validator: (v) {
                 final n = double.tryParse(v?.replaceAll(',', '.') ?? '');
                 if (n == null) return 'Número inválido';
@@ -394,7 +467,8 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
               },
             ),
             const SizedBox(height: 12),
-            const Text('NFs / GRs', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('NFs / GRs',
+                style: TextStyle(fontWeight: FontWeight.bold)),
             Row(
               children: [
                 Expanded(
@@ -416,11 +490,13 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
                       labelText: 'Quantidade (${mat.unidade})',
                       border: const OutlineInputBorder(),
                     ),
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
                   ),
                 ),
                 const SizedBox(width: 8),
-                IconButton.filled(onPressed: _addNota, icon: const Icon(Icons.add)),
+                IconButton.filled(
+                    onPressed: _addNota, icon: const Icon(Icons.add)),
               ],
             ),
             if (_notas.isNotEmpty) ...[
@@ -437,7 +513,8 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
                   ),
                 ),
               const Divider(),
-              Text('Soma das NFs/GRs: ${item.somaNotas.toStringAsFixed(2)} ${mat.unidade}'),
+              Text(
+                  'Soma das NFs/GRs: ${item.somaNotas.toStringAsFixed(2)} ${mat.unidade}'),
             ],
             const SizedBox(height: 12),
             TextFormField(
@@ -449,34 +526,36 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
               maxLines: 2,
             ),
             const SizedBox(height: 8),
-            if (_requerJustificativa || r.avisos.any((a) => a.contains('justificada')))
+            if (_requerJustificativa ||
+                r.avisos.any((a) => a.contains('justificada')))
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-const Text('Justificativa de divergência *',
-                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
-                TextFormField(
-                  controller: _justCtrl,
-                  decoration: const InputDecoration(
-                    labelText: 'Explique a divergência',
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        icon: const Icon(Icons.photo_camera),
-                        label: Text(_justFotoPath == null
-                            ? 'Anexar foto (opcional)'
-                            : 'Foto anexada'),
-                        onPressed: () => _tirarFoto(true),
-                      ),
+                  const Text('Justificativa de divergência *',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.red)),
+                  TextFormField(
+                    controller: _justCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Explique a divergência',
+                      border: OutlineInputBorder(),
                     ),
-                  ],
-                ),
+                    maxLines: 3,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.photo_camera),
+                          label: Text(_justFotoPath == null
+                              ? 'Anexar foto (opcional)'
+                              : 'Foto anexada'),
+                          onPressed: () => _tirarFoto(true),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             const SizedBox(height: 16),

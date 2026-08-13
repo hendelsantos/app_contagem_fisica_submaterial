@@ -64,7 +64,8 @@ class _AdminPageState extends ConsumerState<AdminPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(Icons.lock_outline, size: 64, color: Color(0xFF1565C0)),
+                const Icon(Icons.lock_outline,
+                    size: 64, color: Color(0xFF1565C0)),
                 const SizedBox(height: 12),
                 const Text(
                   'Digite o PIN administrativo para acessar os parâmetros do app.',
@@ -137,10 +138,12 @@ class _CardParametrosGlobais extends ConsumerStatefulWidget {
   const _CardParametrosGlobais();
 
   @override
-  ConsumerState<_CardParametrosGlobais> createState() => _CardParametrosGlobaisState();
+  ConsumerState<_CardParametrosGlobais> createState() =>
+      _CardParametrosGlobaisState();
 }
 
-class _CardParametrosGlobaisState extends ConsumerState<_CardParametrosGlobais> {
+class _CardParametrosGlobaisState
+    extends ConsumerState<_CardParametrosGlobais> {
   final _pctCtrl = TextEditingController();
   final _minCtrl = TextEditingController();
   String _janela = kAlertaJanelaDefault;
@@ -215,7 +218,8 @@ class _CardParametrosGlobaisState extends ConsumerState<_CardParametrosGlobais> 
                   children: [
                     TextField(
                       controller: _pctCtrl,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       decoration: const InputDecoration(
                         labelText: 'Tolerância % (fração: 0.02 = 2%)',
                         border: OutlineInputBorder(),
@@ -224,7 +228,8 @@ class _CardParametrosGlobaisState extends ConsumerState<_CardParametrosGlobais> 
                     const SizedBox(height: 8),
                     TextField(
                       controller: _minCtrl,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       decoration: const InputDecoration(
                         labelText: 'Tolerância mínima (Kg/L)',
                         border: OutlineInputBorder(),
@@ -238,16 +243,20 @@ class _CardParametrosGlobaisState extends ConsumerState<_CardParametrosGlobais> 
                         border: OutlineInputBorder(),
                       ),
                       items: const [
-                        DropdownMenuItem(value: 'diaria', child: Text('Diária')),
-                        DropdownMenuItem(value: 'semanal', child: Text('Semanal')),
+                        DropdownMenuItem(
+                            value: 'diaria', child: Text('Diária')),
+                        DropdownMenuItem(
+                            value: 'semanal', child: Text('Semanal')),
                       ],
-                      onChanged: (v) => setState(() => _janela = v ?? kAlertaJanelaDefault),
+                      onChanged: (v) =>
+                          setState(() => _janela = v ?? kAlertaJanelaDefault),
                     ),
                     const SizedBox(height: 12),
                     FilledButton.icon(
                       icon: _salvando
                           ? const SizedBox(
-                              width: 16, height: 16,
+                              width: 16,
+                              height: 16,
                               child: CircularProgressIndicator(strokeWidth: 2))
                           : const Icon(Icons.save),
                       label: const Text('Salvar parâmetros'),
@@ -369,7 +378,10 @@ class _CardTrocarPinState extends ConsumerState<_CardTrocarPin> {
             const SizedBox(height: 12),
             FilledButton.icon(
               icon: _salvando
-                  ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2))
                   : const Icon(Icons.lock_reset),
               label: const Text('Trocar PIN'),
               onPressed: _salvando ? null : _trocar,
@@ -385,7 +397,8 @@ class _CardConsumoEsperado extends ConsumerStatefulWidget {
   const _CardConsumoEsperado();
 
   @override
-  ConsumerState<_CardConsumoEsperado> createState() => _CardConsumoEsperadoState();
+  ConsumerState<_CardConsumoEsperado> createState() =>
+      _CardConsumoEsperadoState();
 }
 
 class _CardConsumoEsperadoState extends ConsumerState<_CardConsumoEsperado> {
@@ -442,13 +455,15 @@ class _CardConsumoEsperadoState extends ConsumerState<_CardConsumoEsperado> {
               error: (e, _) => Text('Erro: $e'),
               data: (consumos) {
                 return matsAsync.when(
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   error: (e, _) => Text('Erro: $e'),
                   data: (mats) {
                     if (!_inicializado) {
                       for (final m in mats) {
                         final v = consumos[m.codigo];
-                        final c = TextEditingController(text: v == null ? '' : v.toStringAsFixed(2));
+                        final c = TextEditingController(
+                            text: v == null ? '' : v.toStringAsFixed(2));
                         _controllers[m.codigo] = c;
                       }
                       _inicializado = true;
@@ -471,7 +486,9 @@ class _CardConsumoEsperadoState extends ConsumerState<_CardConsumoEsperado> {
                                   flex: 2,
                                   child: TextField(
                                     controller: _controllers[m.codigo],
-                                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                    keyboardType:
+                                        const TextInputType.numberWithOptions(
+                                            decimal: true),
                                     decoration: const InputDecoration(
                                       labelText: 'Kg/L/dia',
                                       border: OutlineInputBorder(),
@@ -529,7 +546,8 @@ class _CardAlertas extends ConsumerWidget {
                 if (lista.isEmpty) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text('Nenhum alerta. Cadastre consumo esperado para monitorar.'),
+                    child: Text(
+                        'Nenhum alerta. Cadastre consumo esperado para monitorar.'),
                   );
                 }
                 return Column(
@@ -537,7 +555,8 @@ class _CardAlertas extends ConsumerWidget {
                     for (final a in lista)
                       ListTile(
                         dense: true,
-                        leading: const Icon(Icons.warning_amber, color: Colors.amber),
+                        leading: const Icon(Icons.warning_amber,
+                            color: Colors.amber),
                         title: Text(a.descricao),
                         subtitle: Text(
                           'Consumo real: ${a.consumoReal.toStringAsFixed(2)} · '
@@ -556,7 +575,8 @@ class _CardAlertas extends ConsumerWidget {
   }
 }
 
-final consumoEsperadoMapProvider = FutureProvider<Map<String, double>>((ref) async {
+final consumoEsperadoMapProvider =
+    FutureProvider<Map<String, double>>((ref) async {
   final db = ref.watch(databaseProvider);
   final rows = await db.listarConsumoEsperado();
   return {for (final r in rows) r.materialCodigo: r.consumoDiarioKg};
@@ -599,7 +619,8 @@ final alertasConsumoProvider = FutureProvider<List<AlertaConsumo>>((ref) async {
     if (esp == null || esp <= 0) continue;
     final contado = it.estoqueContado;
     if (contado == null) continue;
-    final consumoReal = it.estoqueAnterior + (it.recebimentoTotal ?? 0) - contado;
+    final consumoReal =
+        it.estoqueAnterior + (it.recebimentoTotal ?? 0) - contado;
     if (consumoReal < 0) continue;
     final ratio = consumoReal / esp;
     if (ratio < 0.5 || ratio > 1.5) {

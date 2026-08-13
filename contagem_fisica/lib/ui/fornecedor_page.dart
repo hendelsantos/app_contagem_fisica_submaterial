@@ -13,7 +13,8 @@ class FornecedorPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final sessao = ref.watch(sessaoAtualProvider).valueOrNull;
-    final materialesAsync = ref.watch(materiaisPorFornecedorProvider(fornecedor));
+    final materialesAsync =
+        ref.watch(materiaisPorFornecedorProvider(fornecedor));
     final itensAsync = sessao == null
         ? const AsyncValue<List<ItemContagemDTO>>.loading()
         : ref.watch(itensSessaoProvider(sessao.id));
@@ -33,10 +34,15 @@ class FornecedorPage extends ConsumerWidget {
                 return ListTile(
                   leading: CircleAvatar(
                     backgroundColor: _color(status),
-                    child: Text('${idx + 1}', style: const TextStyle(color: Colors.white)),
+                    child: Text('${idx + 1}',
+                        style: const TextStyle(color: Colors.white)),
                   ),
                   title: Text(m.descricao),
-                  subtitle: Text('${m.codigo} • ${m.familia} • ${m.unidade} • ${status.label}'),
+                  subtitle: Text(
+                    '${m.codigo} • ${m.familia} • ${m.unidade} • ${status.label}'
+                    '${it == null ? '' : '\nRegistrado pelo celular: ${_fmtData(it.timestamp)}'}',
+                  ),
+                  isThreeLine: it != null,
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push('/material/${m.codigo}'),
                 );
@@ -66,4 +72,8 @@ class FornecedorPage extends ConsumerWidget {
         return Colors.grey;
     }
   }
+
+  String _fmtData(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/'
+      '${d.year} ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
 }
