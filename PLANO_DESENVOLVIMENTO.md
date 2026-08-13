@@ -5,7 +5,7 @@ Status em 12/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 ## Versão atual
 
 - **Release latest:** v0.4.0 (https://github.com/hendelsantos/app_contagem_fisica_submaterial/releases/latest)
-- **pubspec.yaml:** `0.7.0+12` local em desenvolvimento. App voltou ao fluxo sem backend obrigatório.
+- **pubspec.yaml:** `0.7.1+13` local em desenvolvimento. App voltou ao fluxo sem backend obrigatório.
 - **Página de download:** https://hendelsantos.github.io/app_contagem_fisica_submaterial/  (automática via `releases/latest`)
 - **QR code aponta para:** a página acima (fixo).
 
@@ -25,11 +25,12 @@ Status em 12/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 | v0.6.0 | Backend Django/MySQL no Railway + envio da contagem pelo app via API. |
 | v0.6.1 | Correção backend — números das NFs passam a ser persistidos e exibidos no dashboard/API. |
 | v0.7.0 | Removido envio para backend/Railway do app; exportação volta a ser pacote local compartilhável. |
+| v0.7.1 | Modo de envio do Excel pelo WhatsApp na tela Exportar. |
 
 ## Próximos passos (fila)
 
 ### 1. Fechar publicação GitHub
-- `v0.7.0`: gerar APK, commit, tag e release.
+- `v0.7.1`: gerar APK, commit, tag e release.
 - GitHub Release depende de autenticação do `gh` ou criação manual pelo site.
 
 ### 2. Publicar resultados sem Railway

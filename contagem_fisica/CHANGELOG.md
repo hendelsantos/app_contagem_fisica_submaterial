@@ -1,5 +1,9 @@
 # Changelog — Contagem Física HMB
 
+## 0.7.1
+- Tela Exportar ganha ação direta **Enviar Excel pelo WhatsApp** após gerar a contagem.
+- O envio compartilha apenas o arquivo Excel, facilitando o fluxo operacional com WhatsApp.
+
 ## 0.7.0
 - Removido o envio direto para backend/Railway do app.
 - Tela Exportar volta a focar no pacote local: ZIP de auditoria, Excel e PDF compartilháveis.

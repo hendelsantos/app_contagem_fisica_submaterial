@@ -69,6 +69,16 @@ class _ExportPageState extends ConsumerState<ExportPage> {
     }
   }
 
+  Future<void> _enviarExcelWhatsApp() async {
+    final path = _excelPath;
+    if (path == null) return;
+    await Share.shareXFiles(
+      [XFile(path)],
+      text: 'Contagem física HMB — Excel para importação',
+      subject: 'Contagem física HMB',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,15 +119,31 @@ class _ExportPageState extends ConsumerState<ExportPage> {
               ),
             if (_excelPath != null)
               Card(
-                child: ListTile(
-                  leading: const Icon(Icons.table_view, color: Colors.green),
-                  title: const Text('Excel gerado'),
-                  subtitle: Text(_excelPath!),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.share),
-                    onPressed: () => Share.shareXFiles([XFile(_excelPath!)],
-                        text: 'Contagem física — Excel'),
-                  ),
+                child: Column(
+                  children: [
+                    ListTile(
+                      leading:
+                          const Icon(Icons.table_view, color: Colors.green),
+                      title: const Text('Excel gerado'),
+                      subtitle: Text(_excelPath!),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.share),
+                        onPressed: () => Share.shareXFiles([XFile(_excelPath!)],
+                            text: 'Contagem física — Excel'),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          icon: const Icon(Icons.chat),
+                          label: const Text('Enviar Excel pelo WhatsApp'),
+                          onPressed: _enviarExcelWhatsApp,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             if (_pdfPath != null)
