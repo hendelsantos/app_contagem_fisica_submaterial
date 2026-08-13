@@ -1,3 +1,4 @@
+import 'package:contagem_fisica/data/database.dart';
 import 'package:contagem_fisica/domain/models.dart';
 import 'package:contagem_fisica/providers/database_provider.dart';
 import 'package:contagem_fisica/providers/materiais_provider.dart';
@@ -33,7 +34,18 @@ class SessaoAtual extends AsyncNotifier<SessaoDTO?> {
       versaoCadastro: 'seed-v1',
       aparelho: aparelho,
     ));
+    ref.invalidate(sessoesEmAndamentoProvider);
     return id;
+  }
+
+  Future<void> retomar(String sessaoId) async {
+    final db = ref.read(databaseProvider);
+    final sessao = await db.sessaoPorId(sessaoId);
+    if (sessao == null) throw StateError('Sessão não encontrada.');
+    if (sessao.status != 'em_andamento') {
+      throw StateError('Apenas sessões em andamento podem ser retomadas.');
+    }
+    state = AsyncData(_sessaoDto(sessao));
   }
 
   Future<void> finalizar() async {
@@ -56,6 +68,7 @@ class SessaoAtual extends AsyncNotifier<SessaoDTO?> {
 
   Future<void> limpar() async {
     state = const AsyncData(null);
+    ref.invalidate(sessoesEmAndamentoProvider);
   }
 }
 
@@ -95,6 +108,27 @@ final itensSessaoProvider =
   }
   return out;
 });
+
+final sessoesEmAndamentoProvider = FutureProvider<List<SessaoDTO>>((ref) async {
+  final db = ref.read(databaseProvider);
+  final sessoes = await db.listarSessoes();
+  return sessoes
+      .where((s) => s.status == 'em_andamento')
+      .map(_sessaoDto)
+      .toList();
+});
+
+SessaoDTO _sessaoDto(SessaoRow s) => SessaoDTO(
+      id: s.id,
+      operadorNome: s.operadorNome,
+      operadorMatricula: s.operadorMatricula,
+      dataInicio: s.dataInicio,
+      dataFimPrevista: s.dataFimPrevista,
+      dataFimReal: s.dataFimReal,
+      status: s.status,
+      versaoCadastro: s.versaoCadastro,
+      aparelho: s.aparelho,
+    );
 
 StatusItem _parseStatus(String s) {
   switch (s) {

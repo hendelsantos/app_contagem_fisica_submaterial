@@ -324,8 +324,9 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       ),
       body: matAsync.when(
         data: (mat) {
-          if (mat == null)
+          if (mat == null) {
             return const Center(child: Text('Material não cadastrado.'));
+          }
           return itensAsync.when(
             data: (itens) {
               if (!_inicializado) {

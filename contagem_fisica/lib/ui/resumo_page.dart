@@ -12,8 +12,9 @@ class ResumoPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     final sessao = ref.watch(sessaoAtualProvider).valueOrNull;
-    if (sessao == null)
+    if (sessao == null) {
       return const Scaffold(body: Center(child: Text('Sem sessão.')));
+    }
     final materiais =
         ref.watch(todosMateriaisProvider).valueOrNull ?? const <MaterialDTO>[];
     final itensAsync = ref.watch(itensSessaoProvider(sessao.id));

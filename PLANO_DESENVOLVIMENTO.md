@@ -78,7 +78,7 @@ cd contagem_fisica && flutter build apk --release
 4. `flutter build apk --release`.
 5. `git add -A && git commit -m "vX.Y.Z: <resumo>" && git push origin main`.
 6. `git tag -a vX.Y.Z -m "..." && git push origin vX.Y.Z`.
-7. Criar release no GitHub (gh CLI ou site), anexar `app-release.apk`, notes = conteúdo do `CHANGELOG.md` daquela versão.
+7. A tag `vX.Y.Z` aciona `.github/workflows/release.yml`, que gera o APK e cria a Release com `app-release.apk` anexado.
 8. A página de download atualiza SOZINHA (busca `releases/latest`).
 
 ## Notas operacionais

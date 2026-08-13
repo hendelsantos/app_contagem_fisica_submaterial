@@ -141,8 +141,9 @@ bool requerJustificativa(ItemContagemDTO item, {ParametrosGlobais? params}) {
   if (aumento > tol) return true;
   final consumo = item.consumoFisicoEstimado;
   if (consumo < 0) return true;
-  if (item.justificativa != null && item.justificativa!.trim().isNotEmpty)
+  if (item.justificativa != null && item.justificativa!.trim().isNotEmpty) {
     return true;
+  }
   return false;
 }
 

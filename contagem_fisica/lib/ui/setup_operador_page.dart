@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../domain/models.dart';
 import '../providers/sessao_provider.dart';
 
 class SetupOperadorPage extends ConsumerStatefulWidget {
@@ -33,8 +34,14 @@ class _SetupOperadorPageState extends ConsumerState<SetupOperadorPage> {
     if (mounted) context.go('/home');
   }
 
+  Future<void> _retomar(String sessaoId) async {
+    await ref.read(sessaoAtualProvider.notifier).retomar(sessaoId);
+    if (mounted) context.go('/home');
+  }
+
   @override
   Widget build(BuildContext context) {
+    final sessoesAsync = ref.watch(sessoesEmAndamentoProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Início da contagem'),
@@ -77,10 +84,76 @@ class _SetupOperadorPageState extends ConsumerState<SetupOperadorPage> {
                 label: const Text('Iniciar contagem'),
                 onPressed: _iniciar,
               ),
+              const SizedBox(height: 24),
+              sessoesAsync.when(
+                data: (sessoes) {
+                  if (sessoes.isEmpty) return const SizedBox.shrink();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const Text(
+                        'Sessões em andamento',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 8),
+                      for (final sessao in sessoes)
+                        _SessaoEmAndamentoCard(
+                          sessao: sessao,
+                          onRetomar: () => _retomar(sessao.id),
+                        ),
+                    ],
+                  );
+                },
+                loading: () => const SizedBox.shrink(),
+                error: (e, _) => Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    'Erro ao carregar sessões: $e',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+class _SessaoEmAndamentoCard extends StatelessWidget {
+  final SessaoDTO sessao;
+  final VoidCallback onRetomar;
+
+  const _SessaoEmAndamentoCard({
+    required this.sessao,
+    required this.onRetomar,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: const CircleAvatar(
+          child: Icon(Icons.history),
+        ),
+        title: Text(_operador(sessao)),
+        subtitle: Text('Iniciada em ${_fmt(sessao.dataInicio)}'),
+        trailing: FilledButton(
+          onPressed: onRetomar,
+          child: const Text('Retomar'),
+        ),
+      ),
+    );
+  }
+
+  String _fmt(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/'
+      '${d.year} ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+
+  String _operador(SessaoDTO sessao) {
+    final matricula = sessao.operadorMatricula.trim();
+    if (matricula.isEmpty) return sessao.operadorNome;
+    return '${sessao.operadorNome} ($matricula)';
   }
 }

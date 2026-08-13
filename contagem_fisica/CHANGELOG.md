@@ -1,5 +1,10 @@
 # Changelog — Contagem Física HMB
 
+## 0.7.3
+- Tela inicial passa a listar sessões em andamento salvas no aparelho.
+- Operador pode retomar uma sessão interrompida sem criar nova contagem.
+- Sessões finalizadas/exportadas continuam fora da retomada para preservar o fluxo de auditoria.
+
 ## 0.7.2
 - Tela inicial simplificada: o operador informa apenas o nome.
 - Início da sessão passa a usar automaticamente a hora do celular.
