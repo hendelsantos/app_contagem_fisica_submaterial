@@ -1,5 +1,11 @@
 # Changelog — Contagem Física HMB
 
+## 0.7.0
+- Removido o envio direto para backend/Railway do app.
+- Tela Exportar volta a focar no pacote local: ZIP de auditoria, Excel e PDF compartilháveis.
+- Removida dependência direta `http`.
+- Decisão operacional: sem servidor obrigatório para o fluxo de contagem.
+
 ## 0.6.1
 - Backend passa a persistir e exibir os números das notas fiscais de recebimento.
 - API de detalhe retorna `itens[].notas[]` com número, quantidade, data e caminho de foto.
