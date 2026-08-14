@@ -15,6 +15,84 @@ import '../providers/materiais_provider.dart';
 import '../providers/parametros_provider.dart';
 import '../providers/sessao_provider.dart';
 
+class _EstoquePadraoMaterial {
+  final String label;
+  final String campo;
+  final double valor;
+
+  const _EstoquePadraoMaterial({
+    required this.label,
+    required this.campo,
+    required this.valor,
+  });
+}
+
+const Map<String, List<_EstoquePadraoMaterial>> _estoquesPadraoPorMaterial = {
+  'GB24020120109A074': [
+    _EstoquePadraoMaterial(label: 'BANHO', campo: 'linha', valor: 6271),
+  ],
+  'GB25020120109A104': [
+    _EstoquePadraoMaterial(label: 'BANHO', campo: 'linha', valor: 650),
+  ],
+  'GB24020120109A105': [
+    _EstoquePadraoMaterial(label: 'BANHO', campo: 'linha', valor: 21),
+  ],
+  'GB25020120518A061': [
+    _EstoquePadraoMaterial(label: 'BANHO', campo: 'linha', valor: 6000),
+  ],
+  'GB24020120518A062': [
+    _EstoquePadraoMaterial(label: 'BANHO', campo: 'linha', valor: 81),
+  ],
+  'GB23020130802A072': [
+    _EstoquePadraoMaterial(label: 'BANHO', campo: 'linha', valor: 90000),
+  ],
+  'GB23020130802A073': [
+    _EstoquePadraoMaterial(label: 'BANHO', campo: 'linha', valor: 10500),
+  ],
+  'GB24020130313A017': [
+    _EstoquePadraoMaterial(label: 'Cuba', campo: 'cuba', valor: 360),
+  ],
+  'GB23020121120A149': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+  'GB230201901240002': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+  'GB230201901240001': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+  'GB23020121120A137': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+  'GB230201901240014': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+  'GB230201901240010': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+  'GB230201901240009': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+  'GB230201901240008': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+  'GB230201504090010': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+  'GB230202511100002': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+  'GB23020120510A132': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+  'GB230201411250004': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+  'GB230201411250003': [
+    _EstoquePadraoMaterial(label: 'Tubulação', campo: 'outros', valor: 300),
+  ],
+};
+
 class MaterialPage extends ConsumerStatefulWidget {
   final String codigo;
   const MaterialPage(this.codigo, {super.key});
@@ -30,6 +108,8 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
   final _linhaCtrl = TextEditingController();
   final _containerCtrls =
       List<TextEditingController>.generate(6, (_) => TextEditingController());
+  final _containerCapacidadeCtrl = TextEditingController();
+  final _containerQtdCtrl = TextEditingController();
   final _cubaCtrl = TextEditingController();
   final _outrosCtrl = TextEditingController();
   final _recebCtrl = TextEditingController();
@@ -60,6 +140,8 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     ]) {
       ctrl.addListener(_sincronizarTotalEstratificado);
     }
+    _containerCapacidadeCtrl.addListener(_atualizarPreviewMultiplicacao);
+    _containerQtdCtrl.addListener(_atualizarPreviewMultiplicacao);
   }
 
   @override
@@ -70,6 +152,8 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     for (final ctrl in _containerCtrls) {
       ctrl.dispose();
     }
+    _containerCapacidadeCtrl.dispose();
+    _containerQtdCtrl.dispose();
     _cubaCtrl.dispose();
     _outrosCtrl.dispose();
     _recebCtrl.dispose();
@@ -201,6 +285,12 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     return double.tryParse(text.replaceAll(',', '.'));
   }
 
+  double? _parseObrigatorio(TextEditingController ctrl) {
+    final text = ctrl.text.trim();
+    if (text.isEmpty) return null;
+    return double.tryParse(text.replaceAll(',', '.'));
+  }
+
   String _fmtNumeroCampo(double? value) =>
       value == null || value == 0 ? '' : value.toStringAsFixed(2);
 
@@ -232,6 +322,54 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       _contadoCtrl.text = total.toStringAsFixed(2);
     }
     if (mounted) setState(() {});
+  }
+
+  void _atualizarPreviewMultiplicacao() {
+    if (mounted) setState(() {});
+  }
+
+  double? _totalContainersMultiplicado() {
+    final capacidade = _parseObrigatorio(_containerCapacidadeCtrl);
+    final quantidade = _parseObrigatorio(_containerQtdCtrl);
+    if (capacidade == null || quantidade == null) return null;
+    return capacidade * quantidade;
+  }
+
+  void _aplicarMultiplicacaoContainers(String unidade) {
+    final capacidade = _parseObrigatorio(_containerCapacidadeCtrl);
+    final quantidade = _parseObrigatorio(_containerQtdCtrl);
+    if (capacidade == null || quantidade == null) {
+      _snack('Informe a quantidade por recipiente e o número de recipientes.');
+      return;
+    }
+    if (capacidade < 0 || quantidade < 0) {
+      _snack('Os valores não podem ser negativos.');
+      return;
+    }
+    final total = capacidade * quantidade;
+    final destino = _containerCtrls.indexWhere((c) => c.text.trim().isEmpty);
+    final ctrl = destino >= 0 ? _containerCtrls[destino] : _containerCtrls.last;
+    final valorAtual = _parseOpcional(ctrl) ?? 0;
+    ctrl.text = (destino >= 0 ? total : valorAtual + total).toStringAsFixed(2);
+    _containerCapacidadeCtrl.clear();
+    _containerQtdCtrl.clear();
+    _snack(
+      '${capacidade.toStringAsFixed(2)} $unidade x '
+      '${quantidade.toStringAsFixed(0)} recipientes aplicado nos containers.',
+    );
+  }
+
+  void _aplicarEstoquePadrao(_EstoquePadraoMaterial padrao, String unidade) {
+    final ctrl = switch (padrao.campo) {
+      'linha' => _linhaCtrl,
+      'cuba' => _cubaCtrl,
+      _ => _outrosCtrl,
+    };
+    final atual = _parseOpcional(ctrl) ?? 0;
+    ctrl.text = (atual + padrao.valor).toStringAsFixed(2);
+    _snack(
+      '${padrao.label} ${padrao.valor.toStringAsFixed(2)} $unidade aplicado.',
+    );
   }
 
   Future<void> _salvar({required bool concluir}) async {
@@ -540,7 +678,12 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     const SizedBox(height: 12),
-                    _campoQuantidade(_linhaCtrl, 'Linha', mat.unidade),
+                    _campoQuantidade(
+                        _linhaCtrl, 'Linha / Banho / Tanque', mat.unidade),
+                    const SizedBox(height: 8),
+                    _estoquesPadrao(mat),
+                    const SizedBox(height: 8),
+                    _calculadoraContainers(mat.unidade),
                     const SizedBox(height: 8),
                     GridView.builder(
                       shrinkWrap: true,
@@ -742,6 +885,112 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _estoquesPadrao(MaterialDTO mat) {
+    final padroes = _estoquesPadraoPorMaterial[mat.codigo] ?? const [];
+    if (padroes.isEmpty) return const SizedBox.shrink();
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.blueGrey.shade50,
+        border: Border.all(color: Colors.blueGrey.shade100),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Medidas padrão da planilha stock',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final padrao in padroes)
+                ActionChip(
+                  avatar: const Icon(Icons.add, size: 18),
+                  label: Text(
+                    '${padrao.label}: '
+                    '${padrao.valor.toStringAsFixed(2)} ${mat.unidade}',
+                  ),
+                  onPressed: () => _aplicarEstoquePadrao(padrao, mat.unidade),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _calculadoraContainers(String unidade) {
+    final total = _totalContainersMultiplicado();
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Multiplicar recipientes iguais',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: TextFormField(
+                  controller: _containerCapacidadeCtrl,
+                  decoration: InputDecoration(
+                    labelText: 'Qtd. por recipiente',
+                    border: const OutlineInputBorder(),
+                    suffixText: unidade,
+                  ),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextFormField(
+                  controller: _containerQtdCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Nº recipientes',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  total == null
+                      ? 'Ex.: 1000 x 20 IBCs'
+                      : 'Total: ${total.toStringAsFixed(2)} $unidade',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+              FilledButton.icon(
+                icon: const Icon(Icons.calculate),
+                label: const Text('Aplicar'),
+                onPressed: () => _aplicarMultiplicacaoContainers(unidade),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
