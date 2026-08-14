@@ -1,11 +1,11 @@
 # Plano de Continuação — App Contagem Física HMB
 
-Status em 12/08/2026. Use este doc para retomar o trabalho exatamente de onde paramos.
+Status em 13/08/2026. Use este doc para retomar o trabalho exatamente de onde paramos.
 
 ## Versão atual
 
-- **Release latest:** v0.4.0 (https://github.com/hendelsantos/app_contagem_fisica_submaterial/releases/latest)
-- **pubspec.yaml:** `0.7.2+14` local em desenvolvimento. App simplificado sem login operacional, com horário por material.
+- **Release latest:** v0.7.3 (https://github.com/hendelsantos/app_contagem_fisica_submaterial/releases/latest)
+- **pubspec.yaml:** `0.7.3+15` publicado. App simplificado sem login operacional, com horário por material e retomada de sessões em andamento.
 - **Página de download:** https://hendelsantos.github.io/app_contagem_fisica_submaterial/  (automática via `releases/latest`)
 - **QR code aponta para:** a página acima (fixo).
 
@@ -27,12 +27,14 @@ Status em 12/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 | v0.7.0 | Removido envio para backend/Railway do app; exportação volta a ser pacote local compartilhável. |
 | v0.7.1 | Modo de envio do Excel pelo WhatsApp na tela Exportar. |
 | v0.7.2 | Tela inicial pede apenas nome e registra horários pelo celular por material. |
+| v0.7.3 | Tela inicial lista sessões em andamento e permite retomar contagem interrompida. |
 
 ## Próximos passos (fila)
 
-### 1. Fechar publicação GitHub
-- `v0.7.2`: gerar APK, commit, tag e release.
-- GitHub Release depende de autenticação do `gh` ou criação manual pelo site.
+### 1. Publicação GitHub
+- `v0.7.3`: publicado em 13/08/2026.
+- Release criada pelo GitHub Actions com `app-release.apk` anexado.
+- Checks locais confirmados em 13/08/2026: `flutter analyze`, `flutter test` e `flutter build apk --release`.
 
 ### 2. Publicar resultados sem Railway
 - Opção recomendada: manter Excel/ZIP e compartilhar via Drive/OneDrive/WhatsApp/e-mail.
@@ -40,7 +42,7 @@ Status em 12/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 - Para "senha" em GitHub Pages, só com página estática criptografada no navegador; é proteção simples, não controle de acesso robusto.
 - Alternativa privada: repositório privado no GitHub com arquivos HTML/Excel versionados, acessível só por usuários convidados.
 
-### 3. Itens menores (pode fazer antes do backend, se aparecer prioridade)
+### 3. Itens menores
 - Importar cadastro mestre JSON do Streamlit (`materiais.json`) — tela `/importar_cadastro`. Substitui seed fixo. **Decidido: deixar pra depois, manter seed.dart por enquanto.**
 - QR/barcode nos containers (`mobile_scanner` package) — pular busca manual.
 - Aprovador para divergências grandes (segundo operador).
