@@ -5,7 +5,17 @@
     <h1>Contagem {{ contagem.sessao_app_id }}</h1>
     <p>{{ contagem.operador_nome }} · {{ contagem.data_inicio|date:"d/m/Y H:i" }}</p>
   </div>
-  <a class="button secondary" href="{% url 'dashboard' %}">Voltar</a>
+  <div class="hero-actions">
+    <a class="button secondary" href="{% url 'dashboard' %}">Voltar</a>
+    <a class="button" href="{% url 'baixar_contagem_excel' contagem.id %}">Baixar Excel</a>
+  </div>
+</section>
+
+<section class="metrics">
+  <article><span>Itens</span><strong>{{ contagem.total_itens }}</strong></article>
+  <article><span>Estoque contado</span><strong>{{ contagem.total_contado }}</strong></article>
+  <article><span>Recebimentos</span><strong>{{ contagem.total_recebido }}</strong></article>
+  <article><span>Status</span><strong>{{ contagem.status }}</strong></article>
 </section>
 
 <div class="table-wrap">

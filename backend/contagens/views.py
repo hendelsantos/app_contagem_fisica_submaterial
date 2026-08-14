@@ -1,15 +1,20 @@
 import json
+from io import BytesIO
 from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Count, Sum
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill
+from openpyxl.utils import get_column_letter
 
 from .models import Contagem, ItemContagem, NotaRecebimento
 
@@ -51,6 +56,19 @@ def dashboard(request):
 def detalhe_contagem(request, pk):
     contagem = get_object_or_404(Contagem.objects.prefetch_related("itens__notas"), pk=pk)
     return render(request, "contagens/detalhe.html", {"contagem": contagem})
+
+
+@login_required
+def baixar_contagem_excel(request, pk):
+    contagem = get_object_or_404(Contagem.objects.prefetch_related("itens__notas"), pk=pk)
+    output = _gerar_excel_contagem(contagem)
+    filename = f"contagem_{contagem.data_inicio:%Y-%m-%d}_{contagem.id}.xlsx"
+    response = HttpResponse(
+        output.getvalue(),
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    return response
 
 
 @csrf_exempt
@@ -237,3 +255,117 @@ def _nota_json(nota):
         "dataRecebimento": nota.data_recebimento.isoformat() if nota.data_recebimento else None,
         "fotoPath": nota.foto_path,
     }
+
+
+def _gerar_excel_contagem(contagem):
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Resumo"
+    _append_rows(
+        ws,
+        [
+            ["Campo", "Valor"],
+            ["Sessao", contagem.sessao_app_id],
+            ["Operador", contagem.operador_nome],
+            ["Matricula", contagem.operador_matricula],
+            ["Inicio", _excel_datetime(contagem.data_inicio)],
+            ["Fim", _excel_datetime(contagem.data_fim_real)],
+            ["Status", contagem.status],
+            ["Total de itens", contagem.total_itens],
+            ["Total contado", contagem.total_contado],
+            ["Total recebido", contagem.total_recebido],
+        ],
+    )
+
+    itens_ws = wb.create_sheet("Itens")
+    _append_rows(
+        itens_ws,
+        [
+            [
+                "Fornecedor",
+                "Codigo",
+                "Material",
+                "Estoque anterior",
+                "Recebimento",
+                "Soma NFs",
+                "Estoque contado",
+                "Consumo estimado",
+                "Status",
+                "Justificativa",
+                "Observacao",
+                "Horario",
+                "Foto",
+            ]
+        ],
+    )
+    for item in contagem.itens.all():
+        itens_ws.append(
+            [
+                item.fornecedor,
+                item.material_codigo,
+                item.material_descricao,
+                item.estoque_anterior,
+                item.recebimento_total,
+                item.soma_nf,
+                item.estoque_contado,
+                item.consumo_estimado,
+                item.status,
+                item.justificativa,
+                item.observacao,
+                _excel_datetime(item.timestamp_item),
+                item.foto_path,
+            ]
+        )
+
+    notas_ws = wb.create_sheet("Notas fiscais")
+    _append_rows(
+        notas_ws,
+        [["Fornecedor", "Codigo", "Material", "NF/GR", "Quantidade", "Data", "Foto"]],
+    )
+    for item in contagem.itens.all():
+        for nota in item.notas.all():
+            notas_ws.append(
+                [
+                    item.fornecedor,
+                    item.material_codigo,
+                    item.material_descricao,
+                    nota.numero,
+                    nota.quantidade,
+                    _excel_datetime(nota.data_recebimento),
+                    nota.foto_path,
+                ]
+            )
+
+    for sheet in wb.worksheets:
+        _format_sheet(sheet)
+
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+    return output
+
+
+def _append_rows(ws, rows):
+    for row in rows:
+        ws.append(row)
+
+
+def _format_sheet(ws):
+    header_fill = PatternFill("solid", fgColor="DCEFE9")
+    header_font = Font(bold=True, color="0C3D31")
+    for cell in ws[1]:
+        cell.fill = header_fill
+        cell.font = header_font
+    ws.freeze_panes = "A2"
+    for column_cells in ws.columns:
+        width = 12
+        for cell in column_cells:
+            value = "" if cell.value is None else str(cell.value)
+            width = max(width, min(len(value) + 2, 42))
+        ws.column_dimensions[get_column_letter(column_cells[0].column)].width = width
+
+
+def _excel_datetime(value):
+    if value is None:
+        return None
+    return timezone.localtime(value).replace(tzinfo=None)

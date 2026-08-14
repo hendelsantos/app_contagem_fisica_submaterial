@@ -5,6 +5,7 @@
 - O envio online e opcional: sem configuracao, o app segue funcionando offline com Excel, ZIP e PDF.
 - Backend ganha API publica de leitura para a pagina estatica listar contagens recebidas pelo app.
 - Pagina de contagens publicadas passa a ler a API online com fallback para `manifest.json`.
+- Painel Railway ganha detalhe de contagem e download de Excel gerado no backend.
 
 ## 0.7.3
 - Tela inicial passa a listar sessões em andamento salvas no aparelho.

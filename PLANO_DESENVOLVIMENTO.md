@@ -28,7 +28,7 @@ Status em 13/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 | v0.7.1 | Modo de envio do Excel pelo WhatsApp na tela Exportar. |
 | v0.7.2 | Tela inicial pede apenas nome e registra horários pelo celular por material. |
 | v0.7.3 | Tela inicial lista sessões em andamento e permite retomar contagem interrompida. |
-| v0.7.4 | Envio online opcional para backend Railway e página estática lendo API pública. |
+| v0.7.4 | Envio online opcional para backend Railway, página estática lendo API pública e painel com download Excel. |
 
 ## Próximos passos (fila)
 
@@ -41,6 +41,7 @@ Status em 13/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 - Backend Railway ativo em `https://backend-production-3a35.up.railway.app`.
 - App envia dados para `POST /api/contagens/` quando o APK for gerado com `BACKEND_URL` e `APP_API_TOKEN`.
 - Página `downloads/contagens.html` lê `GET /api/public/contagens/` via `downloads/contagens/config.js`.
+- Painel Railway em `/` lista contagens recebidas, mostra detalhe por item/NF e permite baixar Excel em `/contagens/<id>/excel/`.
 - Excel/ZIP/PDF continuam exportados localmente para auditoria/importação; upload de arquivos binários pelo app fica para uma próxima etapa, se necessário.
 
 ### 3. Itens menores

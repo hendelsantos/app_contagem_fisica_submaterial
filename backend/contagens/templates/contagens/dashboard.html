@@ -3,9 +3,12 @@
 <section class="hero">
   <div>
     <h1>Painel de contagens</h1>
-    <p>Base online para receber os valores do app, acompanhar divergencias e atualizar o estoque contado.</p>
+    <p>Receba os dados enviados pelo app, acompanhe divergencias e baixe a planilha de cada contagem.</p>
   </div>
-  <a class="button" href="/admin/">Admin</a>
+  <div class="hero-actions">
+    <a class="button secondary" href="https://hendelsantos.github.io/app_contagem_fisica_submaterial/contagens.html">Pagina publica</a>
+    <a class="button" href="/admin/">Admin</a>
+  </div>
 </section>
 
 <section class="metrics">
@@ -21,7 +24,7 @@
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>Data</th><th>Operador</th><th>Itens</th><th>Status</th><th></th></tr>
+          <tr><th>Data</th><th>Operador</th><th>Itens</th><th>Contado</th><th>Recebido</th><th>Status</th><th></th></tr>
         </thead>
         <tbody>
           {% for contagem in contagens %}
@@ -29,11 +32,16 @@
               <td>{{ contagem.data_inicio|date:"d/m/Y H:i" }}</td>
               <td>{{ contagem.operador_nome }}</td>
               <td>{{ contagem.total_itens }}</td>
+              <td>{{ contagem.total_contado }}</td>
+              <td>{{ contagem.total_recebido }}</td>
               <td><span class="pill">{{ contagem.status }}</span></td>
-              <td><a href="{% url 'detalhe_contagem' contagem.id %}">Abrir</a></td>
+              <td class="row-actions">
+                <a href="{% url 'detalhe_contagem' contagem.id %}">Detalhes</a>
+                <a href="{% url 'baixar_contagem_excel' contagem.id %}">Excel</a>
+              </td>
             </tr>
           {% empty %}
-            <tr><td colspan="5">Nenhuma contagem recebida ainda.</td></tr>
+            <tr><td colspan="7">Nenhuma contagem recebida ainda.</td></tr>
           {% endfor %}
         </tbody>
       </table>

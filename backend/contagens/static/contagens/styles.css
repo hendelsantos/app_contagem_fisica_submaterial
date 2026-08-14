@@ -76,12 +76,23 @@ a {
   color: var(--muted);
 }
 
+.hero-actions,
+.row-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .compact h1 {
   font-size: 24px;
 }
 
 .button,
 button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 0;
   border-radius: 6px;
   padding: 11px 16px;
@@ -95,6 +106,16 @@ button {
 .ghost {
   color: var(--ink);
   background: #e2e9ef;
+}
+
+.row-actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: #edf4f8;
+  font-weight: 700;
 }
 
 .metrics {
@@ -230,6 +251,14 @@ td span {
   .topbar {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .hero-actions .button {
+    flex: 1 1 150px;
   }
 
   .metrics,
