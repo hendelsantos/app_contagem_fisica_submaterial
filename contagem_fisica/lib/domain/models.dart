@@ -59,6 +59,10 @@ class ItemContagemDTO {
   final String materialCodigo;
   final double estoqueAnterior;
   final double? estoqueContado;
+  final double? linhaEstoque;
+  final List<double> containers;
+  final double? cubaEstoque;
+  final double? outrosEstoque;
   final double? recebimentoTotal;
   final String? observacao;
   final String? justificativa;
@@ -74,6 +78,10 @@ class ItemContagemDTO {
     required this.materialCodigo,
     required this.estoqueAnterior,
     this.estoqueContado,
+    this.linhaEstoque,
+    this.containers = const [],
+    this.cubaEstoque,
+    this.outrosEstoque,
     this.recebimentoTotal,
     this.observacao,
     this.justificativa,
@@ -85,6 +93,16 @@ class ItemContagemDTO {
   });
 
   double get somaNotas => notas.fold(0.0, (a, n) => a + n.quantidade);
+  double get totalEstratificado =>
+      (linhaEstoque ?? 0) +
+      containers.fold(0.0, (a, v) => a + v) +
+      (cubaEstoque ?? 0) +
+      (outrosEstoque ?? 0);
+  bool get temEstratificacao =>
+      linhaEstoque != null ||
+      containers.any((v) => v != 0) ||
+      cubaEstoque != null ||
+      outrosEstoque != null;
   double get consumoFisicoEstimado =>
       estoqueAnterior + (recebimentoTotal ?? 0) - (estoqueContado ?? 0);
 }

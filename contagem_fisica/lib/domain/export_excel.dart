@@ -115,7 +115,9 @@ class GeradorExcel {
     }
 
     final recebTotal = it.recebimentoTotal ?? 0.0;
-    final contado = it.estoqueContado ?? 0.0;
+    final contado = it.temEstratificacao
+        ? it.totalEstratificado
+        : (it.estoqueContado ?? 0.0);
     final dataInicio = sessao.dataInicio;
     final dataFim = sessao.dataFimReal ?? DateTime.now();
 
@@ -131,6 +133,13 @@ class GeradorExcel {
 
     ws.cell(_ci('A$rowFechamento')).value =
         TextCellValue(_fmtData.format(dataFim));
+    for (var i = 0; i < _qtdContainers; i++) {
+      final value = i < it.containers.length ? it.containers[i] : 0.0;
+      if (value != 0) {
+        ws.cell(_ci('${_col(colInicio + i)}$rowFechamento')).value =
+            DoubleCellValue(value);
+      }
+    }
     ws.cell(_ci('${_col(totalCol)}$rowFechamento')).value =
         DoubleCellValue(contado);
     ws.cell(_ci('${_col(sistCol)}$rowFechamento')).value =
@@ -157,6 +166,10 @@ class GeradorExcel {
       'material_codigo',
       'material_descricao',
       'estoque_anterior',
+      'linha',
+      'containers_1_a_6',
+      'cuba',
+      'outros',
       'estoque_contado',
       'recebimento_total',
       'soma_nf',
@@ -179,7 +192,17 @@ class GeradorExcel {
         TextCellValue(it.materialCodigo),
         TextCellValue(m?.descricao ?? ''),
         DoubleCellValue(it.estoqueAnterior),
-        DoubleCellValue(it.estoqueContado ?? 0),
+        DoubleCellValue(it.linhaEstoque ?? 0),
+        TextCellValue(it.containers
+            .asMap()
+            .entries
+            .map((e) => 'C${e.key + 1}:${e.value}')
+            .join('; ')),
+        DoubleCellValue(it.cubaEstoque ?? 0),
+        DoubleCellValue(it.outrosEstoque ?? 0),
+        DoubleCellValue(it.temEstratificacao
+            ? it.totalEstratificado
+            : (it.estoqueContado ?? 0)),
         DoubleCellValue(it.recebimentoTotal ?? 0),
         DoubleCellValue(it.somaNotas),
         TextCellValue(

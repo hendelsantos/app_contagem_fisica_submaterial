@@ -1456,6 +1456,30 @@ class $ItensContagemTable extends ItensContagem
   late final GeneratedColumn<double> estoqueContado = GeneratedColumn<double>(
       'estoque_contado', aliasedName, true,
       type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _linhaEstoqueMeta =
+      const VerificationMeta('linhaEstoque');
+  @override
+  late final GeneratedColumn<double> linhaEstoque = GeneratedColumn<double>(
+      'linha_estoque', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _containersJsonMeta =
+      const VerificationMeta('containersJson');
+  @override
+  late final GeneratedColumn<String> containersJson = GeneratedColumn<String>(
+      'containers_json', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _cubaEstoqueMeta =
+      const VerificationMeta('cubaEstoque');
+  @override
+  late final GeneratedColumn<double> cubaEstoque = GeneratedColumn<double>(
+      'cuba_estoque', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
+  static const VerificationMeta _outrosEstoqueMeta =
+      const VerificationMeta('outrosEstoque');
+  @override
+  late final GeneratedColumn<double> outrosEstoque = GeneratedColumn<double>(
+      'outros_estoque', aliasedName, true,
+      type: DriftSqlType.double, requiredDuringInsert: false);
   static const VerificationMeta _recebimentoTotalMeta =
       const VerificationMeta('recebimentoTotal');
   @override
@@ -1504,6 +1528,10 @@ class $ItensContagemTable extends ItensContagem
         materialCodigo,
         estoqueAnterior,
         estoqueContado,
+        linhaEstoque,
+        containersJson,
+        cubaEstoque,
+        outrosEstoque,
         recebimentoTotal,
         observacao,
         justificativa,
@@ -1554,6 +1582,30 @@ class $ItensContagemTable extends ItensContagem
           _estoqueContadoMeta,
           estoqueContado.isAcceptableOrUnknown(
               data['estoque_contado']!, _estoqueContadoMeta));
+    }
+    if (data.containsKey('linha_estoque')) {
+      context.handle(
+          _linhaEstoqueMeta,
+          linhaEstoque.isAcceptableOrUnknown(
+              data['linha_estoque']!, _linhaEstoqueMeta));
+    }
+    if (data.containsKey('containers_json')) {
+      context.handle(
+          _containersJsonMeta,
+          containersJson.isAcceptableOrUnknown(
+              data['containers_json']!, _containersJsonMeta));
+    }
+    if (data.containsKey('cuba_estoque')) {
+      context.handle(
+          _cubaEstoqueMeta,
+          cubaEstoque.isAcceptableOrUnknown(
+              data['cuba_estoque']!, _cubaEstoqueMeta));
+    }
+    if (data.containsKey('outros_estoque')) {
+      context.handle(
+          _outrosEstoqueMeta,
+          outrosEstoque.isAcceptableOrUnknown(
+              data['outros_estoque']!, _outrosEstoqueMeta));
     }
     if (data.containsKey('recebimento_total')) {
       context.handle(
@@ -1614,6 +1666,14 @@ class $ItensContagemTable extends ItensContagem
           DriftSqlType.double, data['${effectivePrefix}estoque_anterior'])!,
       estoqueContado: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}estoque_contado']),
+      linhaEstoque: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}linha_estoque']),
+      containersJson: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}containers_json']),
+      cubaEstoque: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}cuba_estoque']),
+      outrosEstoque: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}outros_estoque']),
       recebimentoTotal: attachedDatabase.typeMapping.read(
           DriftSqlType.double, data['${effectivePrefix}recebimento_total']),
       observacao: attachedDatabase.typeMapping
@@ -1644,6 +1704,10 @@ class ItemContagemRow extends DataClass implements Insertable<ItemContagemRow> {
   final String materialCodigo;
   final double estoqueAnterior;
   final double? estoqueContado;
+  final double? linhaEstoque;
+  final String? containersJson;
+  final double? cubaEstoque;
+  final double? outrosEstoque;
   final double? recebimentoTotal;
   final String? observacao;
   final String? justificativa;
@@ -1657,6 +1721,10 @@ class ItemContagemRow extends DataClass implements Insertable<ItemContagemRow> {
       required this.materialCodigo,
       required this.estoqueAnterior,
       this.estoqueContado,
+      this.linhaEstoque,
+      this.containersJson,
+      this.cubaEstoque,
+      this.outrosEstoque,
       this.recebimentoTotal,
       this.observacao,
       this.justificativa,
@@ -1673,6 +1741,18 @@ class ItemContagemRow extends DataClass implements Insertable<ItemContagemRow> {
     map['estoque_anterior'] = Variable<double>(estoqueAnterior);
     if (!nullToAbsent || estoqueContado != null) {
       map['estoque_contado'] = Variable<double>(estoqueContado);
+    }
+    if (!nullToAbsent || linhaEstoque != null) {
+      map['linha_estoque'] = Variable<double>(linhaEstoque);
+    }
+    if (!nullToAbsent || containersJson != null) {
+      map['containers_json'] = Variable<String>(containersJson);
+    }
+    if (!nullToAbsent || cubaEstoque != null) {
+      map['cuba_estoque'] = Variable<double>(cubaEstoque);
+    }
+    if (!nullToAbsent || outrosEstoque != null) {
+      map['outros_estoque'] = Variable<double>(outrosEstoque);
     }
     if (!nullToAbsent || recebimentoTotal != null) {
       map['recebimento_total'] = Variable<double>(recebimentoTotal);
@@ -1703,6 +1783,18 @@ class ItemContagemRow extends DataClass implements Insertable<ItemContagemRow> {
       estoqueContado: estoqueContado == null && nullToAbsent
           ? const Value.absent()
           : Value(estoqueContado),
+      linhaEstoque: linhaEstoque == null && nullToAbsent
+          ? const Value.absent()
+          : Value(linhaEstoque),
+      containersJson: containersJson == null && nullToAbsent
+          ? const Value.absent()
+          : Value(containersJson),
+      cubaEstoque: cubaEstoque == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cubaEstoque),
+      outrosEstoque: outrosEstoque == null && nullToAbsent
+          ? const Value.absent()
+          : Value(outrosEstoque),
       recebimentoTotal: recebimentoTotal == null && nullToAbsent
           ? const Value.absent()
           : Value(recebimentoTotal),
@@ -1732,6 +1824,10 @@ class ItemContagemRow extends DataClass implements Insertable<ItemContagemRow> {
       materialCodigo: serializer.fromJson<String>(json['materialCodigo']),
       estoqueAnterior: serializer.fromJson<double>(json['estoqueAnterior']),
       estoqueContado: serializer.fromJson<double?>(json['estoqueContado']),
+      linhaEstoque: serializer.fromJson<double?>(json['linhaEstoque']),
+      containersJson: serializer.fromJson<String?>(json['containersJson']),
+      cubaEstoque: serializer.fromJson<double?>(json['cubaEstoque']),
+      outrosEstoque: serializer.fromJson<double?>(json['outrosEstoque']),
       recebimentoTotal: serializer.fromJson<double?>(json['recebimentoTotal']),
       observacao: serializer.fromJson<String?>(json['observacao']),
       justificativa: serializer.fromJson<String?>(json['justificativa']),
@@ -1751,6 +1847,10 @@ class ItemContagemRow extends DataClass implements Insertable<ItemContagemRow> {
       'materialCodigo': serializer.toJson<String>(materialCodigo),
       'estoqueAnterior': serializer.toJson<double>(estoqueAnterior),
       'estoqueContado': serializer.toJson<double?>(estoqueContado),
+      'linhaEstoque': serializer.toJson<double?>(linhaEstoque),
+      'containersJson': serializer.toJson<String?>(containersJson),
+      'cubaEstoque': serializer.toJson<double?>(cubaEstoque),
+      'outrosEstoque': serializer.toJson<double?>(outrosEstoque),
       'recebimentoTotal': serializer.toJson<double?>(recebimentoTotal),
       'observacao': serializer.toJson<String?>(observacao),
       'justificativa': serializer.toJson<String?>(justificativa),
@@ -1768,6 +1868,10 @@ class ItemContagemRow extends DataClass implements Insertable<ItemContagemRow> {
           String? materialCodigo,
           double? estoqueAnterior,
           Value<double?> estoqueContado = const Value.absent(),
+          Value<double?> linhaEstoque = const Value.absent(),
+          Value<String?> containersJson = const Value.absent(),
+          Value<double?> cubaEstoque = const Value.absent(),
+          Value<double?> outrosEstoque = const Value.absent(),
           Value<double?> recebimentoTotal = const Value.absent(),
           Value<String?> observacao = const Value.absent(),
           Value<String?> justificativa = const Value.absent(),
@@ -1782,6 +1886,13 @@ class ItemContagemRow extends DataClass implements Insertable<ItemContagemRow> {
         estoqueAnterior: estoqueAnterior ?? this.estoqueAnterior,
         estoqueContado:
             estoqueContado.present ? estoqueContado.value : this.estoqueContado,
+        linhaEstoque:
+            linhaEstoque.present ? linhaEstoque.value : this.linhaEstoque,
+        containersJson:
+            containersJson.present ? containersJson.value : this.containersJson,
+        cubaEstoque: cubaEstoque.present ? cubaEstoque.value : this.cubaEstoque,
+        outrosEstoque:
+            outrosEstoque.present ? outrosEstoque.value : this.outrosEstoque,
         recebimentoTotal: recebimentoTotal.present
             ? recebimentoTotal.value
             : this.recebimentoTotal,
@@ -1808,6 +1919,17 @@ class ItemContagemRow extends DataClass implements Insertable<ItemContagemRow> {
       estoqueContado: data.estoqueContado.present
           ? data.estoqueContado.value
           : this.estoqueContado,
+      linhaEstoque: data.linhaEstoque.present
+          ? data.linhaEstoque.value
+          : this.linhaEstoque,
+      containersJson: data.containersJson.present
+          ? data.containersJson.value
+          : this.containersJson,
+      cubaEstoque:
+          data.cubaEstoque.present ? data.cubaEstoque.value : this.cubaEstoque,
+      outrosEstoque: data.outrosEstoque.present
+          ? data.outrosEstoque.value
+          : this.outrosEstoque,
       recebimentoTotal: data.recebimentoTotal.present
           ? data.recebimentoTotal.value
           : this.recebimentoTotal,
@@ -1833,6 +1955,10 @@ class ItemContagemRow extends DataClass implements Insertable<ItemContagemRow> {
           ..write('materialCodigo: $materialCodigo, ')
           ..write('estoqueAnterior: $estoqueAnterior, ')
           ..write('estoqueContado: $estoqueContado, ')
+          ..write('linhaEstoque: $linhaEstoque, ')
+          ..write('containersJson: $containersJson, ')
+          ..write('cubaEstoque: $cubaEstoque, ')
+          ..write('outrosEstoque: $outrosEstoque, ')
           ..write('recebimentoTotal: $recebimentoTotal, ')
           ..write('observacao: $observacao, ')
           ..write('justificativa: $justificativa, ')
@@ -1851,6 +1977,10 @@ class ItemContagemRow extends DataClass implements Insertable<ItemContagemRow> {
       materialCodigo,
       estoqueAnterior,
       estoqueContado,
+      linhaEstoque,
+      containersJson,
+      cubaEstoque,
+      outrosEstoque,
       recebimentoTotal,
       observacao,
       justificativa,
@@ -1867,6 +1997,10 @@ class ItemContagemRow extends DataClass implements Insertable<ItemContagemRow> {
           other.materialCodigo == this.materialCodigo &&
           other.estoqueAnterior == this.estoqueAnterior &&
           other.estoqueContado == this.estoqueContado &&
+          other.linhaEstoque == this.linhaEstoque &&
+          other.containersJson == this.containersJson &&
+          other.cubaEstoque == this.cubaEstoque &&
+          other.outrosEstoque == this.outrosEstoque &&
           other.recebimentoTotal == this.recebimentoTotal &&
           other.observacao == this.observacao &&
           other.justificativa == this.justificativa &&
@@ -1882,6 +2016,10 @@ class ItensContagemCompanion extends UpdateCompanion<ItemContagemRow> {
   final Value<String> materialCodigo;
   final Value<double> estoqueAnterior;
   final Value<double?> estoqueContado;
+  final Value<double?> linhaEstoque;
+  final Value<String?> containersJson;
+  final Value<double?> cubaEstoque;
+  final Value<double?> outrosEstoque;
   final Value<double?> recebimentoTotal;
   final Value<String?> observacao;
   final Value<String?> justificativa;
@@ -1896,6 +2034,10 @@ class ItensContagemCompanion extends UpdateCompanion<ItemContagemRow> {
     this.materialCodigo = const Value.absent(),
     this.estoqueAnterior = const Value.absent(),
     this.estoqueContado = const Value.absent(),
+    this.linhaEstoque = const Value.absent(),
+    this.containersJson = const Value.absent(),
+    this.cubaEstoque = const Value.absent(),
+    this.outrosEstoque = const Value.absent(),
     this.recebimentoTotal = const Value.absent(),
     this.observacao = const Value.absent(),
     this.justificativa = const Value.absent(),
@@ -1911,6 +2053,10 @@ class ItensContagemCompanion extends UpdateCompanion<ItemContagemRow> {
     required String materialCodigo,
     required double estoqueAnterior,
     this.estoqueContado = const Value.absent(),
+    this.linhaEstoque = const Value.absent(),
+    this.containersJson = const Value.absent(),
+    this.cubaEstoque = const Value.absent(),
+    this.outrosEstoque = const Value.absent(),
     this.recebimentoTotal = const Value.absent(),
     this.observacao = const Value.absent(),
     this.justificativa = const Value.absent(),
@@ -1931,6 +2077,10 @@ class ItensContagemCompanion extends UpdateCompanion<ItemContagemRow> {
     Expression<String>? materialCodigo,
     Expression<double>? estoqueAnterior,
     Expression<double>? estoqueContado,
+    Expression<double>? linhaEstoque,
+    Expression<String>? containersJson,
+    Expression<double>? cubaEstoque,
+    Expression<double>? outrosEstoque,
     Expression<double>? recebimentoTotal,
     Expression<String>? observacao,
     Expression<String>? justificativa,
@@ -1946,6 +2096,10 @@ class ItensContagemCompanion extends UpdateCompanion<ItemContagemRow> {
       if (materialCodigo != null) 'material_codigo': materialCodigo,
       if (estoqueAnterior != null) 'estoque_anterior': estoqueAnterior,
       if (estoqueContado != null) 'estoque_contado': estoqueContado,
+      if (linhaEstoque != null) 'linha_estoque': linhaEstoque,
+      if (containersJson != null) 'containers_json': containersJson,
+      if (cubaEstoque != null) 'cuba_estoque': cubaEstoque,
+      if (outrosEstoque != null) 'outros_estoque': outrosEstoque,
       if (recebimentoTotal != null) 'recebimento_total': recebimentoTotal,
       if (observacao != null) 'observacao': observacao,
       if (justificativa != null) 'justificativa': justificativa,
@@ -1964,6 +2118,10 @@ class ItensContagemCompanion extends UpdateCompanion<ItemContagemRow> {
       Value<String>? materialCodigo,
       Value<double>? estoqueAnterior,
       Value<double?>? estoqueContado,
+      Value<double?>? linhaEstoque,
+      Value<String?>? containersJson,
+      Value<double?>? cubaEstoque,
+      Value<double?>? outrosEstoque,
       Value<double?>? recebimentoTotal,
       Value<String?>? observacao,
       Value<String?>? justificativa,
@@ -1978,6 +2136,10 @@ class ItensContagemCompanion extends UpdateCompanion<ItemContagemRow> {
       materialCodigo: materialCodigo ?? this.materialCodigo,
       estoqueAnterior: estoqueAnterior ?? this.estoqueAnterior,
       estoqueContado: estoqueContado ?? this.estoqueContado,
+      linhaEstoque: linhaEstoque ?? this.linhaEstoque,
+      containersJson: containersJson ?? this.containersJson,
+      cubaEstoque: cubaEstoque ?? this.cubaEstoque,
+      outrosEstoque: outrosEstoque ?? this.outrosEstoque,
       recebimentoTotal: recebimentoTotal ?? this.recebimentoTotal,
       observacao: observacao ?? this.observacao,
       justificativa: justificativa ?? this.justificativa,
@@ -2007,6 +2169,18 @@ class ItensContagemCompanion extends UpdateCompanion<ItemContagemRow> {
     }
     if (estoqueContado.present) {
       map['estoque_contado'] = Variable<double>(estoqueContado.value);
+    }
+    if (linhaEstoque.present) {
+      map['linha_estoque'] = Variable<double>(linhaEstoque.value);
+    }
+    if (containersJson.present) {
+      map['containers_json'] = Variable<String>(containersJson.value);
+    }
+    if (cubaEstoque.present) {
+      map['cuba_estoque'] = Variable<double>(cubaEstoque.value);
+    }
+    if (outrosEstoque.present) {
+      map['outros_estoque'] = Variable<double>(outrosEstoque.value);
     }
     if (recebimentoTotal.present) {
       map['recebimento_total'] = Variable<double>(recebimentoTotal.value);
@@ -2044,6 +2218,10 @@ class ItensContagemCompanion extends UpdateCompanion<ItemContagemRow> {
           ..write('materialCodigo: $materialCodigo, ')
           ..write('estoqueAnterior: $estoqueAnterior, ')
           ..write('estoqueContado: $estoqueContado, ')
+          ..write('linhaEstoque: $linhaEstoque, ')
+          ..write('containersJson: $containersJson, ')
+          ..write('cubaEstoque: $cubaEstoque, ')
+          ..write('outrosEstoque: $outrosEstoque, ')
           ..write('recebimentoTotal: $recebimentoTotal, ')
           ..write('observacao: $observacao, ')
           ..write('justificativa: $justificativa, ')
@@ -4702,6 +4880,10 @@ typedef $$ItensContagemTableCreateCompanionBuilder = ItensContagemCompanion
   required String materialCodigo,
   required double estoqueAnterior,
   Value<double?> estoqueContado,
+  Value<double?> linhaEstoque,
+  Value<String?> containersJson,
+  Value<double?> cubaEstoque,
+  Value<double?> outrosEstoque,
   Value<double?> recebimentoTotal,
   Value<String?> observacao,
   Value<String?> justificativa,
@@ -4718,6 +4900,10 @@ typedef $$ItensContagemTableUpdateCompanionBuilder = ItensContagemCompanion
   Value<String> materialCodigo,
   Value<double> estoqueAnterior,
   Value<double?> estoqueContado,
+  Value<double?> linhaEstoque,
+  Value<String?> containersJson,
+  Value<double?> cubaEstoque,
+  Value<double?> outrosEstoque,
   Value<double?> recebimentoTotal,
   Value<String?> observacao,
   Value<String?> justificativa,
@@ -4754,6 +4940,19 @@ class $$ItensContagemTableFilterComposer
   ColumnFilters<double> get estoqueContado => $composableBuilder(
       column: $table.estoqueContado,
       builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get linhaEstoque => $composableBuilder(
+      column: $table.linhaEstoque, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get containersJson => $composableBuilder(
+      column: $table.containersJson,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get cubaEstoque => $composableBuilder(
+      column: $table.cubaEstoque, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get outrosEstoque => $composableBuilder(
+      column: $table.outrosEstoque, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<double> get recebimentoTotal => $composableBuilder(
       column: $table.recebimentoTotal,
@@ -4806,6 +5005,21 @@ class $$ItensContagemTableOrderingComposer
       column: $table.estoqueContado,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<double> get linhaEstoque => $composableBuilder(
+      column: $table.linhaEstoque,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get containersJson => $composableBuilder(
+      column: $table.containersJson,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get cubaEstoque => $composableBuilder(
+      column: $table.cubaEstoque, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get outrosEstoque => $composableBuilder(
+      column: $table.outrosEstoque,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<double> get recebimentoTotal => $composableBuilder(
       column: $table.recebimentoTotal,
       builder: (column) => ColumnOrderings(column));
@@ -4854,6 +5068,18 @@ class $$ItensContagemTableAnnotationComposer
 
   GeneratedColumn<double> get estoqueContado => $composableBuilder(
       column: $table.estoqueContado, builder: (column) => column);
+
+  GeneratedColumn<double> get linhaEstoque => $composableBuilder(
+      column: $table.linhaEstoque, builder: (column) => column);
+
+  GeneratedColumn<String> get containersJson => $composableBuilder(
+      column: $table.containersJson, builder: (column) => column);
+
+  GeneratedColumn<double> get cubaEstoque => $composableBuilder(
+      column: $table.cubaEstoque, builder: (column) => column);
+
+  GeneratedColumn<double> get outrosEstoque => $composableBuilder(
+      column: $table.outrosEstoque, builder: (column) => column);
 
   GeneratedColumn<double> get recebimentoTotal => $composableBuilder(
       column: $table.recebimentoTotal, builder: (column) => column);
@@ -4908,6 +5134,10 @@ class $$ItensContagemTableTableManager extends RootTableManager<
             Value<String> materialCodigo = const Value.absent(),
             Value<double> estoqueAnterior = const Value.absent(),
             Value<double?> estoqueContado = const Value.absent(),
+            Value<double?> linhaEstoque = const Value.absent(),
+            Value<String?> containersJson = const Value.absent(),
+            Value<double?> cubaEstoque = const Value.absent(),
+            Value<double?> outrosEstoque = const Value.absent(),
             Value<double?> recebimentoTotal = const Value.absent(),
             Value<String?> observacao = const Value.absent(),
             Value<String?> justificativa = const Value.absent(),
@@ -4923,6 +5153,10 @@ class $$ItensContagemTableTableManager extends RootTableManager<
             materialCodigo: materialCodigo,
             estoqueAnterior: estoqueAnterior,
             estoqueContado: estoqueContado,
+            linhaEstoque: linhaEstoque,
+            containersJson: containersJson,
+            cubaEstoque: cubaEstoque,
+            outrosEstoque: outrosEstoque,
             recebimentoTotal: recebimentoTotal,
             observacao: observacao,
             justificativa: justificativa,
@@ -4938,6 +5172,10 @@ class $$ItensContagemTableTableManager extends RootTableManager<
             required String materialCodigo,
             required double estoqueAnterior,
             Value<double?> estoqueContado = const Value.absent(),
+            Value<double?> linhaEstoque = const Value.absent(),
+            Value<String?> containersJson = const Value.absent(),
+            Value<double?> cubaEstoque = const Value.absent(),
+            Value<double?> outrosEstoque = const Value.absent(),
             Value<double?> recebimentoTotal = const Value.absent(),
             Value<String?> observacao = const Value.absent(),
             Value<String?> justificativa = const Value.absent(),
@@ -4953,6 +5191,10 @@ class $$ItensContagemTableTableManager extends RootTableManager<
             materialCodigo: materialCodigo,
             estoqueAnterior: estoqueAnterior,
             estoqueContado: estoqueContado,
+            linhaEstoque: linhaEstoque,
+            containersJson: containersJson,
+            cubaEstoque: cubaEstoque,
+            outrosEstoque: outrosEstoque,
             recebimentoTotal: recebimentoTotal,
             observacao: observacao,
             justificativa: justificativa,

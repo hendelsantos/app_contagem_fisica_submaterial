@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:contagem_fisica/data/seed.dart';
@@ -28,7 +29,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -50,6 +51,12 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(parametros);
             await m.createTable(consumoEsperado);
             await _semearParametros();
+          }
+          if (from < 5) {
+            await m.addColumn(itensContagem, itensContagem.linhaEstoque);
+            await m.addColumn(itensContagem, itensContagem.containersJson);
+            await m.addColumn(itensContagem, itensContagem.cubaEstoque);
+            await m.addColumn(itensContagem, itensContagem.outrosEstoque);
           }
         },
         beforeOpen: (details) async {
@@ -206,6 +213,10 @@ class AppDatabase extends _$AppDatabase {
     required String materialCodigo,
     required double estoqueAnterior,
     double? estoqueContado,
+    double? linhaEstoque,
+    List<double> containers = const [],
+    double? cubaEstoque,
+    double? outrosEstoque,
     double? recebimentoTotal,
     String? observacao,
     String? justificativa,
@@ -226,6 +237,10 @@ class AppDatabase extends _$AppDatabase {
         materialCodigo: Value(materialCodigo),
         estoqueAnterior: Value(estoqueAnterior),
         estoqueContado: Value(estoqueContado),
+        linhaEstoque: Value(linhaEstoque),
+        containersJson: Value(_containersToJson(containers)),
+        cubaEstoque: Value(cubaEstoque),
+        outrosEstoque: Value(outrosEstoque),
         recebimentoTotal: Value(recebimentoTotal),
         observacao: Value(observacao),
         justificativa: Value(justificativa),
@@ -251,6 +266,10 @@ class AppDatabase extends _$AppDatabase {
       return id;
     }
     final houveMudanca = existente.estoqueContado != estoqueContado ||
+        existente.linhaEstoque != linhaEstoque ||
+        existente.containersJson != _containersToJson(containers) ||
+        existente.cubaEstoque != cubaEstoque ||
+        existente.outrosEstoque != outrosEstoque ||
         existente.recebimentoTotal != recebimentoTotal ||
         existente.estoqueAnterior != estoqueAnterior ||
         existente.status != status ||
@@ -261,6 +280,10 @@ class AppDatabase extends _$AppDatabase {
       ItensContagemCompanion(
         estoqueAnterior: Value(estoqueAnterior),
         estoqueContado: Value(estoqueContado),
+        linhaEstoque: Value(linhaEstoque),
+        containersJson: Value(_containersToJson(containers)),
+        cubaEstoque: Value(cubaEstoque),
+        outrosEstoque: Value(outrosEstoque),
         recebimentoTotal: Value(recebimentoTotal),
         observacao: Value(observacao),
         justificativa: Value(justificativa),
@@ -369,6 +392,18 @@ class AppDatabase extends _$AppDatabase {
   Future<void> removerNotasDoItem(String itemId) async {
     await (delete(notasRecebimento)..where((t) => t.itemId.equals(itemId)))
         .go();
+  }
+
+  List<double> containersFromJson(String? value) {
+    if (value == null || value.isEmpty) return const [];
+    final data = jsonDecode(value);
+    if (data is! List) return const [];
+    return data.map((e) => (e as num?)?.toDouble() ?? 0.0).toList();
+  }
+
+  String? _containersToJson(List<double> values) {
+    if (values.isEmpty || values.every((v) => v == 0)) return null;
+    return jsonEncode(values);
   }
 
   Future<void> registrarExport({

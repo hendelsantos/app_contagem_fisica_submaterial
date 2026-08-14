@@ -27,6 +27,11 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
   final _formKey = GlobalKey<FormState>();
   final _estoqueAntCtrl = TextEditingController();
   final _contadoCtrl = TextEditingController();
+  final _linhaCtrl = TextEditingController();
+  final _containerCtrls =
+      List<TextEditingController>.generate(6, (_) => TextEditingController());
+  final _cubaCtrl = TextEditingController();
+  final _outrosCtrl = TextEditingController();
   final _recebCtrl = TextEditingController();
   final _obsCtrl = TextEditingController();
   final _justCtrl = TextEditingController();
@@ -45,9 +50,28 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
   bool _estoqueAntEditavel = false;
 
   @override
+  void initState() {
+    super.initState();
+    for (final ctrl in [
+      _linhaCtrl,
+      ..._containerCtrls,
+      _cubaCtrl,
+      _outrosCtrl,
+    ]) {
+      ctrl.addListener(_sincronizarTotalEstratificado);
+    }
+  }
+
+  @override
   void dispose() {
     _estoqueAntCtrl.dispose();
     _contadoCtrl.dispose();
+    _linhaCtrl.dispose();
+    for (final ctrl in _containerCtrls) {
+      ctrl.dispose();
+    }
+    _cubaCtrl.dispose();
+    _outrosCtrl.dispose();
     _recebCtrl.dispose();
     _obsCtrl.dispose();
     _justCtrl.dispose();
@@ -75,6 +99,13 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       _estoqueAntEditavel = true;
     }
     _contadoCtrl.text = it?.estoqueContado?.toStringAsFixed(2) ?? '';
+    _linhaCtrl.text = _fmtNumeroCampo(it?.linhaEstoque);
+    for (var i = 0; i < _containerCtrls.length; i++) {
+      final value = i < (it?.containers.length ?? 0) ? it!.containers[i] : 0.0;
+      _containerCtrls[i].text = value == 0 ? '' : value.toStringAsFixed(2);
+    }
+    _cubaCtrl.text = _fmtNumeroCampo(it?.cubaEstoque);
+    _outrosCtrl.text = _fmtNumeroCampo(it?.outrosEstoque);
     _recebCtrl.text = it?.recebimentoTotal?.toStringAsFixed(2) ?? '0';
     _obsCtrl.text = it?.observacao ?? '';
     _justCtrl.text = it?.justificativa ?? '';
@@ -88,7 +119,7 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
   ItemContagemDTO _itemAtual() {
     final anterior =
         double.tryParse(_estoqueAntCtrl.text.replaceAll(',', '.')) ?? 0;
-    final contado = double.tryParse(_contadoCtrl.text.replaceAll(',', '.'));
+    final contado = _estoqueContadoAtual();
     final receb = double.tryParse(_recebCtrl.text.replaceAll(',', '.'));
     return ItemContagemDTO(
       id: _item?.id ?? '',
@@ -96,6 +127,10 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       materialCodigo: widget.codigo,
       estoqueAnterior: anterior,
       estoqueContado: contado,
+      linhaEstoque: _parseOpcional(_linhaCtrl),
+      containers: _containersAtuais(),
+      cubaEstoque: _parseOpcional(_cubaCtrl),
+      outrosEstoque: _parseOpcional(_outrosCtrl),
       recebimentoTotal: receb,
       observacao: _obsCtrl.text,
       justificativa: _justCtrl.text,
@@ -160,6 +195,45 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
+  double? _parseOpcional(TextEditingController ctrl) {
+    final text = ctrl.text.trim();
+    if (text.isEmpty) return null;
+    return double.tryParse(text.replaceAll(',', '.'));
+  }
+
+  String _fmtNumeroCampo(double? value) =>
+      value == null || value == 0 ? '' : value.toStringAsFixed(2);
+
+  List<double> _containersAtuais() =>
+      _containerCtrls.map((ctrl) => _parseOpcional(ctrl) ?? 0.0).toList();
+
+  bool _temEstratificacaoDigitada() =>
+      _linhaCtrl.text.trim().isNotEmpty ||
+      _containerCtrls.any((ctrl) => ctrl.text.trim().isNotEmpty) ||
+      _cubaCtrl.text.trim().isNotEmpty ||
+      _outrosCtrl.text.trim().isNotEmpty;
+
+  double _totalEstratificadoAtual() =>
+      (_parseOpcional(_linhaCtrl) ?? 0) +
+      _containersAtuais().fold(0.0, (a, v) => a + v) +
+      (_parseOpcional(_cubaCtrl) ?? 0) +
+      (_parseOpcional(_outrosCtrl) ?? 0);
+
+  double? _estoqueContadoAtual() {
+    if (_temEstratificacaoDigitada()) return _totalEstratificadoAtual();
+    return double.tryParse(_contadoCtrl.text.replaceAll(',', '.'));
+  }
+
+  void _sincronizarTotalEstratificado() {
+    if (!_inicializado || !_temEstratificacaoDigitada()) return;
+    final total = _totalEstratificadoAtual();
+    final atual = double.tryParse(_contadoCtrl.text.replaceAll(',', '.'));
+    if (atual != total) {
+      _contadoCtrl.text = total.toStringAsFixed(2);
+    }
+    if (mounted) setState(() {});
+  }
+
   Future<void> _salvar({required bool concluir}) async {
     if (concluir && !_formKey.currentState!.validate()) return;
     final sessao = ref.read(sessaoAtualProvider).valueOrNull;
@@ -167,9 +241,7 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
 
     final anterior =
         double.tryParse(_estoqueAntCtrl.text.replaceAll(',', '.')) ?? 0;
-    final contado = concluir
-        ? double.tryParse(_contadoCtrl.text.replaceAll(',', '.'))
-        : null;
+    final contado = concluir ? _estoqueContadoAtual() : null;
     final receb =
         concluir ? double.tryParse(_recebCtrl.text.replaceAll(',', '.')) : null;
 
@@ -180,6 +252,10 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       materialCodigo: widget.codigo,
       estoqueAnterior: anterior,
       estoqueContado: contado,
+      linhaEstoque: _parseOpcional(_linhaCtrl),
+      containers: _containersAtuais(),
+      cubaEstoque: _parseOpcional(_cubaCtrl),
+      outrosEstoque: _parseOpcional(_outrosCtrl),
       recebimentoTotal: receb,
       observacao: _obsCtrl.text,
       justificativa: _justCtrl.text,
@@ -206,6 +282,10 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
           materialCodigo: widget.codigo,
           estoqueAnterior: anterior,
           estoqueContado: contado,
+          linhaEstoque: _parseOpcional(_linhaCtrl),
+          containers: _containersAtuais(),
+          cubaEstoque: _parseOpcional(_cubaCtrl),
+          outrosEstoque: _parseOpcional(_outrosCtrl),
           recebimentoTotal: receb,
           observacao: _obsCtrl.text,
           justificativa: _justCtrl.text,
@@ -228,6 +308,10 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       materialCodigo: widget.codigo,
       estoqueAnterior: anterior,
       estoqueContado: contado,
+      linhaEstoque: _parseOpcional(_linhaCtrl),
+      containers: _containersAtuais(),
+      cubaEstoque: _parseOpcional(_cubaCtrl),
+      outrosEstoque: _parseOpcional(_outrosCtrl),
       recebimentoTotal: receb,
       observacao: _obsCtrl.text,
       justificativa: _justCtrl.text,
@@ -250,6 +334,10 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       materialCodigo: widget.codigo,
       estoqueAnterior: anterior,
       estoqueContado: contado,
+      linhaEstoque: _parseOpcional(_linhaCtrl),
+      containers: _containersAtuais(),
+      cubaEstoque: _parseOpcional(_cubaCtrl),
+      outrosEstoque: _parseOpcional(_outrosCtrl),
       recebimentoTotal: receb,
       observacao: _obsCtrl.text,
       justificativa: _justCtrl.text,
@@ -265,6 +353,10 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
       materialCodigo: widget.codigo,
       estoqueAnterior: anterior,
       estoqueContado: contado,
+      linhaEstoque: _parseOpcional(_linhaCtrl),
+      containers: _containersAtuais(),
+      cubaEstoque: _parseOpcional(_cubaCtrl),
+      outrosEstoque: _parseOpcional(_outrosCtrl),
       recebimentoTotal: receb,
       observacao: _obsCtrl.text,
       justificativa: _justCtrl.text,
@@ -434,12 +526,71 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
                   const TextInputType.numberWithOptions(decimal: true),
             ),
             const SizedBox(height: 8),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Estratificação do estoque',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Informe os saldos por local físico. O app soma tudo e preenche o estoque contado.',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 12),
+                    _campoQuantidade(_linhaCtrl, 'Linha', mat.unidade),
+                    const SizedBox(height: 8),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 3.2,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                      ),
+                      itemCount: _containerCtrls.length,
+                      itemBuilder: (context, index) => _campoQuantidade(
+                        _containerCtrls[index],
+                        'Container ${index + 1}',
+                        mat.unidade,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: _campoQuantidade(
+                                _cubaCtrl, 'Cuba', mat.unidade)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                            child: _campoQuantidade(
+                                _outrosCtrl, 'Outros', mat.unidade)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
             TextFormField(
               controller: _contadoCtrl,
+              readOnly: _temEstratificacaoDigitada(),
               decoration: InputDecoration(
-                labelText: 'Estoque contado (${mat.unidade}) *',
+                labelText: _temEstratificacaoDigitada()
+                    ? 'Estoque contado calculado (${mat.unidade}) *'
+                    : 'Estoque contado (${mat.unidade}) *',
                 border: const OutlineInputBorder(),
                 suffixText: mat.unidade,
+                helperText: _temEstratificacaoDigitada()
+                    ? 'Soma de linha + containers + cuba + outros.'
+                    : 'Digite o total manualmente ou preencha a estratificação acima.',
+                filled: _temEstratificacaoDigitada(),
+                fillColor:
+                    _temEstratificacaoDigitada() ? Colors.grey.shade100 : null,
               ),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
@@ -592,6 +743,27 @@ class _MaterialPageState extends ConsumerState<MaterialPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _campoQuantidade(
+      TextEditingController controller, String label, String unidade) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+        suffixText: unidade,
+      ),
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      validator: (v) {
+        final text = v?.trim() ?? '';
+        if (text.isEmpty) return null;
+        final n = double.tryParse(text.replaceAll(',', '.'));
+        if (n == null) return 'Inválido';
+        if (n < 0) return 'Negativo';
+        return null;
+      },
     );
   }
 }

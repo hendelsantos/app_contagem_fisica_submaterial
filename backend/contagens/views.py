@@ -54,13 +54,17 @@ def dashboard(request):
 
 @login_required
 def detalhe_contagem(request, pk):
-    contagem = get_object_or_404(Contagem.objects.prefetch_related("itens__notas"), pk=pk)
+    contagem = get_object_or_404(
+        Contagem.objects.prefetch_related("itens__notas"), pk=pk
+    )
     return render(request, "contagens/detalhe.html", {"contagem": contagem})
 
 
 @login_required
 def baixar_contagem_excel(request, pk):
-    contagem = get_object_or_404(Contagem.objects.prefetch_related("itens__notas"), pk=pk)
+    contagem = get_object_or_404(
+        Contagem.objects.prefetch_related("itens__notas"), pk=pk
+    )
     output = _gerar_excel_contagem(contagem)
     filename = f"contagem_{contagem.data_inicio:%Y-%m-%d}_{contagem.id}.xlsx"
     response = HttpResponse(
@@ -94,7 +98,9 @@ def api_contagens(request):
 def api_contagem_detalhe(request, pk):
     if not request.user.is_authenticated and not _token_valido(request):
         return _unauthorized()
-    contagem = get_object_or_404(Contagem.objects.prefetch_related("itens__notas"), pk=pk)
+    contagem = get_object_or_404(
+        Contagem.objects.prefetch_related("itens__notas"), pk=pk
+    )
     data = _contagem_json(contagem)
     data["itens"] = [_item_json(item) for item in contagem.itens.all()]
     return JsonResponse(data)
@@ -102,7 +108,10 @@ def api_contagem_detalhe(request, pk):
 
 @require_http_methods(["GET"])
 def api_public_contagens(_request):
-    data = [_contagem_publica_json(c) for c in Contagem.objects.prefetch_related("itens")[:100]]
+    data = [
+        _contagem_publica_json(c)
+        for c in Contagem.objects.prefetch_related("itens")[:100]
+    ]
     response = JsonResponse({"contagens": data})
     response["Access-Control-Allow-Origin"] = "*"
     response["Cache-Control"] = "no-store"
@@ -142,6 +151,10 @@ def _salvar_payload(payload):
             material_descricao=material.get("descricao", ""),
             estoque_anterior=_decimal(item.get("estoqueAnterior")),
             estoque_contado=_decimal(item.get("estoqueContado")),
+            linha_estoque=_decimal_nullable(item.get("linhaEstoque")),
+            containers=_containers(item.get("containers")),
+            cuba_estoque=_decimal_nullable(item.get("cubaEstoque")),
+            outros_estoque=_decimal_nullable(item.get("outrosEstoque")),
             recebimento_total=_decimal(item.get("recebimentoTotal")),
             soma_nf=_decimal(item.get("somaNotas")),
             status=item.get("status", ""),
@@ -186,6 +199,23 @@ def _decimal(value):
     return Decimal(str(value))
 
 
+def _decimal_nullable(value):
+    if value in (None, ""):
+        return None
+    return Decimal(str(value))
+
+
+def _containers(value):
+    if not isinstance(value, list):
+        return []
+    return [float(v or 0) for v in value]
+
+
+def _containers_excel(value):
+    values = list(value or [])[:6]
+    return values + [None] * (6 - len(values))
+
+
 def _sum_decimal(itens, campo):
     total = Decimal("0")
     for item in itens:
@@ -200,7 +230,9 @@ def _contagem_json(contagem):
         "operadorNome": contagem.operador_nome,
         "operadorMatricula": contagem.operador_matricula,
         "dataInicio": contagem.data_inicio.isoformat(),
-        "dataFimReal": contagem.data_fim_real.isoformat() if contagem.data_fim_real else None,
+        "dataFimReal": (
+            contagem.data_fim_real.isoformat() if contagem.data_fim_real else None
+        ),
         "status": contagem.status,
         "totalItens": contagem.total_itens,
         "totalContado": float(contagem.total_contado),
@@ -221,7 +253,9 @@ def _contagem_publica_json(contagem):
         "matricula": contagem.operador_matricula,
         "data": contagem.data_inicio.date().isoformat(),
         "dataInicio": contagem.data_inicio.isoformat(),
-        "dataFimReal": contagem.data_fim_real.isoformat() if contagem.data_fim_real else None,
+        "dataFimReal": (
+            contagem.data_fim_real.isoformat() if contagem.data_fim_real else None
+        ),
         "status": contagem.status,
         "totalMateriais": contagem.total_itens,
         "totalContado": float(contagem.total_contado),
@@ -240,6 +274,16 @@ def _item_json(item):
         "materialDescricao": item.material_descricao,
         "estoqueAnterior": float(item.estoque_anterior),
         "estoqueContado": float(item.estoque_contado),
+        "linhaEstoque": (
+            float(item.linha_estoque) if item.linha_estoque is not None else None
+        ),
+        "containers": item.containers,
+        "cubaEstoque": (
+            float(item.cuba_estoque) if item.cuba_estoque is not None else None
+        ),
+        "outrosEstoque": (
+            float(item.outros_estoque) if item.outros_estoque is not None else None
+        ),
         "recebimentoTotal": float(item.recebimento_total),
         "notas": [_nota_json(nota) for nota in item.notas.all()],
         "consumoEstimado": float(item.consumo_estimado),
@@ -252,7 +296,9 @@ def _nota_json(nota):
     return {
         "numero": nota.numero,
         "quantidade": float(nota.quantidade),
-        "dataRecebimento": nota.data_recebimento.isoformat() if nota.data_recebimento else None,
+        "dataRecebimento": (
+            nota.data_recebimento.isoformat() if nota.data_recebimento else None
+        ),
         "fotoPath": nota.foto_path,
     }
 
@@ -286,6 +332,15 @@ def _gerar_excel_contagem(contagem):
                 "Codigo",
                 "Material",
                 "Estoque anterior",
+                "Linha",
+                "Container 1",
+                "Container 2",
+                "Container 3",
+                "Container 4",
+                "Container 5",
+                "Container 6",
+                "Cuba",
+                "Outros",
                 "Recebimento",
                 "Soma NFs",
                 "Estoque contado",
@@ -305,6 +360,10 @@ def _gerar_excel_contagem(contagem):
                 item.material_codigo,
                 item.material_descricao,
                 item.estoque_anterior,
+                item.linha_estoque,
+                *_containers_excel(item.containers),
+                item.cuba_estoque,
+                item.outros_estoque,
                 item.recebimento_total,
                 item.soma_nf,
                 item.estoque_contado,

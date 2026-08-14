@@ -1,5 +1,11 @@
 # Changelog — Contagem Física HMB
 
+## 0.7.5
+- Tela do material ganha estratificação do estoque por Linha, Container 1 a 6, Cuba e Outros.
+- O estoque contado passa a ser calculado automaticamente pela soma da estratificação quando esses campos forem usados.
+- Excel compatível com a planilha de estoque passa a preencher os containers da linha de fechamento e registra Linha/Cuba/Outros na aba de auditoria.
+- Envio online para o backend inclui a estratificação, e o painel Railway mostra os campos no detalhe e no Excel baixado.
+
 ## 0.7.4
 - Tela Exportar passa a enviar os dados da contagem para o backend quando o APK for gerado com `BACKEND_URL` e `APP_API_TOKEN`.
 - O envio online e opcional: sem configuracao, o app segue funcionando offline com Excel, ZIP e PDF.

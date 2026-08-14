@@ -158,4 +158,24 @@ void main() {
       expect(hashPin('0000').length, 64);
     });
   });
+
+  group('estratificação de estoque', () {
+    test('soma linha, containers, cuba e outros no total contado', () {
+      final item = ItemContagemDTO(
+        id: '10',
+        sessaoId: 's',
+        materialCodigo: 'c',
+        estoqueAnterior: 100,
+        linhaEstoque: 12,
+        containers: const [3, 4.5, 0, 10, 0, 1.5],
+        cubaEstoque: 2,
+        outrosEstoque: 7,
+        status: StatusItem.pendente,
+        timestamp: DateTime(2026, 8, 13),
+      );
+
+      expect(item.temEstratificacao, isTrue);
+      expect(item.totalEstratificado, closeTo(40, 0.001));
+    });
+  });
 }

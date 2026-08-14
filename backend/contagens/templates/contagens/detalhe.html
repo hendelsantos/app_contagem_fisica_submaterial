@@ -27,6 +27,7 @@
         <th>Anterior</th>
         <th>Receb.</th>
         <th>NFs</th>
+        <th>Estratificação</th>
         <th>Contado</th>
         <th>Consumo</th>
         <th>Status</th>
@@ -45,6 +46,13 @@
             {% empty %}
               <span>-</span>
             {% endfor %}
+          </td>
+          <td>
+            {% if item.tem_estratificacao %}
+              <span>{{ item.estratificacao_resumo }}</span>
+            {% else %}
+              <span>-</span>
+            {% endif %}
           </td>
           <td>{{ item.estoque_contado }}</td>
           <td>{{ item.consumo_estimado }}</td>

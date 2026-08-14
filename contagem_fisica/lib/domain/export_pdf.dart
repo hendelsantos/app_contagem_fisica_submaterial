@@ -44,6 +44,7 @@ class GeradorPdf {
               'Fornecedor',
               'Material',
               'Anterior',
+              'Estratificação',
               'Receb.',
               'Contado',
               'Status',
@@ -56,8 +57,12 @@ class GeradorPdf {
                   matByCodigo[it.materialCodigo]?.descricao ??
                       it.materialCodigo,
                   it.estoqueAnterior.toStringAsFixed(2),
+                  _estratificacao(it),
                   (it.recebimentoTotal ?? 0).toStringAsFixed(2),
-                  (it.estoqueContado ?? 0).toStringAsFixed(2),
+                  (it.temEstratificacao
+                          ? it.totalEstratificado
+                          : (it.estoqueContado ?? 0))
+                      .toStringAsFixed(2),
                   it.status.label,
                   _fmt.format(it.timestamp),
                 ],
@@ -90,5 +95,24 @@ class GeradorPdf {
     final matricula = sessao.operadorMatricula.trim();
     if (matricula.isEmpty) return sessao.operadorNome;
     return '${sessao.operadorNome} ($matricula)';
+  }
+
+  String _estratificacao(ItemContagemDTO item) {
+    if (!item.temEstratificacao) return '-';
+    final partes = <String>[];
+    if (item.linhaEstoque != null) {
+      partes.add('Linha ${item.linhaEstoque!.toStringAsFixed(2)}');
+    }
+    for (var i = 0; i < item.containers.length; i++) {
+      final value = item.containers[i];
+      if (value != 0) partes.add('C${i + 1} ${value.toStringAsFixed(2)}');
+    }
+    if (item.cubaEstoque != null) {
+      partes.add('Cuba ${item.cubaEstoque!.toStringAsFixed(2)}');
+    }
+    if (item.outrosEstoque != null) {
+      partes.add('Outros ${item.outrosEstoque!.toStringAsFixed(2)}');
+    }
+    return partes.join(' / ');
   }
 }

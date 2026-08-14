@@ -80,7 +80,13 @@ class BackendSync {
                 'nomeStock': material.nomeStock,
               },
         'estoqueAnterior': item.estoqueAnterior,
-        'estoqueContado': item.estoqueContado ?? 0,
+        'estoqueContado': item.temEstratificacao
+            ? item.totalEstratificado
+            : (item.estoqueContado ?? 0),
+        'linhaEstoque': item.linhaEstoque,
+        'containers': item.containers,
+        'cubaEstoque': item.cubaEstoque,
+        'outrosEstoque': item.outrosEstoque,
         'recebimentoTotal': item.recebimentoTotal ?? 0,
         'somaNotas': item.somaNotas,
         'observacao': item.observacao,

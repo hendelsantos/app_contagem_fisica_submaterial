@@ -58,6 +58,10 @@ class ItensContagem extends Table {
   TextColumn get materialCodigo => text()();
   RealColumn get estoqueAnterior => real()();
   RealColumn get estoqueContado => real().nullable()();
+  RealColumn get linhaEstoque => real().nullable()();
+  TextColumn get containersJson => text().nullable()();
+  RealColumn get cubaEstoque => real().nullable()();
+  RealColumn get outrosEstoque => real().nullable()();
   RealColumn get recebimentoTotal => real().nullable()();
   TextColumn get observacao => text().nullable()();
   TextColumn get justificativa => text().nullable()();
