@@ -42,6 +42,7 @@ Status em 13/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 - App envia dados para `POST /api/contagens/` quando o APK for gerado com `BACKEND_URL` e `APP_API_TOKEN`.
 - Página `downloads/contagens.html` lê `GET /api/public/contagens/` via `downloads/contagens/config.js`.
 - Painel Railway em `/` lista contagens recebidas, mostra detalhe por item/NF e permite baixar Excel em `/contagens/<id>/excel/`.
+- Banco simplificado para SQLite persistente em volume Railway (`SQLITE_PATH=/data/db.sqlite3`), mantendo apenas um serviço de aplicação. MySQL pode ser removido após validar que não há dados importantes pendentes nele.
 - Excel/ZIP/PDF continuam exportados localmente para auditoria/importação; upload de arquivos binários pelo app fica para uma próxima etapa, se necessário.
 
 ### 3. Itens menores

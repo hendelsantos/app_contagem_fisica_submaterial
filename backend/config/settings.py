@@ -2,9 +2,6 @@ import os
 from pathlib import Path
 
 import dj_database_url
-import pymysql
-
-pymysql.install_as_MySQLdb()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -65,18 +62,14 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASE_URL = os.environ.get("DATABASE_URL") or os.environ.get("MYSQL_URL")
 if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,
-            engine="django.db.backends.mysql",
-        )
-    }
+    DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
 else:
+    sqlite_path = Path(os.environ.get("SQLITE_PATH", BASE_DIR / "db.sqlite3"))
+    sqlite_path.parent.mkdir(parents=True, exist_ok=True)
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "NAME": sqlite_path,
         }
     }
 
