@@ -116,9 +116,15 @@
     }
     .actions {
       display: grid;
-      grid-template-columns: 1fr 44px;
+      grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
       gap: 8px;
       align-items: stretch;
+    }
+    .file-row {
+      display: grid;
+      grid-template-columns: 1fr 44px;
+      gap: 8px;
+      min-width: 0;
     }
     .btn, .icon-btn {
       min-height: 44px;
@@ -134,6 +140,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
+      overflow-wrap: anywhere;
     }
     .icon-btn {
       padding: 0;
@@ -254,6 +261,9 @@
         item.data,
         item.tipo,
         item.arquivo,
+        item.arquivos?.excel,
+        item.arquivos?.zip,
+        item.arquivos?.pdf,
         item.observacao
       ].join(" ").toLowerCase();
     }
@@ -277,9 +287,20 @@
       mensagem.textContent = "";
     }
 
-    function abrirQr(item) {
-      const link = urlPublica(item.arquivo);
-      qrTitulo.textContent = item.titulo || "Baixar contagem";
+    function arquivosDaContagem(item) {
+      const arquivos = [];
+      if (item.arquivos && typeof item.arquivos === "object") {
+        if (item.arquivos.excel) arquivos.push({ tipo: "Excel", arquivo: item.arquivos.excel });
+        if (item.arquivos.zip) arquivos.push({ tipo: "ZIP", arquivo: item.arquivos.zip });
+        if (item.arquivos.pdf) arquivos.push({ tipo: "PDF", arquivo: item.arquivos.pdf });
+      }
+      if (item.arquivo) arquivos.push({ tipo: item.tipo || "Arquivo", arquivo: item.arquivo });
+      return arquivos;
+    }
+
+    function abrirQr(item, arquivo) {
+      const link = urlPublica(arquivo.arquivo);
+      qrTitulo.textContent = `${arquivo.tipo} - ${item.titulo || "Contagem"}`;
       qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=10&qzone=4&data=${encodeURIComponent(link)}`;
       qrLink.href = link;
       qrDialog.showModal();
@@ -297,7 +318,9 @@
       const linhas = [
         item.operador ? `Operador: ${item.operador}${item.matricula ? ` (${item.matricula})` : ""}` : "",
         item.data ? `Data: ${formatarData(item.data)}` : "",
-        item.tipo ? `Tipo: ${item.tipo}` : "",
+        item.turno ? `Turno: ${item.turno}` : "",
+        item.totalMateriais ? `Materiais: ${item.totalMateriais}` : "",
+        item.alertas || item.bloqueios ? `Alertas: ${item.alertas || 0} | Bloqueios: ${item.bloqueios || 0}` : "",
         item.observacao || ""
       ].filter(Boolean);
       linhas.forEach((linha) => {
@@ -309,23 +332,30 @@
       const actions = document.createElement("div");
       actions.className = "actions";
 
-      const link = document.createElement("a");
-      link.className = "btn";
-      link.href = urlPublica(item.arquivo);
-      link.target = "_blank";
-      link.rel = "noopener";
-      link.download = "";
-      link.textContent = "Baixar";
+      arquivosDaContagem(item).forEach((arquivo) => {
+        const row = document.createElement("div");
+        row.className = "file-row";
 
-      const qr = document.createElement("button");
-      qr.className = "icon-btn";
-      qr.type = "button";
-      qr.title = "Mostrar QR code";
-      qr.setAttribute("aria-label", "Mostrar QR code");
-      qr.textContent = "QR";
-      qr.addEventListener("click", () => abrirQr(item));
+        const link = document.createElement("a");
+        link.className = "btn";
+        link.href = urlPublica(arquivo.arquivo);
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.download = "";
+        link.textContent = arquivo.tipo;
 
-      actions.append(link, qr);
+        const qr = document.createElement("button");
+        qr.className = "icon-btn";
+        qr.type = "button";
+        qr.title = `Mostrar QR code do ${arquivo.tipo}`;
+        qr.setAttribute("aria-label", `Mostrar QR code do ${arquivo.tipo}`);
+        qr.textContent = "QR";
+        qr.addEventListener("click", () => abrirQr(item, arquivo));
+
+        row.append(link, qr);
+        actions.appendChild(row);
+      });
+
       article.append(titulo, meta, actions);
       return article;
     }
