@@ -5,7 +5,7 @@ Status em 13/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 ## Versão atual
 
 - **Release latest:** v0.7.3 (https://github.com/hendelsantos/app_contagem_fisica_submaterial/releases/latest)
-- **pubspec.yaml:** `0.7.3+15` publicado. App simplificado sem login operacional, com horário por material e retomada de sessões em andamento.
+- **pubspec.yaml:** `0.7.4+16` em desenvolvimento. App simplificado sem login operacional, com horário por material, retomada de sessões em andamento e envio online opcional.
 - **Página de download:** https://hendelsantos.github.io/app_contagem_fisica_submaterial/  (automática via `releases/latest`)
 - **QR code aponta para:** a página acima (fixo).
 
@@ -28,6 +28,7 @@ Status em 13/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 | v0.7.1 | Modo de envio do Excel pelo WhatsApp na tela Exportar. |
 | v0.7.2 | Tela inicial pede apenas nome e registra horários pelo celular por material. |
 | v0.7.3 | Tela inicial lista sessões em andamento e permite retomar contagem interrompida. |
+| v0.7.4 | Envio online opcional para backend Railway e página estática lendo API pública. |
 
 ## Próximos passos (fila)
 
@@ -36,11 +37,11 @@ Status em 13/08/2026. Use este doc para retomar o trabalho exatamente de onde pa
 - Release criada pelo GitHub Actions com `app-release.apk` anexado.
 - Checks locais confirmados em 13/08/2026: `flutter analyze`, `flutter test` e `flutter build apk --release`.
 
-### 2. Publicar resultados sem Railway
-- Opção recomendada: manter Excel/ZIP e compartilhar via Drive/OneDrive/WhatsApp/e-mail.
-- GitHub Pages pode hospedar uma página estática de resultados, mas não oferece senha real.
-- Para "senha" em GitHub Pages, só com página estática criptografada no navegador; é proteção simples, não controle de acesso robusto.
-- Alternativa privada: repositório privado no GitHub com arquivos HTML/Excel versionados, acessível só por usuários convidados.
+### 2. Publicar resultados online
+- Backend Railway ativo em `https://backend-production-3a35.up.railway.app`.
+- App envia dados para `POST /api/contagens/` quando o APK for gerado com `BACKEND_URL` e `APP_API_TOKEN`.
+- Página `downloads/contagens.html` lê `GET /api/public/contagens/` via `downloads/contagens/config.js`.
+- Excel/ZIP/PDF continuam exportados localmente para auditoria/importação; upload de arquivos binários pelo app fica para uma próxima etapa, se necessário.
 
 ### 3. Itens menores
 - Importar cadastro mestre JSON do Streamlit (`materiais.json`) — tela `/importar_cadastro`. Substitui seed fixo. **Decidido: deixar pra depois, manter seed.dart por enquanto.**

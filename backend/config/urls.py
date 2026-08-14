@@ -13,4 +13,5 @@ urlpatterns = [
     path("api/health/", views.health, name="health"),
     path("api/contagens/", views.api_contagens, name="api_contagens"),
     path("api/contagens/<int:pk>/", views.api_contagem_detalhe, name="api_contagem_detalhe"),
+    path("api/public/contagens/", views.api_public_contagens, name="api_public_contagens"),
 ]

@@ -3,10 +3,23 @@
 Esta pasta guarda os resultados de contagem exibidos em
 `downloads/contagens.html`, publicada pelo GitHub Pages.
 
+## Fonte dos dados
+
+A pagina tenta ler primeiro a API configurada em `config.js`:
+
+```js
+window.CONTAGENS_API_URL =
+  "https://backend-production-3a35.up.railway.app/api/public/contagens/";
+```
+
+Se a API estiver fora do ar ou vazia, a pagina usa `manifest.json` como
+fallback manual.
+
 ## Como publicar uma contagem
 
+Este fluxo manual continua disponivel para anexar Excel, ZIP e PDF na pagina.
 Depois de exportar os arquivos no app Android, rode o script abaixo no
-computador de desenvolvimento:
+computador de desenvolvimento.
 
 ```bash
 python3 scripts/publicar_contagem.py \

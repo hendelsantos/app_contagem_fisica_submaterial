@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 import '../domain/export_excel.dart';
 import '../domain/export_pdf.dart';
 import '../domain/export_zip.dart';
+import '../domain/sync_backend.dart';
 import '../providers/database_provider.dart';
 import '../providers/materiais_provider.dart';
 import '../providers/sessao_provider.dart';
@@ -22,6 +23,8 @@ class _ExportPageState extends ConsumerState<ExportPage> {
   String? _pdfPath;
   String? _zipPath;
   String? _erro;
+  bool _enviandoOnline = false;
+  bool _enviadoOnline = false;
 
   Future<void> _gerar() async {
     setState(() {
@@ -62,6 +65,10 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         _pdfPath = pdf.path;
         _zipPath = zip.path;
       });
+
+      if (BackendSyncConfig.habilitado) {
+        await _enviarOnline(silencioso: true);
+      }
     } catch (e) {
       setState(() => _erro = e.toString());
     } finally {
@@ -77,6 +84,37 @@ class _ExportPageState extends ConsumerState<ExportPage> {
       text: 'Contagem física HMB — Excel para importação',
       subject: 'Contagem física HMB',
     );
+  }
+
+  Future<void> _enviarOnline({bool silencioso = false}) async {
+    setState(() {
+      _enviandoOnline = true;
+      _erro = null;
+    });
+    try {
+      final sessao = ref.read(sessaoAtualProvider).valueOrNull;
+      if (sessao == null) throw StateError('Sem sessão ativa.');
+      final materiais = await ref.read(todosMateriaisProvider.future);
+      final itens = await ref.read(itensSessaoProvider(sessao.id).future);
+
+      await BackendSync().enviarContagem(
+        sessao: sessao,
+        itens: itens,
+        materiais: materiais,
+      );
+
+      if (mounted) {
+        setState(() => _enviadoOnline = true);
+      }
+    } catch (e) {
+      if (!silencioso && mounted) {
+        setState(() => _erro = e.toString());
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _enviandoOnline = false);
+      }
+    }
   }
 
   @override
@@ -115,6 +153,39 @@ class _ExportPageState extends ConsumerState<ExportPage> {
                     onPressed: () => Share.shareXFiles([XFile(_zipPath!)],
                         text: 'Contagem física — pacote de auditoria'),
                   ),
+                ),
+              ),
+            if (_zipPath != null && BackendSyncConfig.habilitado)
+              Card(
+                child: ListTile(
+                  leading: Icon(
+                    _enviadoOnline ? Icons.cloud_done : Icons.cloud_upload,
+                    color: _enviadoOnline ? Colors.green : Colors.blue,
+                  ),
+                  title: Text(_enviadoOnline
+                      ? 'Dados enviados para a página'
+                      : 'Enviar dados online'),
+                  subtitle: const Text(
+                      'Quando houver internet, envia a contagem para o painel online.'),
+                  trailing: IconButton(
+                    icon: _enviandoOnline
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.send),
+                    onPressed: _enviandoOnline ? null : _enviarOnline,
+                  ),
+                ),
+              ),
+            if (_zipPath != null && !BackendSyncConfig.habilitado)
+              const Card(
+                child: ListTile(
+                  leading: Icon(Icons.cloud_off, color: Colors.blueGrey),
+                  title: Text('Envio online desativado'),
+                  subtitle: Text(
+                      'Este APK foi gerado sem BACKEND_URL e APP_API_TOKEN.'),
                 ),
               ),
             if (_excelPath != null)

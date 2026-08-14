@@ -92,7 +92,23 @@ dart run build_runner build --delete-conflicting-outputs
    material pendente/bloqueado.
 6. **Exportar**: gera `.xlsx` compatível com Streamlit (Stock do Operador) +
    PDF de auditoria com horário por material. Compartilha via `share_plus`,
-   incluindo envio do Excel pelo WhatsApp.
+   incluindo envio do Excel pelo WhatsApp. Quando o APK for gerado com
+   `BACKEND_URL` e `APP_API_TOKEN`, a tela também envia os dados da contagem
+   para o backend online.
+
+## Envio online
+
+O envio online é opcional. Para gerar um APK que envia a contagem para o
+backend quando houver internet:
+
+```bash
+flutter build apk --release \
+  --dart-define=BACKEND_URL=https://backend-production-3a35.up.railway.app \
+  --dart-define=APP_API_TOKEN=<token-do-backend>
+```
+
+Sem esses `dart-define`, o app continua 100% offline e mostra o envio online
+como desativado.
 
 ## Compatibilidade do Excel
 

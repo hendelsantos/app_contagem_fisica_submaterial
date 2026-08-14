@@ -161,6 +161,20 @@
       color: var(--erro);
       border-color: #F5B7C2;
     }
+    .badge {
+      min-height: 44px;
+      border-radius: 8px;
+      border: 1px solid var(--borda);
+      background: #F8FAFC;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px 10px;
+    }
     dialog {
       width: min(420px, calc(100% - 24px));
       border: 1px solid var(--borda);
@@ -235,8 +249,10 @@
     </div>
   </dialog>
 
+  <script src="contagens/config.js"></script>
   <script>
     const MANIFEST_URL = "contagens/manifest.json";
+    const API_URL = window.CONTAGENS_API_URL || "";
     const PAGES_BASE = "https://hendelsantos.github.io/app_contagem_fisica_submaterial/";
     const lista = document.getElementById("lista");
     const busca = document.getElementById("busca");
@@ -264,6 +280,7 @@
         item.arquivos?.excel,
         item.arquivos?.zip,
         item.arquivos?.pdf,
+        item.status,
         item.observacao
       ].join(" ").toLowerCase();
     }
@@ -311,7 +328,7 @@
       article.className = "card";
 
       const titulo = document.createElement("h2");
-      titulo.textContent = item.titulo || item.arquivo.split("/").pop();
+      titulo.textContent = item.titulo || item.arquivo?.split("/").pop() || "Contagem recebida";
 
       const meta = document.createElement("div");
       meta.className = "meta";
@@ -319,8 +336,11 @@
         item.operador ? `Operador: ${item.operador}${item.matricula ? ` (${item.matricula})` : ""}` : "",
         item.data ? `Data: ${formatarData(item.data)}` : "",
         item.turno ? `Turno: ${item.turno}` : "",
+        item.status ? `Status: ${item.status}` : "",
         item.totalMateriais ? `Materiais: ${item.totalMateriais}` : "",
         item.alertas || item.bloqueios ? `Alertas: ${item.alertas || 0} | Bloqueios: ${item.bloqueios || 0}` : "",
+        item.totalContado ? `Total contado: ${item.totalContado}` : "",
+        item.totalRecebido ? `Total recebido: ${item.totalRecebido}` : "",
         item.observacao || ""
       ].filter(Boolean);
       linhas.forEach((linha) => {
@@ -332,7 +352,8 @@
       const actions = document.createElement("div");
       actions.className = "actions";
 
-      arquivosDaContagem(item).forEach((arquivo) => {
+      const arquivos = arquivosDaContagem(item);
+      arquivos.forEach((arquivo) => {
         const row = document.createElement("div");
         row.className = "file-row";
 
@@ -355,6 +376,13 @@
         row.append(link, qr);
         actions.appendChild(row);
       });
+
+      if (arquivos.length === 0) {
+        const badge = document.createElement("div");
+        badge.className = "badge";
+        badge.textContent = "Recebida online pelo app";
+        actions.appendChild(badge);
+      }
 
       article.append(titulo, meta, actions);
       return article;
@@ -380,17 +408,35 @@
       statusEl.textContent = filtradas.length === 1 ? "1 contagem" : `${filtradas.length} contagens`;
     }
 
-    fetch(MANIFEST_URL, { cache: "no-store" })
-      .then((response) => {
-        if (!response.ok) throw new Error("manifest");
-        return response.json();
-      })
-      .then((data) => {
-        contagens = Array.isArray(data.contagens) ? data.contagens : [];
-        render();
-      })
+    function carregarManifest() {
+      return fetch(MANIFEST_URL, { cache: "no-store" })
+        .then((response) => {
+          if (!response.ok) throw new Error("manifest");
+          return response.json();
+        })
+        .then((data) => {
+          contagens = Array.isArray(data.contagens) ? data.contagens : [];
+          render();
+        });
+    }
+
+    function carregarApi() {
+      if (!API_URL) return carregarManifest();
+      return fetch(API_URL, { cache: "no-store" })
+        .then((response) => {
+          if (!response.ok) throw new Error("api");
+          return response.json();
+        })
+        .then((data) => {
+          contagens = Array.isArray(data.contagens) ? data.contagens : [];
+          render();
+        })
+        .catch(() => carregarManifest());
+    }
+
+    carregarApi()
       .catch(() => {
-        mostrarMensagem("Nao foi possivel carregar a lista de contagens. Confira o arquivo contagens/manifest.json.", true);
+        mostrarMensagem("Nao foi possivel carregar a lista de contagens. Confira a API ou o arquivo contagens/manifest.json.", true);
         statusEl.textContent = "Erro ao carregar";
       });
 

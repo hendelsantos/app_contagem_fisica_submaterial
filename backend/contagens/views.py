@@ -82,6 +82,15 @@ def api_contagem_detalhe(request, pk):
     return JsonResponse(data)
 
 
+@require_http_methods(["GET"])
+def api_public_contagens(_request):
+    data = [_contagem_publica_json(c) for c in Contagem.objects.prefetch_related("itens")[:100]]
+    response = JsonResponse({"contagens": data})
+    response["Access-Control-Allow-Origin"] = "*"
+    response["Cache-Control"] = "no-store"
+    return response
+
+
 @transaction.atomic
 def _salvar_payload(payload):
     sessao = payload["sessao"]
@@ -178,6 +187,31 @@ def _contagem_json(contagem):
         "totalItens": contagem.total_itens,
         "totalContado": float(contagem.total_contado),
         "totalRecebido": float(contagem.total_recebido),
+    }
+
+
+def _contagem_publica_json(contagem):
+    itens = list(contagem.itens.all())
+    alertas = sum(1 for item in itens if item.status == "alerta")
+    bloqueios = sum(1 for item in itens if item.status == "bloqueado")
+    justificados = sum(1 for item in itens if item.status == "justificado")
+    return {
+        "id": contagem.id,
+        "sessaoAppId": contagem.sessao_app_id,
+        "titulo": f"Contagem {contagem.data_inicio:%d/%m/%Y} - {contagem.operador_nome}",
+        "operador": contagem.operador_nome,
+        "matricula": contagem.operador_matricula,
+        "data": contagem.data_inicio.date().isoformat(),
+        "dataInicio": contagem.data_inicio.isoformat(),
+        "dataFimReal": contagem.data_fim_real.isoformat() if contagem.data_fim_real else None,
+        "status": contagem.status,
+        "totalMateriais": contagem.total_itens,
+        "totalContado": float(contagem.total_contado),
+        "totalRecebido": float(contagem.total_recebido),
+        "alertas": alertas,
+        "bloqueios": bloqueios,
+        "justificados": justificados,
+        "observacao": "Recebida automaticamente pelo app",
     }
 
 

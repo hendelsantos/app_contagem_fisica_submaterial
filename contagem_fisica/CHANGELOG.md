@@ -1,5 +1,11 @@
 # Changelog — Contagem Física HMB
 
+## 0.7.4
+- Tela Exportar passa a enviar os dados da contagem para o backend quando o APK for gerado com `BACKEND_URL` e `APP_API_TOKEN`.
+- O envio online e opcional: sem configuracao, o app segue funcionando offline com Excel, ZIP e PDF.
+- Backend ganha API publica de leitura para a pagina estatica listar contagens recebidas pelo app.
+- Pagina de contagens publicadas passa a ler a API online com fallback para `manifest.json`.
+
 ## 0.7.3
 - Tela inicial passa a listar sessões em andamento salvas no aparelho.
 - Operador pode retomar uma sessão interrompida sem criar nova contagem.

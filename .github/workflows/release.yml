@@ -45,7 +45,17 @@ jobs:
 
       - name: Build APK
         working-directory: contagem_fisica
-        run: flutter build apk --release
+        env:
+          BACKEND_URL: ${{ vars.BACKEND_URL || 'https://backend-production-3a35.up.railway.app' }}
+          APP_API_TOKEN: ${{ secrets.APP_API_TOKEN }}
+        run: |
+          if [ -n "$APP_API_TOKEN" ]; then
+            flutter build apk --release \
+              --dart-define=BACKEND_URL="$BACKEND_URL" \
+              --dart-define=APP_API_TOKEN="$APP_API_TOKEN"
+          else
+            flutter build apk --release
+          fi
 
       - name: Notas da release
         run: |
